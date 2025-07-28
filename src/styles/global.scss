@@ -1,5 +1,7 @@
 @use "./variables" as *;
-@use './scss-reset';
+@use "./scss-reset.scss";
+@use "./footer.scss";
+@use "./home.scss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,12 +1,23 @@
-import "@/styles/footer.scss";
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer>
-        <Link></Link>
-        <Link></Link>
-        <Link></Link>
-        <Link></Link>
-        
+      <Link to='/'>
+        <img src="../../src/assets/icons/home_icon.svg" alt='...' />
+      </Link>
+      <Link to='/page-1'>
+        <img src='../../src/assets/icons/calendar_icon.svg' alt='...' />
+      </Link>
+      <Link to='/page-1'>
+        <img src='../src/assets/icons/qr_icon.svg' alt='...' />
+      </Link>
+      <Link to='/page-1'>
+        <img src='../src/assets/icons/geo_icon.svg' alt='...' />
+      </Link>
+      <Link to='/profile'>
+        <img src='../src/assets/icons/user_icon.svg' alt='...' />
+      </Link>
     </footer>
-  )
+  );
 }
