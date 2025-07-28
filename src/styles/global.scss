@@ -1,0 +1,17 @@
+@use "./variables" as *;
+@use './scss-reset';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: $font-roboto;
+  }
+
+.main-container {
+    max-width: 375px;
+    margin: 0 auto;
+    background-color: $bg;
+    min-height: 100vh;
+  }
+  
