@@ -12,8 +12,8 @@ export default function Footer() {
       <Link to='/page-1'>
         <img src='../src/assets/icons/qr_icon.svg' alt='...' />
       </Link>
-      <Link to='/page-1'>
-        <img src='../src/assets/icons/geo_icon.svg' alt='...' />
+      <Link to='/carwash-statistics'>
+        <img src='../src/assets/icons/car-icon.svg' alt='...' />
       </Link>
       <Link to='/profile'>
         <img src='../src/assets/icons/user_icon.svg' alt='...' />

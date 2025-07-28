@@ -1,8 +1,11 @@
 import leftArrow from "../../assets/icons/left-arrow.svg";
 import rightArrow from "../../assets/icons/right-arrow.svg";
+import Header from "../Header";
 
 export default function Home() {
   return (
+    <div>
+    <Header/>
     <main>
       <h3>
         Hello, <b>Anna!</b>
@@ -96,5 +99,6 @@ export default function Home() {
         </div>
       </div>
     </main>
+    </div>
   );
 }

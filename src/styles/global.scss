@@ -2,6 +2,8 @@
 @use "./scss-reset.scss";
 @use "./footer.scss";
 @use "./home.scss";
+@use './my-data.scss';
+@use './carwash-statistics.scss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,0 +1,75 @@
+@use './variables' as *;
+
+.my-data-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+header {
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include font-roboto-bold-blue;
+    font-weight: 600;
+    font-size: 18px;
+    box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
+}
+
+.my-info {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
+    margin: 0px 16px;
+    padding: 24px 16px;
+    gap: 16px;
+    @include font-roboto-regular-blue;
+    h2 {
+        @include font-roboto-bold-blue;
+        font-weight: 600    ;
+        font-size: 20px;
+    }
+    p {
+        padding: 4px;
+    }
+}
+
+.name-info {
+    gap: 8px;
+    display: flex;
+}
+
+.bold {
+    @include font-roboto-bold-blue;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.my-statistic {
+    padding: 24px 16px;
+    @include font-roboto-bold-blue;
+    font-size: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
+    margin: 0px 16px;
+    justify-content: space-around;
+}
+
+.statistic-button-block {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 16px;
+    button {
+        color: $textPrimary;
+        padding: 8px 0px;
+        width: 33%;
+        &:hover {
+            background-color: $blueMain;
+            color: $yellowMain;
+            border-radius: 16px;
+        }
+    }
+    
+}

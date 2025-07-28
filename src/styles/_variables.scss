@@ -49,6 +49,7 @@ $color-naturals-900: #222;
 $bg: #FAFAFA;
 $blueMain: $color-blue-500;
 $textSecondary: $color-blue-400;
+$textPrimary: $color-blue-600; 
 $redMain: #BA1717;
 $yellowMain: $color-yellow-500;
 $dark: $color-naturals-900;
@@ -73,7 +74,7 @@ $font-roboto: 'Roboto', sans-serif;
 @mixin font-roboto-regular-yellow {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
-    font-style: Regular;
+    font-style: 'Regular';
     font-size: 16px;
     line-height: 22px;
     letter-spacing: 0%;
