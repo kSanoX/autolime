@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import PercentBar from "../PercentBar";
+import { MobileDropdownSheet } from "../ui/MobileDropdown";
+import { Button } from "../ui/button";
 
-export default function ManagerCarwashStatistics() {
+export default function CarwashStatistics() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState("Period");
+
   return (
     <div>
       <header>Carwash statistics</header>
@@ -24,18 +29,24 @@ export default function ManagerCarwashStatistics() {
               St - Sn <span className='yellow'>11:00 - 15:00</span>
             </p>
           </div>
+
           <div className='period'>
-            Period
             <div className='period-dropdown'>
-              <p>Today</p>
-              <a href=''>
+              <p>{selectedPeriod}</p>
+              <button onClick={() => setDropdownOpen(true)} className='ml-2'>
                 <img
                   className='right-arrow'
                   src='../../src/assets/icons/right-arrow.svg'
                   alt='right-arrow'
                 />
-              </a>
+              </button>
             </div>
+
+            <MobileDropdownSheet
+              open={dropdownOpen}
+              setOpen={setDropdownOpen}
+              setPeriod={setSelectedPeriod}
+            />
           </div>
         </div>
       </div>
@@ -89,28 +100,39 @@ export default function ManagerCarwashStatistics() {
 
         <div className='car-types-list'>
           <div className='car-types-row'>
-            <div className='blue-box'><img src="../../src/assets/icons/branch/sedan.svg" alt="sedan" /></div>
+            <div className='blue-box'>
+              <img src='../../src/assets/icons/branch/sedan.svg' alt='sedan' />
+            </div>
             <div className='bar-container'>
               <PercentBar percent={64} label='Sedan' />
             </div>
           </div>
 
           <div className='car-types-row'>
-          <div className='blue-box'><img src="../../src/assets/icons/branch/wagon.svg" alt="wagon" /></div>
+            <div className='blue-box'>
+              <img src='../../src/assets/icons/branch/wagon.svg' alt='wagon' />
+            </div>
             <div className='bar-container'>
               <PercentBar percent={25} label='Wagon' />
             </div>
           </div>
 
           <div className='car-types-row'>
-          <div className='blue-box'><img src="../../src/assets/icons/branch/coupe.svg" alt="cope" /></div>
+            <div className='blue-box'>
+              <img src='../../src/assets/icons/branch/coupe.svg' alt='cope' />
+            </div>
             <div className='bar-container'>
               <PercentBar percent={20} label='Coupe' />
             </div>
           </div>
 
           <div className='car-types-row'>
-          <div className='blue-box'><img src="../../src/assets/icons/branch/pickup.svg" alt="pickup" /></div>
+            <div className='blue-box'>
+              <img
+                src='../../src/assets/icons/branch/pickup.svg'
+                alt='pickup'
+              />
+            </div>
             <div className='bar-container'>
               <PercentBar percent={9} label='Pickup' />
             </div>
@@ -118,40 +140,36 @@ export default function ManagerCarwashStatistics() {
         </div>
       </div>
 
-
-      <div className="workload">
-      <div className='packeges-header'>
+      <div className='workload'>
+        <div className='packeges-header'>
           <div className='yellow-box'>
-            <img
-              src='./../../src/assets/icons/branch/workload.svg'
-              alt=''
-            />
+            <img src='./../../src/assets/icons/branch/workload.svg' alt='' />
           </div>
           <div>
             <p>Workload</p>
-            <p><span className="yellow"> Period:</span> 15/06/2023 - 23/06/2023</p>
+            <p>
+              <span className='yellow'> Period:</span> 15/06/2023 - 23/06/2023
+            </p>
           </div>
         </div>
-        <div className="graphics-container">
-          <div className="graph">
-
+        <div className='graphics-container'>
+          <div className='graph'></div>
+          <div className='graph-info'>
+            <div className='graph-info-item'>15Jun</div>
+            <div className='graph-info-item'>17DEC</div>
+            <div className='graph-info-item'>19DEC</div>
+            <div className='graph-info-item'>21DEC</div>
+            <div className='graph-info-item'>23Jun</div>
           </div>
-          <div className="graph-info">
-            <div className="graph-info-item">15Jun</div>
-            <div className="graph-info-item">17DEC</div>
-            <div className="graph-info-item">19DEC</div>
-            <div className="graph-info-item">21DEC</div>
-            <div className="graph-info-item">23Jun</div>
-          </div>
-          <div className="avg-whashes">
+          <div className='avg-whashes'>
             <div>
-            <p className="yellow">Average number of washes:</p>
-            <p>Per Day</p>
+              <p className='yellow'>Average number of washes:</p>
+              <p>Per Day</p>
             </div>
             <span>-</span>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 }

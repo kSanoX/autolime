@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import "./styles/global.scss";
 import Footer from './components/Footer.tsx';
 import Home from './components/pages/Home.tsx';
 import MyData from './components/pages/MyData.tsx';

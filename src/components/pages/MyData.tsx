@@ -1,4 +1,6 @@
 import React from 'react'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 
 export default function MyData() {
   return (
