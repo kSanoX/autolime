@@ -17,5 +17,30 @@ body {
     margin: 0 auto;
     background-color: $bg;
     min-height: 100vh;
+    position: relative;
+    padding-bottom: 80px;
   }
-  
+
+  .yellow {
+    color: $yellowMain;
+  }
+
+  .yellow-box {
+    width: 48px;
+    height: 48px;
+    background-color: $yellowMain;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blue-box {
+    width: 48px;
+    height: 48px;
+    background-color: $blueMain;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
