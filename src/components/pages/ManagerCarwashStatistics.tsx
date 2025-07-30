@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import PercentBar from "../PercentBar";
 import { MobileDropdownSheet } from "../ui/MobileDropdown";
 import { Button } from "../ui/button";
+import { CalendarMobileSheet } from "../CalendarDropDownSheet";
+import { format } from "date-fns";
 
 export default function CarwashStatistics() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("Period");
+  const [range, setRange] = useState<{ from: Date; to: Date }>();
 
   return (
     <div>
@@ -32,7 +36,14 @@ export default function CarwashStatistics() {
 
           <div className='period'>
             <div className='period-dropdown'>
-              <p>{selectedPeriod}</p>
+            <p>
+                {selectedPeriod === "Custom period" && range?.from && range?.to
+                  ? `${format(range.from, "d MMM yyyy")} — ${format(
+                      range.to,
+                      "d MMM yyyy"
+                    )}`
+                  : selectedPeriod}
+              </p>
               <button onClick={() => setDropdownOpen(true)} className='ml-2'>
                 <img
                   className='right-arrow'
@@ -43,10 +54,28 @@ export default function CarwashStatistics() {
             </div>
 
             <MobileDropdownSheet
-              open={dropdownOpen}
-              setOpen={setDropdownOpen}
-              setPeriod={setSelectedPeriod}
-            />
+        open={dropdownOpen}
+        setOpen={setDropdownOpen}
+        setPeriod={(label) => {
+          setSelectedPeriod(label);
+          if (label === "Custom period") {
+            setDropdownOpen(false);
+            setCalendarOpen(true); // 👉 Открываем календарь
+          } else {
+            // обычные периоды
+            setCalendarOpen(false);
+          }
+        }}
+      />
+      {/* Календарь */}
+      <CalendarMobileSheet
+        open={calendarOpen}
+        setOpen={setCalendarOpen}
+        applyRange={(selected) => {
+          setRange(selected);
+          setSelectedPeriod("Custom period");
+        }}
+      />
           </div>
         </div>
       </div>

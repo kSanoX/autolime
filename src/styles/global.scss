@@ -1,9 +1,11 @@
 @use "./variables" as *;
 @use "./scss-reset.scss";
-@use "./footer.scss";
+@use "./nav-bar.scss";
 @use "./home.scss";
 @use './my-data.scss';
 @use './carwash-statistics.scss';
+@use './booking.scss';
+@use './manager-order.scss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,4 +54,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .calendar-select-btn {
+    border-radius: 16px;
+    background-color: $blueMain;
+    padding: 12px 0px;
+    text-align: center;
+    color: $yellowMain;
+    margin: 0px 16px;
+    margin-bottom: 16px;
   }

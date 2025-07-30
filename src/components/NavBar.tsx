@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer>
+    <div className="nav-bar-wrapper">
+    <nav className="nav-bar-container">
       <Link to='/'>
         <img src="../../src/assets/icons/home_icon.svg" alt='...' />
       </Link>
-      <Link to='/page-1'>
+      <Link to='/booking'>
         <img src='../../src/assets/icons/calendar_icon.svg' alt='...' />
       </Link>
       <Link to='/page-1'>
@@ -18,6 +19,7 @@ export default function Footer() {
       <Link to='/profile'>
         <img src='../src/assets/icons/user_icon.svg' alt='...' />
       </Link>
-    </footer>
+    </nav>
+    </div>
   );
 }
