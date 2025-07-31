@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface DeleteReasonPopupProps {
   visible: boolean
@@ -15,6 +15,17 @@ export default function DeleteReasonPopup({
   onConfirm,
   onCancel,
 }: DeleteReasonPopupProps) {
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [visible])
   if (!visible) return null
 
   const chars = reason.length

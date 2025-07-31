@@ -8,6 +8,7 @@
 @use './manager-order.scss';
 @use './delete-reason-popup.scss';
 @use './rescheduling-order.scss';
+@use './manager-calendar.scss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,7 +18,7 @@ body {
   }
 
 .main-container {
-    max-width: 375px;
+    max-width: 100%;
     margin: 0 auto;
     background-color: $bg;
     min-height: 100vh;

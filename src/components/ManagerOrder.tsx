@@ -95,12 +95,14 @@ export default function ManagerOrder({
   <button
     className='order-btn'
     onClick={onReschedule}
+    disabled={isDeleted}
   >
     <img src='../../src/assets/icons/ManagerOrder/refresh.svg' alt='refresh' />
   </button>
 )}
-        <button className='order-btn'>
+        <button className='order-btn' disabled={isDeleted}>
           <img src='../../src/assets/icons/ManagerOrder/confirmed.svg' alt='confirmed' />
+          
         </button>
       </div>
     )
@@ -136,6 +138,7 @@ export default function ManagerOrder({
             <button
               className='order-btn cancel'
               onClick={onDelete}
+              disabled={isDeleted}
             >
               <img
                 src='../../src/assets/icons/ManagerOrder/cancel (2).svg'
@@ -156,7 +159,6 @@ export default function ManagerOrder({
               </button>
             </div>
           )}
-          
         </div>
       </div>
     </div>

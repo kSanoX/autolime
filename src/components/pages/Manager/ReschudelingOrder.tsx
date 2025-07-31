@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { format } from "date-fns"
-import { updateOrder } from "../../store/ordersSlice"
-import { SingleCalendarMobileSheet } from "../Calendars/SingleCalendarDropDownSheet"
-import { TimePickerMobileSheet } from "../TimePickerMobileSheet"
+import { updateOrder } from "../../../store/ordersSlice"
+import { SingleCalendarMobileSheet } from "../../Calendars/SingleCalendarDropDownSheet"
+import { TimePickerMobileSheet } from "../../TimePickerMobileSheet"
 
 
 export default function ReschudelingOrder() {
