@@ -17,26 +17,35 @@ export default function DeleteReasonPopup({
 }: DeleteReasonPopupProps) {
   if (!visible) return null
 
+  const chars = reason.length
+  const isValid = chars >= 24
+
   return (
     <div className='delete-popup-overlay'>
       <div className='delete-popup'>
-        <h3>Why do you want to delete this order?</h3>
-        <textarea
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          maxLength={500}
-          placeholder='Describe your reason (max 500 characters)'
-        />
+        <h3>Deleting a order</h3>
+        <p className='leave-a-description'>
+          To delete a order, please leave a description of the reason
+        </p>
+        <span className='lable'>lable</span>
+        <div className='textarea-wrapper'>
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            maxLength={500}
+            placeholder='Input text'
+            className={isValid ? 'active' : ''}
+          />
+          <span className='char-counter'>{chars}/500</span>
+        </div>
         <div className='popup-actions'>
-          <button onClick={onCancel}>Cancel</button>
+          <button onClick={onCancel}>Leave</button>
           <button
-            onClick={() => {
-              if (reason.trim()) {
-                onConfirm()
-              }
-            }}
+            disabled={!isValid}
+            className={isValid ? '' : 'disabled'}
+            onClick={() => onConfirm()}
           >
-            Confirm
+            OK
           </button>
         </div>
       </div>

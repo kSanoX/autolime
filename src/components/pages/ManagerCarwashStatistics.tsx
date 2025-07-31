@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PercentBar from "../PercentBar";
 import { MobileDropdownSheet } from "../ui/MobileDropdown";
 import { Button } from "../ui/button";
-import { CalendarMobileSheet } from "../CalendarDropDownSheet";
+import { CalendarMobileSheet } from "../Calendars/CalendarDropDownSheet";
 import { format } from "date-fns";
 
 export default function CarwashStatistics() {
@@ -60,7 +60,7 @@ export default function CarwashStatistics() {
           setSelectedPeriod(label);
           if (label === "Custom period") {
             setDropdownOpen(false);
-            setCalendarOpen(true); // 👉 Открываем календарь
+            setCalendarOpen(true);
           } else {
             // обычные периоды
             setCalendarOpen(false);

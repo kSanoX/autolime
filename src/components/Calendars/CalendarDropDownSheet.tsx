@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format, subMonths } from "date-fns";
@@ -8,14 +8,19 @@ export function CalendarMobileSheet({
   open,
   setOpen,
   applyRange,
+  initialRange,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
   applyRange: (range: { from: Date; to: Date }) => void;
+  initialRange?: { from: Date; to: Date };
 }) {
-  const [range, setRange] = useState<DateRange | undefined>();
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [month, setMonth] = useState(new Date());
+  const [range, setRange] = useState<DateRange | undefined>(initialRange);
+  useEffect(() => {
+    setRange(initialRange);
+  }, [initialRange]);
 
   if (!open) return null;
 

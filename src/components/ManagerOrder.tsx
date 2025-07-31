@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
-import DeleteReasonPopup from './DeleteReasonPopup'
-
-const [showDeletePopup, setShowDeletePopup] = useState(false)
-const [deleteReason, setDeleteReason] = useState('')
 
 type Status = 'Confirm' | 'Rescheduled' | 'Expired' | 'Deleted' | 'New'
 
@@ -11,10 +7,9 @@ interface ManagerOrderProps {
   status?: Status
   date: string
   type: string
-  customer: {
-    name: string
-    phone: string
-  }
+  customer: { name: string; phone: string }
+  onDelete: () => void
+  onReschedule?: () => void
 }
 
 const statusColorMap: Record<
@@ -79,6 +74,8 @@ export default function ManagerOrder({
   date,
   customer,
   type,
+  onDelete,
+  onReschedule
 }: ManagerOrderProps) {
   const isConfirmed = status === 'Confirm'
   const isNew = status === 'New'
@@ -86,7 +83,7 @@ export default function ManagerOrder({
   const capStyle = {
     backgroundColor: statusColorMap[status].capBg,
     color: statusColorMap[status].capText,
-  }     
+  }
 
   const renderControlButtons = () => {
     return (
@@ -94,11 +91,14 @@ export default function ManagerOrder({
         <button className='order-btn'>
           <img src='../../src/assets/icons/ManagerOrder/call_icon.svg' alt='cutomerCall' />
         </button>
-        {!isConfirmed && (
-          <button className='order-btn'>
-            <img src='../../src/assets/icons/ManagerOrder/refresh.svg' alt='refresh' />
-          </button>
-        )}
+        {!isConfirmed && onReschedule && (
+  <button
+    className='order-btn'
+    onClick={onReschedule}
+  >
+    <img src='../../src/assets/icons/ManagerOrder/refresh.svg' alt='refresh' />
+  </button>
+)}
         <button className='order-btn'>
           <img src='../../src/assets/icons/ManagerOrder/confirmed.svg' alt='confirmed' />
         </button>
@@ -135,7 +135,7 @@ export default function ManagerOrder({
           <div>
             <button
               className='order-btn cancel'
-              onClick={() => setShowDeletePopup(true)}
+              onClick={onDelete}
             >
               <img
                 src='../../src/assets/icons/ManagerOrder/cancel (2).svg'
@@ -156,22 +156,9 @@ export default function ManagerOrder({
               </button>
             </div>
           )}
+          
         </div>
       </div>
-      <DeleteReasonPopup
-        visible={showDeletePopup}
-        reason={deleteReason}
-        setReason={setDeleteReason}
-        onConfirm={() => {
-          console.log("Deleting reason:", deleteReason);
-          setShowDeletePopup(false);
-          setDeleteReason("");
-        }}
-        onCancel={() => {
-          setShowDeletePopup(false);
-          setDeleteReason("");
-        }}
-      />
     </div>
   );
 }
