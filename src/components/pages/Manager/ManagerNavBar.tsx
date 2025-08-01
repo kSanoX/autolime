@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function Footer() {
+export default function ManagerNavBar() {
   return (
     <div className="nav-bar-wrapper">
     <nav className="nav-bar-container">

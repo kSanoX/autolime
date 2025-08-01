@@ -9,6 +9,9 @@
 @use './delete-reason-popup.scss';
 @use './rescheduling-order.scss';
 @use './manager-calendar.scss';
+@use "./customer_styles/auth.scss";
+@use "./customer_styles//otp-verification.scss";
+@use "./customer_styles/customer-my-data.scss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
