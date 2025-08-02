@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import OTPVerification from "../../OTPVerification";
+import { Link } from "react-router-dom";
 
 export default function Registration() {
   const [phoneDigits, setPhoneDigits] = useState("");
@@ -53,7 +54,7 @@ export default function Registration() {
         </div>
       )}
       {error.phone === "invalid-length" && (
-        <div className="invalid-phone-length-error">
+        <div className="phone-number-doesnt-exist-error">
           <p>Phone number must be 9 digits</p>
         </div>
       )}
@@ -81,7 +82,7 @@ export default function Registration() {
       </div>
 
       <div className="sign-up-navigate">
-        <p>Already have an account? <a href="/"> Sign In</a></p>
+        <p>Already have an account? <Link to="/auth"> Sign In</Link></p>
       </div>
 
       <div className="auth-separator">

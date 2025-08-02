@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { useDrag } from "@use-gesture/react";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format, subMonths } from "date-fns";
 import type { DateRange } from "react-day-picker";
@@ -15,12 +16,31 @@ export function CalendarMobileSheet({
   applyRange: (range: { from: Date; to: Date }) => void;
   initialRange?: { from: Date; to: Date };
 }) {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [month, setMonth] = useState(new Date());
   const [range, setRange] = useState<DateRange | undefined>(initialRange);
+  const calendarRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setRange(initialRange);
   }, [initialRange]);
+
+  // swipe gesture: left → addMonth, right → subMonth
+  useDrag(
+    ({ down, swipe }) => {
+      if (!down) {
+        const [swipeX] = swipe;
+        if (swipeX === -1) setMonth(addMonths(month, 1));
+        if (swipeX === 1) setMonth(subMonths(month, 1));
+      }
+    },
+    {
+      target: calendarRef,
+      axis: "x",
+      swipe: { distance: [50, 0] },
+      filterTaps: true,
+      pointer: { touch: true },
+    }
+  );
 
   if (!open) return null;
 
@@ -42,9 +62,8 @@ export function CalendarMobileSheet({
         style={{ paddingTop: "16px" }}
       >
         <div className='flex flex-col gap-6'>
-          {/* Drag-полоска */}
           <div className='flex justify-center mt-4'>
-            <div className='h-1.5 w-10 rounded-full bg-gray-300 mx-auto и mb-4' />
+            <div className='h-1.5 w-10 rounded-full bg-gray-300 mx-auto mb-4' />
           </div>
 
           <h3 className='text-center text-base font-semibold text-gray-800'>
@@ -53,6 +72,7 @@ export function CalendarMobileSheet({
 
           <div className='flex items-center justify-around px-2 pt-2'>
             <button
+              type='button'
               className='text-[#17BA68] font-bold'
               onClick={() => setMonth(subMonths(month, 1))}
             >
@@ -69,6 +89,7 @@ export function CalendarMobileSheet({
             </span>
 
             <button
+              type='button'
               className='text-[#17BA68] font-bold'
               onClick={() => setMonth(addMonths(month, 1))}
             >
@@ -76,8 +97,8 @@ export function CalendarMobileSheet({
             </button>
           </div>
 
-          {/* Календарь */}
-          <div className='flex justify-center'>
+          {/* Календарь с swipe */}
+          <div className='flex justify-center' ref={calendarRef}>
             <Calendar
               month={month}
               onMonthChange={setMonth}
@@ -86,14 +107,15 @@ export function CalendarMobileSheet({
               onSelect={setRange}
               weekStartsOn={1}
               className='
-  rounded-xl px-4 py-3 text-sm text-[#183D69]
-  [&_.rdp-nav]:hidden
-  [&_button:hover]:bg-[#CDF5D8] [&_button:hover]:text-[#17BA68]
-  [&_.selected]:bg-[#CDF5D8] [&_.selected]:text-[#17BA68]
-  [&_.rdp-head_cell]:text-[#183D69] [&_.rdp-head_cell]:font-medium
-'
+                rounded-xl px-4 py-3 text-sm text-[#183D69]
+                [&_.rdp-nav]:hidden
+                [&_button:hover]:bg-[#CDF5D8] [&_button:hover]:text-[#17BA68]
+                [&_.selected]:bg-[#CDF5D8] [&_.selected]:text-[#17BA68]
+                [&_.rdp-head_cell]:text-[#183D69] [&_.rdp-head_cell]:font-medium
+              '
             />
           </div>
+
           {range?.from && range?.to && (
             <div className='mt-2 text-center text-sm text-[#183D69] font-medium'>
               {format(range.from, "d MMMM yyyy")}{" "}

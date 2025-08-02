@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Authentication() {
   const [showPassword, setShowPassword] = useState(false);
@@ -131,7 +132,7 @@ export default function Authentication() {
         </div>
       </div>
       <div className="sign-up-navigate">
-        <p>Dont have an account? <a href="/">Sign Up</a></p>
+        <p>Dont have an account? <Link to="/register"> Sign Up</Link></p>
       </div>
       <div className="auth-separator">
         <hr />

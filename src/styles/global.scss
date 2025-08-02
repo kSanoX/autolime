@@ -12,6 +12,8 @@
 @use "./customer_styles/auth.scss";
 @use "./customer_styles//otp-verification.scss";
 @use "./customer_styles/customer-my-data.scss";
+@use "./customer_styles/customer-contact-info.scss";
+@use "./customer_styles//my-vehicles.scss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
