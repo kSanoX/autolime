@@ -4,6 +4,7 @@ import { SexDropDown } from "@/components/ui/SexDropDown";
 import { useNavigate } from "react-router-dom";
 import CustomerContactInfo from "@/components/CustomerContactInfo";
 import MyVehicles from "./MyVehicles";
+import NotificationSettings from "./NotificationSettings";
 
 export default function CustomerMyData() {
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -174,6 +175,7 @@ export default function CustomerMyData() {
       )}
       <CustomerContactInfo />
       <MyVehicles/>
+      <NotificationSettings/>
     </div>
   );
 }

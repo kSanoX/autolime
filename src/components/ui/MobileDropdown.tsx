@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 
 export function MobileDropdownSheet({
@@ -12,9 +11,24 @@ export function MobileDropdownSheet({
 }) {
   if (!open) return null;
 
+  const OPTIONS = [
+    "ToDay",
+    "Yesterday",
+    "Last 7 Days",
+    "Last Month",
+    "Custom period",
+  ];
+
   return (
     <>
-      <div className='fixed inset-0 bg-[rgba(24,61,105,0.5)] z-[999]' />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(24,61,105,0.5)",
+          zIndex: 999,
+        }}
+      />
 
       <motion.div
         drag='y'
@@ -23,39 +37,91 @@ export function MobileDropdownSheet({
           if (info.offset.y > 50) setOpen(false);
         }}
         onUpdate={(latest) => {
-          if (latest.y < 0) {
-            latest.y = 0;
-          }
+          if (latest.y < 0) latest.y = 0;
         }}
-        className='fixed inset-x-0 bottom-0 z-[1000] bg-white rounded-t-2xl min-h-[375px] overflow-y-auto shadow-xl cursor-grab p-4'
-        style={{ padding: "16px" }}
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1000,
+          backgroundColor: "#fff",
+          borderTopLeftRadius: "16px",
+          borderTopRightRadius: "16px",
+          minHeight: "375px",
+          overflowY: "auto",
+          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+          cursor: "grab",
+          padding: "16px",
+          width: "100%",
+          maxWidth: "480px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
       >
-        <div className='flex flex-col gap-6'>
-          <div className='flex justify-center'>
-            <div className='h-1.5 w-10 rounded-full bg-gray-300 mt-4 mb-6' />
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Drag Indicator */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "16px",
+            }}
+          >
+            <div
+              style={{
+                height: "6px",
+                width: "40px",
+                borderRadius: "16px",
+                backgroundColor: "#D1D5DB",
+                marginBottom: "16px",
+              }}
+            />
           </div>
 
-          <h3 className='text-center text-base font-semibold text-gray-800 mb-3'>
+          {/* Header */}
+          <h3
+            style={{
+              textAlign: "center",
+              fontSize: "20px",
+              fontWeight: 600,
+              color: "#183d69",
+              padding: "0px",
+            }}
+          >
             Choose statistic period
           </h3>
 
-          <ul className='space-y-3 flex flex-col gap-3 text-base font-semibold text-gray-800'>
-            {[
-              "ToDay",
-              "Yesterday",
-              "Last 7 Days",
-              "Last Month",
-              "Custom period",
-            ].map((label) => (
+          {/* Options */}
+          <ul style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {OPTIONS.map((label) => (
               <li
                 key={label}
                 onClick={() => {
                   setPeriod(label);
-                  setOpen(false); // закрыть по выбору
+                  setOpen(false);
                 }}
-                className='flex items-center px-4 py-3 transition gap-2 cursor-pointer'
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "4px",
+                  cursor: "pointer",
+                  borderRadius: "8px",
+                  transition: "background 0.2s ease",
+                }}
               >
-                <div className='blue-box-40'>
+                <div
+                  style={{
+                    backgroundColor: "#183D69",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <svg
                     width='20'
                     height='20'
@@ -69,7 +135,13 @@ export function MobileDropdownSheet({
                     />
                   </svg>
                 </div>
-                <span className='text-base font-semibold text-gray-800'>
+                <span
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 400,
+                    color: "#183D69",
+                  }}
+                >
                   {label}
                 </span>
               </li>

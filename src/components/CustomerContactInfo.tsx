@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function CustomerContactInfo() {
   return (
@@ -11,7 +12,7 @@ export default function CustomerContactInfo() {
                     <p><span className='dot-status'></span> +995 500 500 555</p>
                 </div>
                 <div>
-                    <img src="src/assets/icons/edit-note-icon.svg" alt="editNote" />
+                    <Link to="/change-phone"><img src="src/assets/icons/edit-note-icon.svg" alt="editNote" /></Link>
                 </div>
             </div>
             <div className="customer-email">
@@ -20,7 +21,7 @@ export default function CustomerContactInfo() {
                     <p><span className='dot-status'></span> ivyl@gmail.com</p>
                 </div>
                 <div>
-                <img src="src/assets/icons/edit-note-icon.svg" alt="editNote" />
+                <Link to="/change-email"><img src="src/assets/icons/edit-note-icon.svg" alt="editNote" /></Link>
                 </div>
             </div>
         </div>

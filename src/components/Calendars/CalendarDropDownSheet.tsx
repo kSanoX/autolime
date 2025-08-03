@@ -24,7 +24,6 @@ export function CalendarMobileSheet({
     setRange(initialRange);
   }, [initialRange]);
 
-  // swipe gesture: left → addMonth, right → subMonth
   useDrag(
     ({ down, swipe }) => {
       if (!down) {
@@ -46,91 +45,167 @@ export function CalendarMobileSheet({
 
   return (
     <>
-      <div className='fixed inset-0 bg-[rgba(24,61,105,0.5)] z-[999] pt-4' />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(24,61,105,0.5)",
+          zIndex: 999,
+          paddingTop: "16px",
+        }}
+      />
       <motion.div
-        drag='y'
+        drag="y"
         dragMomentum={false}
         onDragEnd={(e, info) => {
           if (info.offset.y > 60) setOpen(false);
         }}
         onUpdate={(latest) => {
-          if (latest.y < 0) {
-            latest.y = 0;
-          }
+          if (latest.y < 0) latest.y = 0;
         }}
-        className='fixed inset-x-0 bottom-0 z-[1000] bg-white rounded-t-2xl min-h-[400px] overflow-y-auto shadow-xl cursor-grab p-4 w-full max-w-screen-sm mx-auto'
-        style={{ paddingTop: "16px" }}
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1000,
+          backgroundColor: "#fff",
+          borderTopLeftRadius: "16px",
+          borderTopRightRadius: "16px",
+          minHeight: "400px",
+          overflowY: "auto",
+          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+          cursor: "grab",
+          padding: "16px",
+          width: "100%",
+          maxWidth: "480px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
       >
-        <div className='flex flex-col gap-6'>
-          <div className='flex justify-center mt-4'>
-            <div className='h-1.5 w-10 rounded-full bg-gray-300 mx-auto mb-4' />
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+            <div
+              style={{
+                height: "6px",
+                width: "40px",
+                borderRadius: "16px",
+                backgroundColor: "#D1D5DB",
+                marginBottom: "16px",
+              }}
+            />
           </div>
 
-          <h3 className='text-center text-base font-semibold text-gray-800'>
+          <h3
+            style={{
+              textAlign: "center",
+              fontSize: "20px",
+              fontWeight: 600,
+              color: "#183D69",
+              margin: 0,
+              padding: "0px"
+            }}
+          >
             Custom statistic period
           </h3>
 
-          <div className='flex items-center justify-around px-2 pt-2'>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
+              padding: "8px 12px",
+            }}
+          >
             <button
-              type='button'
-              className='text-[#17BA68] font-bold'
+              type="button"
               onClick={() => setMonth(subMonths(month, 1))}
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#17BA68",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
             >
-              <img src='../../src/assets/icons/left-arrow.svg' alt='' />
+              <img src="../../src/assets/icons/left-arrow.svg" alt="Previous Month" />
             </button>
 
-            <span className='text-[#183D69] font-medium text-base'>
-              {month
-                .toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })
-                .replace(/^\w/, (c) => c.toUpperCase())}
+            <span
+              style={{
+                fontSize: "18px",
+                fontWeight: 500,
+                color: "#183D69",
+              }}
+            >
+              {month.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              }).replace(/^\w/, (c) => c.toUpperCase())}
             </span>
 
             <button
-              type='button'
-              className='text-[#17BA68] font-bold'
+              type="button"
               onClick={() => setMonth(addMonths(month, 1))}
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#17BA68",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
             >
-              <img src='../../src/assets/icons/right-arrow.svg' alt='' />
+              <img src="../../src/assets/icons/right-arrow.svg" alt="Next Month" />
             </button>
           </div>
 
-          {/* Календарь с swipe */}
-          <div className='flex justify-center' ref={calendarRef}>
+          <div ref={calendarRef} style={{ display: "flex", justifyContent: "center" }}>
             <Calendar
               month={month}
               onMonthChange={setMonth}
-              mode='range'
+              mode="range"
               selected={range}
               onSelect={setRange}
               weekStartsOn={1}
-              className='
-                rounded-xl px-4 py-3 text-sm text-[#183D69]
-                [&_.rdp-nav]:hidden
-                [&_button:hover]:bg-[#CDF5D8] [&_button:hover]:text-[#17BA68]
-                [&_.selected]:bg-[#CDF5D8] [&_.selected]:text-[#17BA68]
-                [&_.rdp-head_cell]:text-[#183D69] [&_.rdp-head_cell]:font-medium
-              '
             />
           </div>
 
           {range?.from && range?.to && (
-            <div className='mt-2 text-center text-sm text-[#183D69] font-medium'>
-              {format(range.from, "d MMMM yyyy")}{" "}
-              {format(range.to, "d MMMM yyyy")}
+            <div
+              style={{
+                marginTop: "4px",
+                textAlign: "center",
+                fontSize: "16px",
+                fontWeight: 500,
+                color: "#183D69",
+              }}
+            >
+              {format(range.from, "d MMMM yyyy")} – {format(range.to, "d MMMM yyyy")}
             </div>
           )}
 
           <button
-            className='calendar-select-btn'
-            disabled={!range?.from || !range?.to}
             onClick={() => {
               if (range?.from && range?.to) {
                 applyRange({ from: range.from, to: range.to });
                 setOpen(false);
               }
+            }}
+            disabled={!range?.from || !range?.to}
+            style={{
+              borderRadius: "16px",
+              backgroundColor: "#183D69",
+              padding: "12px 24px",
+              textAlign: "center",
+              color: "#F7B233",
+              fontWeight: 600,
+              fontSize: "14px",
+              border: "none",
+              margin: "0 auto 16px auto",
+              cursor: range?.from && range?.to ? "pointer" : "not-allowed",
+              opacity: range?.from && range?.to ? 1 : 0.5,
+              display: "block",
+              width: "fit-content",
             }}
           >
             Select

@@ -72,9 +72,6 @@
   .forgot-password {
     text-align: center;
     @include font-roboto-regular-yellow;
-    a {
-        border-bottom: 1px solid $yellowMain;
-    }
   }
   
   .sign-in {
@@ -204,7 +201,6 @@
     margin-top: 16px;
     a {
         color: $yellowMain;
-        border-bottom: 1px solid $yellowMain;
     }
   }
 

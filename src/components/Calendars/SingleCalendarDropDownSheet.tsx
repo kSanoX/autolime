@@ -25,20 +25,19 @@ export function SingleCalendarMobileSheet({
     setSelected(initialDate);
   }, [initialDate]);
 
-  // Свайп на календаре — вправо/влево
   useDrag(
     ({ down, swipe }) => {
       if (!down) {
         const [swipeX] = swipe;
-        if (swipeX === -1) setMonth(addMonths(month, 1)); // swipe left
-        if (swipeX === 1) setMonth(subMonths(month, 1)); // swipe right
+        if (swipeX === -1) setMonth(addMonths(month, 1));
+        if (swipeX === 1) setMonth(subMonths(month, 1));
       }
     },
     {
       target: calendarRef,
       axis: "x",
       swipe: {
-        distance: [50, 0], // 50px по оси X
+        distance: [50, 0],
       },
       filterTaps: true,
       pointer: {
@@ -51,7 +50,15 @@ export function SingleCalendarMobileSheet({
 
   return (
     <>
-      <div className='fixed inset-0 bg-[rgba(24,61,105,0.5)] z-[999] pt-4' />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(24,61,105,0.5)",
+          zIndex: 999,
+          paddingTop: "16px",
+        }}
+      />
       <motion.div
         drag='y'
         dragMomentum={false}
@@ -59,50 +66,95 @@ export function SingleCalendarMobileSheet({
           if (info.offset.y > 60) setOpen(false);
         }}
         onUpdate={(latest) => {
-          if (latest.y < 0) {
-            latest.y = 0;
-          }
+          if (latest.y < 0) latest.y = 0;
         }}
-        className='fixed inset-x-0 bottom-0 z-[1000] bg-white rounded-t-2xl min-h-[400px] overflow-y-auto shadow-xl cursor-grab p-4 w-full max-w-screen-sm mx-auto'
-        style={{ paddingTop: "16px" }}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          backgroundColor: "#fff",
+          borderTopLeftRadius: "16px",
+          borderTopRightRadius: "16px",
+          minHeight: "400px",
+          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+          cursor: "grab",
+          padding: "16px",
+          overflowY: "auto",
+          width: "100%",
+          maxWidth: "480px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
       >
-        <div className='flex flex-col gap-6'>
-          <div className='flex justify-center mt-4'>
-            <div className='h-1.5 w-10 rounded-full bg-gray-300 mx-auto mb-4' />
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
+            <div
+              style={{
+                height: "6px",
+                width: "40px",
+                borderRadius: "16px",
+                backgroundColor: "#D1D5DB",
+                marginBottom: "16px",
+              }}
+            />
           </div>
 
-          <h3 className='text-center text-base font-semibold text-gray-800'>
+          <h3
+            style={{
+              textAlign: "center",
+              fontSize: "18px",
+              fontWeight: 600,
+              color: "#374151",
+              padding: "0px",
+            }}
+          >
             {title}
           </h3>
 
-          <div className='flex items-center justify-around px-2 pt-2'>
+          <div style={{ display: "flex", justifyContent: "space-around", paddingTop: "8px" }}>
             <button
               type='button'
-              className='text-[#17BA68] font-bold'
               onClick={() => setMonth(subMonths(month, 1))}
+              style={{
+                color: "#17BA68",
+                fontWeight: "bold",
+                border: "none",
+                background: "transparent",
+              }}
             >
-              <img src='../../src/assets/icons/left-arrow.svg' alt='' />
+              <img src='../../src/assets/icons/left-arrow.svg' alt='prev' />
             </button>
 
-            <span className='text-[#183D69] font-medium text-base'>
-              {month
-                .toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })
-                .replace(/^\w/, (c) => c.toUpperCase())}
+            <span
+              style={{
+                color: "#183D69",
+                fontWeight: 500,
+                fontSize: "16px",
+              }}
+            >
+              {month.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              }).replace(/^\w/, (c) => c.toUpperCase())}
             </span>
 
             <button
               type='button'
-              className='text-[#17BA68] font-bold'
               onClick={() => setMonth(addMonths(month, 1))}
+              style={{
+                color: "#17BA68",
+                fontWeight: "bold",
+                border: "none",
+                background: "transparent",
+              }}
             >
-              <img src='../../src/assets/icons/right-arrow.svg' alt='' />
+              <img src='../../src/assets/icons/right-arrow.svg' alt='next' />
             </button>
           </div>
 
-          <div className='flex justify-center' ref={calendarRef}>
+          <div style={{ display: "flex", justifyContent: "center" }} ref={calendarRef}>
             <Calendar
               month={month}
               onMonthChange={setMonth}
@@ -110,30 +162,49 @@ export function SingleCalendarMobileSheet({
               selected={selected}
               onSelect={setSelected}
               weekStartsOn={1}
-              className='
-                rounded-xl px-4 py-3 text-sm text-[#183D69]
-                [&_.rdp-nav]:hidden
-                [&_button:hover]:bg-[#CDF5D8] [&_button:hover]:text-[#17BA68]
-                [&_.selected]:bg-[#CDF5D8] [&_.selected]:text-[#17BA68]
-                [&_.rdp-head_cell]:text-[#183D69] [&_.rdp-head_cell]:font-medium
-              '
+              style={{
+                borderRadius: "12px",
+                padding: "12px 16px",
+                fontSize: "14px",
+                color: "#183D69",
+              }}
             />
           </div>
 
           {selected && (
-            <div className='text-center text-sm font-medium text-[#183D69]'>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "18px",
+                fontWeight: 500,
+                color: "#183D69",
+              }}
+            >
               {format(selected, "d MMMM yyyy")}
             </div>
           )}
 
           <button
-            className='calendar-select-btn'
-            disabled={!selected}
             onClick={() => {
               if (selected) {
                 applyDate(selected);
                 setOpen(false);
               }
+            }}
+            disabled={!selected}
+            style={{
+              borderRadius: "16px",
+              backgroundColor: "#183D69",
+              padding: "12px 0px",
+              textAlign: "center",
+              color: "#F7B233",
+              margin: "0px 16px",
+              marginBottom: "16px",
+              fontWeight: 600,
+              fontSize: "14px",
+              border: "none",
+              cursor: selected ? "pointer" : "not-allowed",
+              opacity: selected ? 1 : 0.5,
             }}
           >
             Select

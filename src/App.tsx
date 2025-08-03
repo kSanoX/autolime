@@ -15,8 +15,9 @@ import Registration from "./components/pages/Customer/Registration";
 
 import ManagerLayout from "./components/Layouts/ManagerLayout";
 import CustomerLayout from "./components/Layouts/CustomerLayout";
-import NotFound from "./components/pages/NotFound"; // создай заглушку или реакт-компонент
-
+import PhoneNumberChanging from "./components/pages/Customer/PhoneNumberChanging";
+import EmailChanging from "./components/pages/Customer/EmailChanging";
+import AddCar from "./components/pages/Customer/AddCar";
 function AppRoutes() {
   const role = useUserRole();
 
@@ -35,6 +36,9 @@ function AppRoutes() {
           <Route path="/" element={<Authentication />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/customer-my-data" element={<CustomerMyData />} />
+          <Route path="/change-phone" element={<PhoneNumberChanging />} />
+          <Route path="/change-email" element={<EmailChanging />} />
+          <Route path="/add-car" element={<AddCar />} />
         </Route>
       )}
 

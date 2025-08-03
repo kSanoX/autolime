@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function MyVehicles() {
   return (
@@ -15,7 +16,7 @@ export default function MyVehicles() {
         </div>
       </div>
       <hr />
-      <button>Add Car</button>
+      <Link to="/add-car"><button>Add Car</button></Link>
     </div>
   );
 }
