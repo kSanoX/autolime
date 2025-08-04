@@ -1,0 +1,178 @@
+@use "../variables" as *;
+
+.branch-map-wrapper {
+    position: relative;
+  
+    // запретить scroll страницы, когда открыт попап
+    body.map-locked & {
+      overflow: hidden;
+    }
+  }
+  
+  .branch-info-panel {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 125px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 10;
+    padding: 16px;
+  
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  
+    &__handle {
+      width: 40px;
+      height: 4px;
+      background: #ccc;
+      border-radius: 2px;
+      margin: 8px auto;
+    }
+  
+    &__content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  
+    &__title {
+    font-size: 18px;
+    font-weight: 700;
+    padding: 0px;
+    }
+  
+    &__text {
+      @include font-roboto-regular-blue;
+      font-size: 14px;
+      color: $textSecondary;
+      
+    }
+  
+    &__status {
+      margin: 8px 0;
+      font-size: 14px;
+      background-color: $redMain;
+      padding: 4px 12px;
+      border-radius: 8px;
+      color: #fff;
+    }
+  
+    &__schedule {
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      span {
+        color: $yellowMain;
+      }
+    }
+  
+    &__actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      img {
+        padding: 12px;
+        border-radius: 16px;
+        background-color: $blueMain;
+      }
+    }
+  
+    &__route-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+  
+      &:hover {
+        background: #2a85c6;
+      }
+    }
+  }
+  
+  // полная блокировка прокрутки страницы
+  body.map-locked {
+    overflow: hidden;
+  }
+
+  .branch-screen-wrapper {
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+  }
+  
+
+  .branch-info-panel-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+  }
+
+  .branch-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 16px;
+  }
+
+  .branch-screen {
+    margin: 16px;
+  }
+  .branch-view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  
+    button {
+      flex: 1 1 0;
+      text-align: center;
+      padding: 16px;
+      border-radius: 16px;
+      background-color: transparent;
+      border: none;
+  
+      &:first-child {
+        color: $textSecondary;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background-color: #fff;
+      }
+  
+      &:last-child {
+        background-color: $blueMain;
+        color: $yellowMain;
+      }
+    }
+  
+    // Только при включенном режиме карты
+    &.map-mode {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background-color: transparent;
+      padding: 16px;
+    }
+  }
+  
+

@@ -16,7 +16,8 @@
 @use "./customer_styles//my-vehicles.scss";
 @use "./customer_styles/add-car.scss";
 @use "./customer_styles/edit-car.scss";
-
+@use "./customer_styles/branches.scss";
+@use "./customer_styles/wash-apointment.scss";
 body {
     font-family: $font-roboto;
   }

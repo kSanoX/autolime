@@ -19,6 +19,8 @@ import PhoneNumberChanging from "./components/pages/Customer/PhoneNumberChanging
 import EmailChanging from "./components/pages/Customer/EmailChanging";
 import AddCar from "./components/pages/Customer/AddCar";
 import EditCar from "./components/pages/Customer/EditCar";
+import BranchScreen from "./components/BranchScreen";
+import WashAppointment from "./components/pages/Customer/WashApointment";
 function AppRoutes() {
   const role = useUserRole();
 
@@ -42,6 +44,8 @@ function AppRoutes() {
           <Route path="/change-email" element={<EmailChanging />} />
           <Route path="/add-car" element={<AddCar showHeader={true}/>} />
           <Route path="/edit-car" element={<EditCar/>} />
+          <Route path="/branches" element={<BranchScreen/>} />
+          <Route path="/wash-appointment" element={<WashAppointment/>} />
         </Route>
       )}
 
