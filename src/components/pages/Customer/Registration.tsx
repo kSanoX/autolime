@@ -34,7 +34,7 @@ export default function Registration() {
   };
 
   if (stage === "verify") {
-    return <OTPVerification onSuccess={() => alert("Phone verified successfully!")} />;
+    return <OTPVerification/>;
   }
 
   return (

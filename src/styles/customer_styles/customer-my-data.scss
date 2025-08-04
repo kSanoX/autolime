@@ -21,7 +21,7 @@
 
       input {
         color: $blueMain;
-        background-color: transparent;
+        background-color: transparent !important; 
       }
   
       .form-group {

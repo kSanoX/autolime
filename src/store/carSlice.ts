@@ -1,13 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface CarState {
+type Car = {
   brand: string;
   model: string;
-}
+  plate: string;
+};
 
-const initialState: CarState = {
+const initialState = {
   brand: "",
   model: "",
+  plate: "",
+  cars: [] as Car[],
 };
 
 export const carSlice = createSlice({
@@ -21,8 +24,23 @@ export const carSlice = createSlice({
     setModel: (state, action: PayloadAction<string>) => {
       state.model = action.payload;
     },
+    addCar: (state, action: PayloadAction<Car>) => {
+      state.cars.push(action.payload);
+    },
+
+    updateCar: (state, action: PayloadAction<{ oldPlate: string; brand: string; model: string; plate: string }>) => {
+      const { oldPlate, brand, model, plate } = action.payload;
+      const index = state.cars.findIndex(c => c.plate === oldPlate);
+      if (index !== -1) {
+        state.cars[index] = { brand, model, plate };
+      }
+    },
+    removeCar: (state, action: PayloadAction<string>) => {
+      state.cars = state.cars.filter(car => car.plate !== action.payload);
+    }        
   },
+  
 });
 
-export const { setBrand, setModel } = carSlice.actions;
+export const { setBrand, setModel, addCar, updateCar, removeCar } = carSlice.actions;
 export default carSlice.reducer;

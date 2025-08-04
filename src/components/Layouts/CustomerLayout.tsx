@@ -1,11 +1,18 @@
+import { Outlet, useLocation } from "react-router-dom";
 import CustomerNavBar from "../../components/pages/Customer/CustomerNavBar";
-import { Outlet } from "react-router-dom";
 
 export default function CustomerLayout() {
+  const { pathname, state } = useLocation();
+
+  const noFooterPaths = ["/register", "/auth", "/add-car"];
+  const isAfterRegistration = state?.fromRegistration === true;
+
+  const shouldShowNav = !noFooterPaths.includes(pathname) || (pathname === "/add-car" && !isAfterRegistration);
+
   return (
     <>
       <Outlet />
-      <CustomerNavBar />
+      {shouldShowNav && <CustomerNavBar />}
     </>
   );
 }

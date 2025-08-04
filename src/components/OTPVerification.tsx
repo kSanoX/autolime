@@ -1,10 +1,12 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function OTPVerification({ onSuccess }: { onSuccess: () => void }) {
+export default function OTPVerification() {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [errorCode, setErrorCode] = useState<"none" | "invalid" | "duplicate">("none");
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const navigate = useNavigate();
 
   const correctCode = "654321";
 
@@ -34,8 +36,7 @@ export default function OTPVerification({ onSuccess }: { onSuccess: () => void }
     setTimeout(() => {
       if (code === correctCode) {
         setErrorCode("none");
-        alert("Phone verified!");
-        onSuccess();
+        navigate("/add-car", { state: { fromRegistration: true } });
       } else {
         setErrorCode("invalid");
       }

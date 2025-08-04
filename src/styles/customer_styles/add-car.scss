@@ -42,6 +42,12 @@
       box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
       margin: 16px;
       border-radius: 16px;
+      h1 {
+        @include font-roboto-bold-blue;
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 24px;
+      }
       p {
         margin-bottom: 20px;
       }
@@ -64,6 +70,7 @@
           border-radius: 16px;
           cursor: pointer;
           transition: opacity 0.2s ease;
+          -webkit-tap-highlight-color: transparent;
   
           &.disabled {
             cursor: not-allowed;
@@ -81,6 +88,8 @@
           img {
             width: 16px;
             height: 16px;
+
+              rotate: -90deg;
           }
         }
       }
@@ -104,5 +113,47 @@
     border-radius: 16px;
     color: #C8D1DC;
     margin-top: 24px;
+    &.active {
+      background-color: $blueMain;
+      cursor: pointer;
+      color: $yellowMain;
+    }
   }
   
+  .plate-error {
+    color: #e44;
+    font-size: 13px;
+    margin-top: 6px;
+    display: block;
+  }
+  
+  .car-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h4 {
+      @include font-roboto-bold-blue;
+      font-size: 32px;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .car-type {
+      @include font-roboto-regular-blue;
+      font-size: 16px;
+      color: $textSecondary;
+      margin-top: 4px;
+    }
+  }
+
+  .after-submit-btns {
+    button {
+      background-color: $blueMain;
+      &:first-child {
+        background-color: transparent;
+        border: 1px solid $textSecondary;
+      }
+    }
+  }
