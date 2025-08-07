@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { CarBrandDropDown } from "@/components/CarBrandDropDown";
-import { CarModelDropDown } from "@/components/CarModelDropDown";
+import { CarBrandDropDown } from "@/components/ui/CarBrandDropDown";
+import { CarModelDropDown } from "@/components/ui/CarModelDropDown";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import { setBrand, setModel, addCar } from "@/store/carSlice";
 import { useNavigate } from "react-router-dom";

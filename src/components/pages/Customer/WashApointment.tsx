@@ -1,44 +1,188 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-
+import { SingleCalendarMobileSheet } from '@/components/Calendars/SingleCalendarDropDownSheet';
+import { TimePickerMobileSheet } from '@/components/ui/TimePickerMobileSheet';
+import { TypeWashingDropDown } from '@/components/ui/TypeWashingDropDown';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { BranchInfoPanel } from './BranchInfoPanel';
+import { useDispatch, useSelector } from "react-redux";
+import { addAppointment } from "@/store/appointmentsSlice";
+import { type RootState } from "@/store";
 export default function WashAppointment() {
   const location = useLocation();
   const branch = location.state?.branch;
+  const navigate = useNavigate();
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [pickedTime, setPickedTime] = useState("");
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<"washing" | "polishing" | "dry-cleaning" | "complex" | "">("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const dispatch = useDispatch();
+  const appointments = useSelector((state: RootState) => state.appointments);
+  const [isBookingSuccess, setIsBookingSuccess] = useState(false);
 
+
+  const isFormValid = selectedDate && pickedTime && selectedType;
+
+  const handleGoToMap = () => {
+    if (branch) {
+      navigate("/branches", {
+        state: {
+          selectedBranchId: branch.id,
+          viewMode: "map",
+        },
+      });
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!isFormValid || isSubmitting) return;
+  
+    setIsSubmitting(true);
+  
+    setTimeout(() => {
+      dispatch(
+        addAppointment({
+          branchId: branch.id,
+          date: selectedDate?.toISOString() ?? "",
+          time: pickedTime,
+          type: selectedType,
+        })
+      );
+  
+      setSelectedDate(undefined);
+      setPickedTime("");
+      setSelectedType("");
+      setIsSubmitting(false);
+      setIsConfirmed(true); // можно убрать, если используешь Redux
+      setIsBookingSuccess(true);
+    }, 2000);
+  };
+  
   return (
+    <div>
+    <header>
+        <img src="src/assets/icons/left-arrow.svg" alt="" />
+        Branches
+        <span></span>
+      </header>
     <div className="wash-apointment-wrapper">
-    <div className="branch-info-panel-card visible">
-      <div className="branch-info-panel__content">
+      <BranchInfoPanel
+  branch={branch}
+  extraActions={
+    <button onClick={handleGoToMap}>
+      <img src="../../src/assets/icons/geo-icon-yellow.svg" alt="geo" />
+    </button>
+  }
+/>
+
+{appointments.length > 0 && (
+  <div className="appointment-summary-card">
+    <h3>My appointments</h3>
+    {appointments.map((appointment, index) => (
+      <div key={index} className="flexible-appointment-detail">
         <div>
-          <h3 className="branch-info-panel__title">{branch.name}</h3>
-          <p className="branch-info-panel__text">{branch.address}</p>
+          <div className="appointment-detail">
+            <img src="../../../src/assets/icons/branch/summary-calendar.svg" alt="calendar" />
+            <span>{new Date(appointment.date).toLocaleDateString("en-GB")}</span>
+          </div>
+          <div className="appointment-detail">
+            <img src="src/assets/icons/car-wash-type-icon.svg" alt="type" />
+            <span>{appointment.type}</span>
+          </div>
         </div>
         <div>
-          <p
-            style={{
-              backgroundColor: branch.isOpen ? "#17BA68" : "#BA1717",
-            }}
-            className="branch-info-panel__status"
-          >
-            {branch.isOpen ? "Open" : "Close"}
-          </p>
+          <div className="appointment-detail">
+            <img src="../../../src/assets/icons/branch/summary-time.svg" alt="clock" />
+            <span>{appointment.time}</span>
+          </div>
+          <div className="appointment-detail">
+            <img src="../../../src/assets/icons/branch/summary-applied.svg" alt="status" />
+            <span>Applied</span>
+          </div>
         </div>
       </div>
-      <p className="branch-info-panel__schedule">
-        Mn – Fr <span>9:00 –17:00</span>
-        St – Sn <span>11:00 – 15:00</span>
-      </p>
-      <div className="branch-info-panel__actions">
-        <button>
-          <img src="../../src/assets/icons/ManagerOrder/call_icon.svg" alt="" />
-        </button>
-        <button>
-          <img src="../../src/assets/icons/path-icon.svg" alt="" />
-        </button>
-        <button>
-          <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="" />
+    ))}
+  </div>
+)}
+
+      <div className="car-wash-apointment-display">
+        <h4>Сar wash appointment</h4>
+        {isBookingSuccess && <div className="booking-status">
+        Booking success
+        </div>}
+        <div className="form-group">
+          <label htmlFor="dob">Date</label>
+          <div className="input-select" onClick={() => setCalendarOpen(true)}>
+            <input
+              type="text"
+              id="dob"
+              placeholder="--/--/----"
+              value={
+                selectedDate
+                  ? selectedDate.toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
+                  : ""
+              }
+              readOnly
+            />
+            <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+          </div>
+        </div>
+
+        <div className="input-block">
+          <label>Time</label>
+          <div className="input-select" onClick={() => setTimePickerOpen(true)}>
+            {pickedTime || "-- : --"}
+            <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+          </div>
+        </div>
+
+        <div className="input-block">
+          <label>Service</label>
+          <div className="input-select" onClick={() => setTypeOpen(true)}>
+            {selectedType || "-"}
+            <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+          </div>
+        </div>
+
+        <button
+          className={`submit-button ${isFormValid ? 'active' : 'disabled'}`}
+          onClick={handleSubmit}
+          disabled={!isFormValid || isSubmitting}
+        >
+          {isSubmitting ? <div className="loader-spinner" /> : "Book a service"}
         </button>
       </div>
+
+      <SingleCalendarMobileSheet
+        open={calendarOpen}
+        setOpen={setCalendarOpen}
+        applyDate={setSelectedDate}
+        initialDate={selectedDate}
+        title="Select date of birth"
+      />
+
+      <TimePickerMobileSheet
+        open={timePickerOpen}
+        setOpen={setTimePickerOpen}
+        applyTime={(time) => setPickedTime(time)}
+      />
+
+      <TypeWashingDropDown
+        open={typeOpen}
+        setOpen={setTypeOpen}
+        applyType={(type) => {
+          setSelectedType(type);
+          setTypeOpen(false);
+        }}
+        selectedType={selectedType}
+      />
     </div>
     </div>
   );

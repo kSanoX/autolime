@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import "../../src/styles/dropdowns/car-model-dropdown.scss";
+import "../../../src/styles/dropdowns/car-model-dropdown.scss";
 
 const MODELS_BY_BRAND: Record<string, string[]> = {
   "Alfa Romeo": ["Giulia", "Stelvio", "Tonale"],

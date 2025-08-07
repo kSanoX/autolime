@@ -1,45 +1,38 @@
 import { useNavigate } from "react-router-dom";
+import { BranchInfoPanel } from "./pages/Customer/BranchInfoPanel";
 
-export function BranchCard({ branch, onClick }) {
+export function BranchCard({ branch, onClick, actionType = "geo" }) {
   const navigate = useNavigate();
+
   const handleCalendarClick = (e) => {
     e.stopPropagation();
     navigate("/wash-appointment", { state: { branch } });
   };
+  const handleGoToMap = (e) => {
+    e.stopPropagation();
+    navigate("/branches", {
+      state: {
+        selectedBranchId: branch.id,
+        viewMode: "map",
+      },
+      replace: true,
+    });
+  };
+
+  const extraButton =
+    actionType === "calendar" ? (
+      <button onClick={handleCalendarClick}>
+        <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="calendar" />
+      </button>
+    ) : (
+      <button onClick={handleGoToMap}>
+        <img src="../../src/assets/icons/geo-icon-yellow.svg" alt="geo" />
+      </button>
+    );
+
   return (
-    <div className="branch-info-panel-card visible" onClick={onClick}>
-      <div className="branch-info-panel__content">
-        <div>
-          <h3 className="branch-info-panel__title">{branch.name}</h3>
-          <p className="branch-info-panel__text">{branch.address}</p>
-        </div>
-        <div>
-          <p
-            style={{
-              backgroundColor: branch.isOpen ? "#17BA68" : "#BA1717",
-            }}
-            className="branch-info-panel__status"
-          >
-            {branch.isOpen ? "Open" : "Close"}
-          </p>
-        </div>
-      </div>
-      <p className="branch-info-panel__schedule">
-        Mn – Fr <span>9:00 –17:00</span>
-        St – Sn <span>11:00 – 15:00</span>
-      </p>
-      <div className="branch-info-panel__actions">
-        <button>
-          <img src="../../src/assets/icons/ManagerOrder/call_icon.svg" alt="" />
-        </button>
-        <button>
-          <img src="../../src/assets/icons/path-icon.svg" alt="" />
-        </button>
-        <button onClick={handleCalendarClick}>
-          <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="" />
-        </button>
-      </div>
+    <div onClick={onClick}>
+      <BranchInfoPanel branch={branch} extraActions={extraButton} />
     </div>
   );
-  }
-  
+}

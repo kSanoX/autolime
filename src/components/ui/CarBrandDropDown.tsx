@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import "../../src/styles/dropdowns/car-brands-dropdown.scss";
+import "../../../src/styles/dropdowns/car-brands-dropdown.scss";
 
 const BRANDS = [
   { name: "Alfa Romeo", letter: "A" },
