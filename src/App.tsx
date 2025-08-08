@@ -21,6 +21,8 @@ import AddCar from "./components/pages/Customer/AddCar";
 import EditCar from "./components/pages/Customer/EditCar";
 import BranchScreen from "./components/BranchScreen";
 import WashAppointment from "./components/pages/Customer/WashApointment";
+import MyReviews from "./components/pages/Customer/MyReviews";
+import MyPackages from "./components/pages/Customer/MyPackages";
 function AppRoutes() {
   const role = useUserRole();
 
@@ -46,10 +48,12 @@ function AppRoutes() {
           <Route path="/edit-car" element={<EditCar/>} />
           <Route path="/branches" element={<BranchScreen/>} />
           <Route path="/wash-appointment" element={<WashAppointment/>} />
+          <Route path="/my-reviews" element={<MyReviews/>} />
+          <Route path="/my-packages" element={<MyPackages/>} />
         </Route>
       )}
 
-      {/* 🔒 Если пользователь вводит путь не из своей роли — редирект */}
+      {/*Если пользователь вводит путь не из своей роли — редирект */}
       <Route path="*" element={<Navigate to={role === "manager" ? "/" : "/customer-my-data"} replace />} />
     </Routes>
   );
