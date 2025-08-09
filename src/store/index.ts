@@ -3,6 +3,7 @@ import ordersReducer from './ordersSlice'
 import userReducer from './userSlice'
 import carReducer from './carSlice'
 import appointmentsReducer from './appointmentsSlice'
+import plateSlice from './plateSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userReducer,
     car: carReducer,
     appointments: appointmentsReducer,
+    plateSlice, 
   },
 })
 

@@ -21,6 +21,7 @@
 @use "./customer_styles/my-packages.scss";
 body {
     font-family: $font-roboto;
+    -webkit-tap-highlight-color: transparent;
   }
 
 .main-container {

@@ -103,7 +103,6 @@ export function ActivePackageCard({
         </button>
       </div>
 
-      {/* 👇 Анимация формы */}
       <AnimatePresence>
         {isEditing && (
           <motion.div

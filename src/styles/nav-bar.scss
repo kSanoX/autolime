@@ -1,36 +1,48 @@
 @use "./variables" as *;
 
 .nav-bar-wrapper {
-    position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 96%;
-    padding: 0 16px;
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 96%;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.nav-bar-container {
+  width: 100%;
+  padding: 8px;
+  border-radius: 16px;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 4px 6px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+
+  a {
     display: flex;
+    align-items: center;
     justify-content: center;
-    z-index: 100;
-    pointer-events: none;
-  }
-  
-  .nav-bar-container {
-    width: 100%;
-    padding: 8px;
+    padding: 12px;
     border-radius: 16px;
-    background-color: #fff;
-    display: flex;
-    justify-content: space-around;
-    box-shadow: 0 4px 6px 4px rgba(0, 0, 0, 0.1);
-    pointer-events: auto;
-  
-    img {
-      padding: 18px;
-  
-      &:active {
-        background-color: $blueMain;
-        border-radius: 16px;
+    transition: background-color 0.3s ease;
+
+    &.active {
+      background-color: $blueMain;
+
+      svg path {
+        fill: #F7B233;
+        transition: fill 0.3s ease;
       }
     }
   }
-  
+
+  svg {
+    margin: 0;
+  }
+}

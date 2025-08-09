@@ -55,7 +55,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              Messages
+              <Link to="messages">Messages</Link>
             </li>
           </ul>
           </div>
@@ -82,7 +82,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              Contacts
+              <Link to="contacts">Contacts</Link>
             </li>
             <li>
               <svg
@@ -104,7 +104,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   </clipPath>
                 </defs>
               </svg>
-              Help
+              <Link to="help">Help</Link>
             </li>
           </ul>
           </div>

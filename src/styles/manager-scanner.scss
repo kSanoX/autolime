@@ -1,0 +1,17 @@
+@use "./variables" as *;
+/* components/ManagerScanner/styles.scss */
+.scanner-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .scanner-box {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+  }
+  

@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import logo from '@/assets/logo.svg';
 import "../styles/header.scss";
 import Sidebar from '../components/ui/Sidebar';
+import { Link } from 'react-router-dom';
 
-export default function Header() {
+type Props = {
+  logoVariant?: "image" | "calendar " | "qr";
+};
+
+
+export default function Header({ logoVariant = "image" }: Props) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "auto";
@@ -21,8 +27,12 @@ export default function Header() {
           alt="burger-menu"
           onClick={() => setIsSidebarOpen(true)}
         />
-        <img className='logo' src={logo} alt="Logo" />
-        <img src="../../icons/bell_active_icon.svg" alt="notification-bell" />
+        {logoVariant === "image" ? (
+          <img className='logo' src={logo} alt='Logo' />
+        ) : (
+          <span className='logo-text'>Calendar</span>
+        )}
+        <Link to="messages"> <img src="../../icons/bell_active_icon.svg" alt="notification-bell" /></Link>
       </header>
 
       {isSidebarOpen && (

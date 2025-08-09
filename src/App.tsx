@@ -23,6 +23,12 @@ import BranchScreen from "./components/BranchScreen";
 import WashAppointment from "./components/pages/Customer/WashApointment";
 import MyReviews from "./components/pages/Customer/MyReviews";
 import MyPackages from "./components/pages/Customer/MyPackages";
+import CustomerCalendar from "./components/Calendars/CustomerCalendar";
+import QRPage from "./components/pages/Customer/QRPage";
+import ManagerScanner from "./components/pages/Manager/ManagerScanner";
+import Messages from "./components/pages/Messages";
+import Help from "./components/pages/Help";
+import Contacts from "./components/Contacts";
 function AppRoutes() {
   const role = useUserRole();
 
@@ -35,6 +41,9 @@ function AppRoutes() {
           <Route path="/carwash-statistics" element={<ManagerCarwashStatistics />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/reschedule/:id" element={<ReschudelingOrder />} />
+          <Route path="/manager-qr-page" element={<ManagerScanner />} />
+          <Route path="/contacts" element={<Contacts/>} />
+          <Route path="/help" element={<Help/>} />
         </Route>
       ) : (
         <Route element={<CustomerLayout />}>
@@ -50,6 +59,11 @@ function AppRoutes() {
           <Route path="/wash-appointment" element={<WashAppointment/>} />
           <Route path="/my-reviews" element={<MyReviews/>} />
           <Route path="/my-packages" element={<MyPackages/>} />
+          <Route path="/customer-calendar" element={<CustomerCalendar/>} />
+          <Route path="/customer-qr-page" element={<QRPage/>} />
+          <Route path="/messages" element={<Messages/>} />
+          <Route path="/contacts" element={<Contacts/>} />
+          <Route path="/help" element={<Help/>} />
         </Route>
       )}
 
