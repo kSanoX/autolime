@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export type UserRole = "manager" | "manager";
 
 const initialState = {
-  role: "manager" as UserRole, // временно хардкод
+  role: "customer" as UserRole, // временно хардкод
 };
 
 export const userSlice = createSlice({

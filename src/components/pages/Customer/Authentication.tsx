@@ -1,52 +1,88 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Authentication() {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-  const [phoneDigits, setPhoneDigits] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState<{ phone?: string; password?: string }>({});
+  const navigate = useNavigate();
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const formatPhoneDigits = (raw: string): string => {
-    const onlyDigits = raw.replace(/\D/g, "").slice(0, 9);
-    const grouped = onlyDigits.match(/.{1,3}/g) || [];
-    return grouped.join(" ");
-  };
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setPhoneDigits(formatPhoneDigits(e.target.value));
+    let raw = e.target.value;
+
+    // Удаляем всё, кроме + и цифр
+    raw = raw.replace(/[^\d+]/g, "");
+
+    // Только один + в начале
+    if (raw.includes("+")) {
+      raw = "+" + raw.replace(/\+/g, "").slice(0, 12);
+    }
+
+    setPhone(raw);
     if (error.phone) setError((prev) => ({ ...prev, phone: undefined }));
   };
 
-  const handleLogin = (): void => {
-    const trimmedPhone = phoneDigits.replace(/\D/g, "");
-    const fullPhone = "+995" + trimmedPhone;
+  const handleLogin = async () => {
+    console.log("handleLogin started");
   
-    const fakeUser = {
-      phone: "+995123456789",
-      password: "demo123",
-    };
+    const trimmedPhone = phone.trim();
+    const trimmedPassword = password.trim();
   
-    let phoneCode: "not-found" | undefined;
-    let passwordCode: "incorrect" | undefined;
+    const newError: { phone?: string; password?: string } = {};
+    if (!trimmedPhone) newError.phone = "required";
+    if (!trimmedPassword) newError.password = "required";
   
-    if (trimmedPhone.length !== 9 || fullPhone !== fakeUser.phone) {
-      phoneCode = "not-found";
+    if (Object.keys(newError).length > 0) {
+      setError(newError);
+      console.warn("Validation failed:", newError);
+      return;
     }
   
-    if (!password.trim() || password !== fakeUser.password) {
-      passwordCode = "incorrect";
-    }
+    // Убираем + перед отправкой
+    const sanitizedPhone = trimmedPhone.startsWith("+")
+      ? trimmedPhone.slice(1)
+      : trimmedPhone;
   
-    if (phoneCode || passwordCode) {
-      setError({ phone: phoneCode, password: passwordCode });
-    } else {
-      setError({});
-      alert("Login successful!");
+    console.log("Sanitized Phone:", `"${sanitizedPhone}"`);
+    console.log("Password:", `"${trimmedPassword}"`);
+  
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: sanitizedPhone,
+          password: trimmedPassword,
+        }),
+      });
+  
+      const data = await res.json();
+      console.log("Response:", data);
+  
+      if (res.ok && data.access_token) {
+        localStorage.setItem("token", data.token);
+        navigate("/");
+      } else {
+        const serverError = data?.error || "Login failed";
+        console.warn("❌ Server error:", serverError);
+  
+        if (serverError.includes("phone")) {
+          setError({ phone: "not-found" });
+        } else if (serverError.includes("password")) {
+          setError({ password: "incorrect" });
+        } else {
+        }
+      }
+    } catch (err) {
+      console.error("Network error:", err);
     }
-  };  
+  };
+  
+  
 
   return (
     <div className="auth-wrapper">
@@ -58,33 +94,32 @@ export default function Authentication() {
         <h1>Welcome</h1>
         <p>Enter your phone number and password to access your account</p>
       </div>
-      {error.phone === "not-found" && (
-  <div className="phone-number-doesnt-exist-error">
-    <p>Phone number doesn't exist</p>
-  </div>
-)}
 
-{error.password === "incorrect" && (
-  <div className="incorrect-password-error">
-    <p>Password is incorrect</p>
-  </div>
-)}
+      {error.phone === "not-found" && (
+        <div className="phone-number-doesnt-exist-error">
+          <p>Phone number doesn't exist</p>
+        </div>
+      )}
+
+      {error.password === "incorrect" && (
+        <div className="incorrect-password-error">
+          <p>Password is incorrect</p>
+        </div>
+      )}
+
       <div className="auth-input-block">
         {/* PHONE */}
         <div className="auth-phone-input">
           <label>Phone number</label>
-          <div className="input-with-prefix">
-            <span className="phone-prefix">+995</span>
-            <input
-              type="tel"
-              inputMode="numeric"
-              value={phoneDigits}
-              onChange={handlePhoneChange}
-              maxLength={11}
-              placeholder="XXX XXX XXX"
-              className="custom-input"
-            />
-          </div>
+          <input
+            type="tel"
+            inputMode="numeric"
+            value={phone}
+            onChange={handlePhoneChange}
+            maxLength={13}
+            placeholder="+995 500 500 555"
+            className="custom-input"
+          />
         </div>
 
         {/* PASSWORD */}
@@ -128,25 +163,31 @@ export default function Authentication() {
 
         {/* Submit */}
         <div className="sign-in">
-          <button onClick={handleLogin}>Sign In</button>
+          <button onClick={() => {
+    console.log("🔥 CLICKED");
+    handleLogin();
+  }}>Sign In</button>
         </div>
       </div>
+
       <div className="sign-up-navigate">
-        <p>Dont have an account? <Link to="/register"> Sign Up</Link></p>
+        <p>Don't have an account? <Link to="/register"> Sign Up</Link></p>
       </div>
+
       <div className="auth-separator">
         <hr />
         <p>OR</p>
         <hr />
       </div>
+
       <div className="alternative-servives-auth">
         <div className="google-auth">
           <a href="/"><img src="../../../src/assets/icons/google-service (1).svg" alt="google" /></a>
           <p>Google</p>
         </div>
         <div className="facebook-auth">
-        <a href="/"><img src="../../../src/assets/icons/facebook.svg" alt="facebook"/></a>
-        <p>Facebook</p>
+          <a href="/"><img src="../../../src/assets/icons/facebook.svg" alt="facebook" /></a>
+          <p>Facebook</p>
         </div>
       </div>
     </div>

@@ -1,12 +1,17 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
-export default function OTPVerification() {
+export default function OTPVerification({
+  tempCode,
+  onSuccess,
+}: {
+  tempCode: number;
+  onSuccess: () => void;
+}) {
   const [otp, setOtp] = useState(Array(6).fill(""));
-  const [errorCode, setErrorCode] = useState<"none" | "invalid" | "duplicate">("none");
+  const [errorCode, setErrorCode] = useState<"none" | "invalid">("none");
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const navigate = useNavigate();
 
   const correctCode = "654321";
 
@@ -29,19 +34,31 @@ export default function OTPVerification() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const code = otp.join("");
     setIsLoading(true);
-
-    setTimeout(() => {
-      if (code === correctCode) {
-        setErrorCode("none");
-        navigate("/add-car", { state: { fromRegistration: true } });
+  
+    try {
+      const res = await fetch(`${API_URL}/register/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ temp_code: tempCode, code }),
+      });
+  
+      const data = await res.json();
+  
+      if (data.success) {
+        localStorage.setItem("token", data.access_token); // сохраняем JWT
+        onSuccess(); // переход к вводу пароля
       } else {
         setErrorCode("invalid");
       }
+    } catch (err) {
+      console.error("Ошибка верификации:", err);
+      setErrorCode("invalid");
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const allDigitsFilled = otp.every((digit) => /^\d$/.test(digit));
@@ -81,11 +98,7 @@ export default function OTPVerification() {
         disabled={!buttonIsActive}
         className={`send-button ${buttonIsActive ? "active" : ""}`}
       >
-        {isLoading ? (
-          <span className="spinner" />
-        ) : (
-          "Send"
-        )}
+        {isLoading ? <span className="spinner" /> : "Send"}
       </button>
 
       <div className="send-code-again">
