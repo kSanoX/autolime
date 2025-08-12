@@ -105,7 +105,7 @@ export default function EmailChanging() {
           />
         </div>
 
-        <div className='sign-in'>
+        <div>
           <button
             onClick={handleSubmitEmail}
             disabled={!isValid || isSubmitting}
@@ -116,6 +116,7 @@ export default function EmailChanging() {
               borderRadius: "16px",
               fontWeight: 600,
               fontSize: "14px",
+              width: "100%",
               border: "none",
               cursor: isValid && !isSubmitting ? "pointer" : "default",
               position: "relative",

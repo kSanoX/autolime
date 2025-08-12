@@ -1,35 +1,29 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import "../../../src/styles/dropdowns/car-model-dropdown.scss";
-
-const MODELS_BY_BRAND: Record<string, string[]> = {
-  "Alfa Romeo": ["Giulia", "Stelvio", "Tonale"],
-  "Aston Martin": ["DB11", "Vantage", "DBX"],
-  "BMW": ["X5", "X6", "M5", "i8"],
-  "Bentley": ["Bentayga", "Continental GT", "Flying Spur"],
-};
+import type { Brand, Model} from "@/store/carSlice";
 
 export function CarModelDropDown({
   open,
   setOpen,
   selectedBrand,
+  models,
   applyModel,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
-  selectedBrand: string;
-  applyModel: (model: string) => void;
+  selectedBrand: Brand | null;
+  models: Model[]; // ✅ добавлено
+  applyModel: (model: Model) => void;
 }) {
   const [search, setSearch] = useState("");
-  const [selectedModel, setSelectedModel] = useState("");
+  const [selectedModel, setSelectedModel] = useState<Model | null>(null);
 
   const filteredModels = useMemo(() => {
-    if (!selectedBrand) return [];
-    const models = MODELS_BY_BRAND[selectedBrand] || [];
     return models.filter((m) =>
-      m.toLowerCase().includes(search.toLowerCase())
+      m.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, selectedBrand]);
+  }, [search, models]);
 
   if (!open || !selectedBrand) return null;
 
@@ -52,7 +46,7 @@ export function CarModelDropDown({
             <div />
           </div>
 
-          <h3>Choose model of {selectedBrand}</h3>
+          <h3>Choose model of {selectedBrand.name}</h3>
 
           <div className='search-wrapper'>
             <input
@@ -66,27 +60,27 @@ export function CarModelDropDown({
           </div>
 
           <div className='brand-letter-group'>
-            <div className='brand-letter' style={{whiteSpace: "noWrap"}}>
-              {selectedBrand} <hr />{" "}
+            <div className='brand-letter' style={{ whiteSpace: "nowrap" }}>
+              {selectedBrand.name} <hr />{" "}
               <span className='count-brands'>{filteredModels.length}</span>
             </div>
 
-            {filteredModels.map((model) => (
-              <div
-                key={model}
-                className={`brand-option ${
-                  selectedModel === model ? "selected" : ""
-                }`}
-                onClick={() => setSelectedModel(model)}
-              >
-                {model}
-              </div>
-            ))}
-
-            {filteredModels.length === 0 && (
+            {filteredModels.length === 0 ? (
               <p style={{ color: "#999", paddingTop: "12px" }}>
-                No models available for {selectedBrand}
+                No models available for {selectedBrand.name}
               </p>
+            ) : (
+              filteredModels.map((model) => (
+                <div
+                  key={model.id}
+                  className={`brand-option ${
+                    selectedModel?.name === model.name ? "selected" : ""
+                  }`}                  
+                  onClick={() => setSelectedModel(model)}
+                >
+                  {model.name}
+                </div>
+              ))
             )}
           </div>
 
@@ -96,7 +90,7 @@ export function CarModelDropDown({
                 applyModel(selectedModel);
                 setOpen(false);
               }
-            }}
+            }}            
             disabled={!selectedModel}
             className={`submit-button ${selectedModel ? "active" : "disabled"}`}
           >

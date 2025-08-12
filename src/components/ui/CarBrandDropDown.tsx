@@ -1,37 +1,36 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import "../../../src/styles/dropdowns/car-brands-dropdown.scss";
+import type { Brand } from "@/store/carSlice";
 
-const BRANDS = [
-  { name: "Alfa Romeo", letter: "A" },
-  { name: "Aston Martin", letter: "A" },
-  { name: "BMW", letter: "B" },
-  { name: "Bentley", letter: "B" },
-];
 
 export function CarBrandDropDown({
   open,
   setOpen,
   applyBrand,
+  brands,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
-  applyBrand: (brand: string) => void;
+  applyBrand: (brand: Brand) => void;
+  brands: Brand[];
+  loading: boolean;
 }) {
   const [search, setSearch] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
 
-  const groupedBrands = useMemo(() => {
-    const filtered = BRANDS.filter((b) =>
-      b.name.toLowerCase().includes(search.toLowerCase())
-    );
-    const groups: Record<string, string[]> = {};
-    filtered.forEach(({ name, letter }) => {
-      if (!groups[letter]) groups[letter] = [];
-      groups[letter].push(name);
-    });
-    return groups;
-  }, [search]);
+    const groupedBrands = useMemo(() => {
+  const filtered = brands.filter((b) =>
+    b.name.toLowerCase().includes(search.toLowerCase())
+  );
+  const groups: Record<string, Brand[]> = {};
+  filtered.forEach((brand) => {
+    const letter = brand.name[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(brand);
+  });
+  return groups;
+}, [search, brands]);
 
   if (!open) return null;
 
@@ -66,41 +65,39 @@ export function CarBrandDropDown({
             />
             <img src='src/assets/icons/search-icon.svg' alt='' />
           </div>
-
           <div className='brand-letter-group'>
-            {Object.entries(groupedBrands).map(([letter, brands]) => (
-              <div key={letter} className='brand-group'>
-                <div className='brand-letter'>
-                  {letter} <hr />{" "}
-                  <span className='count-brands'>{brands.length}</span>
-                </div>
-                {brands.map((brand) => (
-                  <div
-                    key={brand}
-                    className={`brand-option ${
-                      selectedBrand === brand ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedBrand(brand)}
-                  >
-                    {brand}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={() => {
-              if (selectedBrand) {
-                applyBrand(selectedBrand);
-                setOpen(false);
-              }
-            }}
-            disabled={!selectedBrand}
-            className={`submit-button ${selectedBrand ? "active" : "disabled"}`}
-          >
-            Select
-          </button>
+  {Object.entries(groupedBrands).map(([letter, brands]) => (
+    <div key={letter} className='brand-group'>
+      <div className='brand-letter'>
+        {letter} <hr />
+        <span className='count-brands'>{brands.length}</span>
+      </div>
+      {brands.map((brand) => (
+        <div
+          key={brand.id}
+          className={`brand-option ${
+            selectedBrand?.id === brand.id ? "selected" : ""
+          }`}
+          onClick={() => setSelectedBrand(brand)}
+        >
+          {brand.name}
+        </div>
+      ))}
+    </div>
+  ))}
+</div>
+<button
+  onClick={() => {
+    if (selectedBrand) {
+      applyBrand(selectedBrand); 
+      setOpen(false);
+    }
+  }}
+  disabled={!selectedBrand}
+  className={`submit-button ${selectedBrand ? "active" : "disabled"}`}
+>
+  Select
+</button>
         </div>
       </motion.div>
     </>

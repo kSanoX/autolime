@@ -92,7 +92,7 @@ export default function PhoneNumberChanging() {
           </div>
         </div>
 
-        <div className='sign-in'>
+        <div>
           <button
             onClick={handleSaveNewPhone}
             disabled={!isValid || isSubmitting}
@@ -103,6 +103,7 @@ export default function PhoneNumberChanging() {
               borderRadius: "16px",
               fontWeight: 600,
               fontSize: "14px",
+              width: "100%",
               border: "none",
               cursor: isValid && !isSubmitting ? "pointer" : "default",
               position: "relative",

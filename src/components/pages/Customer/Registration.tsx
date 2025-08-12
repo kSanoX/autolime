@@ -12,7 +12,6 @@ export default function Registration() {
 
   const togglePassword = () => setShowPassword((prev) => !prev);
   const [tempCode, setTempCode] = useState<number | null>(null);
-  const normalizedPhone = phone.replace("+", "");
   const navigate = useNavigate();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -83,6 +82,7 @@ export default function Registration() {
       const data = await res.json();
   
       if (data.success) {
+        localStorage.setItem("access_token", data.access_token);
         navigate("/add-car");
       } else {
         setError({ password: "server-error" });

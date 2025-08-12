@@ -27,7 +27,18 @@
       .form-group {
         display: flex;
         flex-direction: column;
-
+        input {
+          &:last-child {
+            padding: 28px 16px;
+          border: 1px solid $border;
+          border-radius: 16px;
+          outline: none;
+  
+          &:focus {
+            border-color: $yellowMain;
+          }
+          }
+        }
         div {
           border: 1px solid $border;
           border-radius: 16px;

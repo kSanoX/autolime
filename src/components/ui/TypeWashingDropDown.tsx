@@ -1,24 +1,47 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { customFetch } from "@/utils/customFetch";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function TypeWashingDropDown({
   open,
   setOpen,
-  selectedType,
+  selectedServiceName,
   applyType,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
-  selectedType: "washing" | "polishing" | "dry-cleaning" | "complex" | "";
-  applyType: (type: "washing" | "polishing" | "dry-cleaning" | "complex") => void;
+  selectedServiceName: string;
+  applyType: (serviceName: string) => void;
 }) {
-  if (!open) return null;
+  const [services, setServices] = useState<{ id: number; name: string }[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const types = [
-    { id: "washing", label: "Washing" },
-    { id: "polishing", label: "Polishing" },
-    { id: "dry-cleaning", label: "Dry cleaning" },
-    { id: "complex", label: "Complex" },
-  ];
+  useEffect(() => {
+    if (!open) return;
+
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    setLoading(true);
+    customFetch(`${API_URL}/services-list`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setServices(data.services);
+      })
+      .catch((err) => console.error("Ошибка загрузки услуг:", err))
+      .finally(() => setLoading(false));
+  }, [open]);
+
+  if (!open) return null;
 
   return (
     <>
@@ -85,59 +108,62 @@ export function TypeWashingDropDown({
             Choose service type
           </h3>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              justifyItems: "start",
-              alignItems: "center",
-            }}
-          >
-            {types.map((type) => {
-              const isSelected = selectedType === type.id;
-              return (
-                <div
-                  key={type.id}
-                  onClick={() => applyType(type.id)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "16px",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
-                >
+          {loading ? (
+            <p style={{ textAlign: "center", color: "#879AB1" }}>Loading...</p>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                justifyItems: "start",
+                alignItems: "center",
+              }}
+            >
+              {services.map((service) => {
+                const isSelected = selectedServiceName === service.name;
+                return (
                   <div
+                    key={service.id}
+                    onClick={() => applyType(service.name)} // 👈 передаём название
                     style={{
-                      backgroundColor: "#183D69",
-                      padding: "12px",
+                      display: "flex",
+                      alignItems: "center",
                       borderRadius: "16px",
-                      marginBottom: "8px",
-                      
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
                     }}
                   >
-                    <img
-                      src="../../src/assets/icons/car-wash-type-icon.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
+                    <div
+                      style={{
+                        backgroundColor: "#183D69",
+                        padding: "12px",
+                        borderRadius: "16px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <img
+                        src='../../src/assets/icons/car-wash-type-icon.svg'
+                        alt=''
+                        width={24}
+                        height={24}
+                      />
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        color: isSelected ? "#F7B233" : "#183D69",
+                        marginLeft: "12px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {service.name}
+                    </span>
                   </div>
-                  <span
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      color: isSelected ? "#F7B233" : "#183D69",
-                      marginLeft: "12px",
-                      whiteSpace: "noWrap",
-                    }}
-                  >
-                    {type.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </motion.div>
     </>

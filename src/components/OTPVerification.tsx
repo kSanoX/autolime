@@ -13,8 +13,6 @@ export default function OTPVerification({
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const correctCode = "654321";
-
   const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value)) return;
 

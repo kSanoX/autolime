@@ -1,6 +1,7 @@
 import leftArrow from "../../assets/icons/left-arrow.svg";
 import rightArrow from "../../assets/icons/right-arrow.svg";
 import Header from "../Header";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   return (

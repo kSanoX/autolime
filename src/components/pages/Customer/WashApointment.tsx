@@ -25,6 +25,7 @@ export default function WashAppointment() {
   const [selectedType, setSelectedType] = useState<"washing" | "polishing" | "dry-cleaning" | "complex" | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  const [selectedServiceName, setSelectedServiceName] = useState("");
 
   const isFormValid = selectedDate && pickedTime && selectedType && branch;
 
@@ -73,43 +74,57 @@ export default function WashAppointment() {
   return (
     <div>
       <header>
-        <img src="src/assets/icons/left-arrow.svg" alt="" />
+        <img src='src/assets/icons/left-arrow.svg' alt='' />
         Branches
         <span></span>
       </header>
 
-      <div className="wash-apointment-wrapper">
+      <div className='wash-apointment-wrapper'>
         <BranchInfoPanel
           branch={branch}
           extraActions={
             <button onClick={handleGoToMap}>
-              <img src="../../src/assets/icons/geo-icon-yellow.svg" alt="geo" />
+              <img src='../../src/assets/icons/geo-icon-yellow.svg' alt='geo' />
             </button>
           }
         />
 
         {appointments.length > 0 && (
-          <div className="appointment-summary-card">
+          <div className='appointment-summary-card'>
             <h3>My appointments</h3>
             {appointments.map((appointment, index) => (
-              <div key={index} className="flexible-appointment-detail">
+              <div key={index} className='flexible-appointment-detail'>
                 <div>
-                  <div className="appointment-detail">
-                    <img src="../../../src/assets/icons/branch/summary-calendar.svg" alt="calendar" />
-                    <span>{new Date(appointment.date).toLocaleDateString("en-GB")}</span>
+                  <div className='appointment-detail'>
+                    <img
+                      src='../../../src/assets/icons/branch/summary-calendar.svg'
+                      alt='calendar'
+                    />
+                    <span>
+                      {new Date(appointment.date).toLocaleDateString("en-GB")}
+                    </span>
                   </div>
-                  <div className="appointment-detail">
-                    <img src="src/assets/icons/car-wash-type-icon.svg" alt="type" />
+                  <div className='appointment-detail'>
+                    <img
+                      src='src/assets/icons/car-wash-type-icon.svg'
+                      alt='type'
+                    />
                     <span>{appointment.type}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="appointment-detail">
-                    <img src="../../../src/assets/icons/branch/summary-time.svg" alt="clock" />
+                  <div className='appointment-detail'>
+                    <img
+                      src='../../../src/assets/icons/branch/summary-time.svg'
+                      alt='clock'
+                    />
                     <span>{appointment.time}</span>
                   </div>
-                  <div className="appointment-detail">
-                    <img src="../../../src/assets/icons/branch/summary-applied.svg" alt="status" />
+                  <div className='appointment-detail'>
+                    <img
+                      src='../../../src/assets/icons/branch/summary-applied.svg'
+                      alt='status'
+                    />
                     <span>Applied</span>
                   </div>
                 </div>
@@ -118,17 +133,19 @@ export default function WashAppointment() {
           </div>
         )}
 
-        <div className="car-wash-apointment-display">
+        <div className='car-wash-apointment-display'>
           <h4>Сar wash appointment</h4>
-          {isBookingSuccess && <div className="booking-status">Booking success</div>}
+          {isBookingSuccess && (
+            <div className='booking-status'>Booking success</div>
+          )}
 
-          <div className="form-group">
-            <label htmlFor="dob">Date</label>
-            <div className="input-select" onClick={() => setCalendarOpen(true)}>
+          <div className='form-group'>
+            <label htmlFor='dob'>Date</label>
+            <div className='input-select' onClick={() => setCalendarOpen(true)}>
               <input
-                type="text"
-                id="dob"
-                placeholder="--/--/----"
+                type='text'
+                id='dob'
+                placeholder='--/--/----'
                 value={
                   selectedDate
                     ? selectedDate.toLocaleDateString("en-GB", {
@@ -140,23 +157,26 @@ export default function WashAppointment() {
                 }
                 readOnly
               />
-              <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
             </div>
           </div>
 
-          <div className="input-block">
+          <div className='input-block'>
             <label>Time</label>
-            <div className="input-select" onClick={() => setTimePickerOpen(true)}>
+            <div
+              className='input-select'
+              onClick={() => setTimePickerOpen(true)}
+            >
               {pickedTime || "-- : --"}
-              <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
             </div>
           </div>
 
-          <div className="input-block">
+          <div className='input-block'>
             <label>Service</label>
-            <div className="input-select" onClick={() => setTypeOpen(true)}>
-              {selectedType || "-"}
-              <img src="src/assets/icons/left-arrow.svg" alt="Arrow" />
+            <div className='input-select' onClick={() => setTypeOpen(true)}>
+              {selectedServiceName || "-"}
+              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
             </div>
           </div>
 
@@ -165,7 +185,11 @@ export default function WashAppointment() {
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting ? <div className="loader-spinner" /> : "Book a service"}
+            {isSubmitting ? (
+              <div className='loader-spinner' />
+            ) : (
+              "Book a service"
+            )}
           </button>
         </div>
 
@@ -174,7 +198,7 @@ export default function WashAppointment() {
           setOpen={setCalendarOpen}
           applyDate={setSelectedDate}
           initialDate={selectedDate}
-          title="Select date of birth"
+          title='Select date of birth'
         />
 
         <TimePickerMobileSheet
@@ -186,11 +210,12 @@ export default function WashAppointment() {
         <TypeWashingDropDown
           open={typeOpen}
           setOpen={setTypeOpen}
-          applyType={(type) => {
-            setSelectedType(type);
+          selectedServiceName={selectedServiceName}
+          applyType={(name) => {
+            setSelectedType(name); // если ты хочешь отправлять name
+            setSelectedServiceName(name); // ✅ записываем в input
             setTypeOpen(false);
           }}
-          selectedType={selectedType}
         />
       </div>
     </div>

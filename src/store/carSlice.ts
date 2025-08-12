@@ -1,60 +1,61 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice,  type PayloadAction } from "@reduxjs/toolkit";
 
-type Car = {
-  brand: string;
-  model: string;
-  plate: string;
+export type Brand = {
+  id: number;
+  name: string;
 };
+export type Model = { id: number; name: string };
+export type Car = { brand: Brand; model: Model; plate: string };
 
-// 🔄 Загрузка из localStorage
-const storedCars = localStorage.getItem("cars");
-const parsedCars = storedCars ? JSON.parse(storedCars) as Car[] : [];
 
-// 🧼 Начальное состояние
-const initialState = {
-  brand: "",
-  model: "",
-  plate: "",
-  cars: parsedCars,
+const initialState: {
+  brand: Brand | null;
+  model: Model | null;
+  cars: Car[];
+} = {
+  brand: null,
+  model: null,
+  cars: [],
 };
-
-// 💾 Сохранение в localStorage
-function saveToLocalStorage(cars: Car[]) {
-  localStorage.setItem("cars", JSON.stringify(cars));
-}
 
 export const carSlice = createSlice({
   name: "car",
   initialState,
   reducers: {
-    setBrand: (state, action: PayloadAction<string>) => {
+    setBrand: (state, action: PayloadAction<Brand | null>) => {
       state.brand = action.payload;
-      state.model = "";
+      state.model = null;
     },
-    setModel: (state, action: PayloadAction<string>) => {
+    setModel: (state, action: PayloadAction<Model | null>) => {
       state.model = action.payload;
     },
     addCar: (state, action: PayloadAction<Car>) => {
       state.cars.push(action.payload);
-      saveToLocalStorage(state.cars);
     },
     updateCar: (
       state,
-      action: PayloadAction<{ oldPlate: string; brand: string; model: string; plate: string }>
+      action: PayloadAction<{
+        oldPlate: string;
+        brand: Brand;
+        model: Model;
+        plate: string;
+      }>
     ) => {
       const { oldPlate, brand, model, plate } = action.payload;
-      const index = state.cars.findIndex(c => c.plate === oldPlate);
+      const index = state.cars.findIndex((c) => c.plate === oldPlate);
       if (index !== -1) {
         state.cars[index] = { brand, model, plate };
-        saveToLocalStorage(state.cars);
       }
     },
     removeCar: (state, action: PayloadAction<string>) => {
-      state.cars = state.cars.filter(car => car.plate !== action.payload);
-      saveToLocalStorage(state.cars);
+      state.cars = state.cars.filter((car) => car.plate !== action.payload);
     },
-  },
+    setCars: (state, action: PayloadAction<Car[]>) => {
+      state.cars = action.payload;
+    },
+  }  
 });
 
-export const { setBrand, setModel, addCar, updateCar, removeCar } = carSlice.actions;
+export const { setBrand, setModel, addCar, updateCar, removeCar, setCars} = carSlice.actions;
 export default carSlice.reducer;
+
