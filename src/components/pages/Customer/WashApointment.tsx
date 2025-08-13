@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addAppointment } from "@/store/appointmentsSlice";
 import { type RootState } from "@/store";
+import { useCreateAppointment } from "@/hooks/useCreateAppointment";
+import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
 
 import { SingleCalendarMobileSheet } from "@/components/Calendars/SingleCalendarDropDownSheet";
 import { TimePickerMobileSheet } from "@/components/ui/TimePickerMobileSheet";
@@ -29,7 +30,9 @@ export default function WashAppointment() {
   const [typeOpen, setTypeOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  const { createAppointment, loading, error, success } = useCreateAppointment();
+  useLoadAppointmentsFromBackend();
+  
 
   const isFormValid = selectedDate && pickedTime && selectedService && branch;
 
@@ -50,30 +53,27 @@ export default function WashAppointment() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!isFormValid || isSubmitting || !branch || !selectedService) return;
-
+  const handleSubmit = async () => {
+    if (!isFormValid || isSubmitting || !branch || !selectedService || !selectedDate) return;
+  
     setIsSubmitting(true);
-
-    setTimeout(() => {
-      dispatch(
-        addAppointment({
-          branchId: branch.id,
-          branchName: branch.name,
-          branchAddress: branch.address,
-          date: selectedDate?.toISOString() ?? "",
-          time: pickedTime,
-          type: selectedService.name,
-        })
-      );
-
-      setSelectedDate(undefined);
-      setPickedTime("");
-      setSelectedService(null);
-      setIsSubmitting(false);
-      setIsBookingSuccess(true);
-    }, 2000);
-  };
+  
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+  
+    await createAppointment({
+      car_wash_id: branch.id,
+      date: formattedDate,
+      time: pickedTime,
+      branchName: branch.name,
+      branchAddress: branch.address,
+      type: selectedService.name,
+    });
+  
+    setSelectedDate(undefined);
+    setPickedTime("");
+    setSelectedService(null);
+    setIsSubmitting(false);
+  };  
 
   return (
     <div>
@@ -82,6 +82,8 @@ export default function WashAppointment() {
         Branches
         <span></span>
       </header>
+
+      
 
       <div className='wash-apointment-wrapper'>
         <BranchInfoPanel
@@ -139,9 +141,8 @@ export default function WashAppointment() {
 
         <div className='car-wash-apointment-display'>
           <h4>Сar wash appointment</h4>
-          {isBookingSuccess && (
-            <div className='booking-status'>Booking success</div>
-          )}
+          {success && <div className="booking-status">Booking success</div>}
+          {error && <div className="booking-error">{error}</div>}
 
           <div className='form-group'>
             <label htmlFor='dob'>Date</label>

@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-type Appointment = {
-  branchId: string;
+export type Appointment = {
+  branchId: number;
   branchName: string;
   branchAddress: string;
   date: string;
@@ -9,29 +9,24 @@ type Appointment = {
   type: string;
 };
 
-
-// 🔄 Загрузка из localStorage
-const stored = localStorage.getItem("appointments");
-const parsed = stored ? (JSON.parse(stored) as Appointment[]) : [];
-
-// 🧼 Начальное состояние
-const initialState = {
-  appointments: parsed,
+type AppointmentsState = {
+  appointments: Appointment[];
 };
 
-// 💾 Сохранение в localStorage
-function save(appointments: Appointment[]) {
-  localStorage.setItem("appointments", JSON.stringify(appointments));
-}
+const initialState: AppointmentsState = {
+  appointments: [],
+};
 
 export const appointmentsSlice = createSlice({
   name: "appointments",
   initialState,
   reducers: {
+    // Добавить новую запись
     addAppointment: (state, action: PayloadAction<Appointment>) => {
       state.appointments.push(action.payload);
-      save(state.appointments);
     },
+
+    // Удалить запись по дате и времени
     removeAppointment: (
       state,
       action: PayloadAction<{ date: string; time: string }>
@@ -39,15 +34,25 @@ export const appointmentsSlice = createSlice({
       state.appointments = state.appointments.filter(
         (a) => !(a.date === action.payload.date && a.time === action.payload.time)
       );
-      save(state.appointments);
     },
+
+    // Очистить все записи
     clearAppointments: (state) => {
       state.appointments = [];
-      save(state.appointments);
+    },
+
+    // Загрузить записи с бэка
+    setAppointments: (state, action: PayloadAction<Appointment[]>) => {
+      state.appointments = action.payload;
     },
   },
 });
 
-export const { addAppointment, removeAppointment, clearAppointments } =
-  appointmentsSlice.actions;
+export const {
+  addAppointment,
+  removeAppointment,
+  clearAppointments,
+  setAppointments,
+} = appointmentsSlice.actions;
+
 export default appointmentsSlice.reducer;

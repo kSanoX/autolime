@@ -130,7 +130,6 @@
   .branch-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
     margin-top: 16px;
   }
 
@@ -163,7 +162,6 @@
       }
     }
   
-    // Только при включенном режиме карты
     &.map-mode {
       position: absolute;
       top: 60px;
@@ -175,4 +173,26 @@
     }
   }
   
+  
+  .branch-card {
+    position: relative;
+  }
+  .branch-booked-icon {
+    position: absolute;
+    bottom: 40px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+  }
 
+  .filter-button svg path {
+    transition: fill 0.2s ease;
+    fill: $blueMain;
+  }
+  
+  .filter-button.active svg path {
+    fill: $yellowMain; 
+  }
+  
+  

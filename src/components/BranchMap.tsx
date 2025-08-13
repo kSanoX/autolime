@@ -3,21 +3,13 @@ import MapView, { Marker } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import PinIcon from "../../public/images/branch-mark.png";
 import { useNavigate } from "react-router-dom";
+import type { Branch } from "@/hooks/useFetchBranches"; // или лучше из "@/types/branch"
 
-
-type Branch = {
-  id: string;
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
-  isOpen: boolean;
-};
 
 type BranchMapProps = {
   branches: Branch[];
-  selectedBranchId: string | null;
-  onSelect: (id: string | null) => void;
+  selectedBranchId: number | null;
+  onSelect: (id: number | null) => void;
 };
 
 export function BranchMap({
@@ -26,9 +18,13 @@ export function BranchMap({
   onSelect,
 }: BranchMapProps) {
   const mapRef = useRef<any>(null);
-  const selectedBranch = branches.find(b => b.id === selectedBranchId);
+  const navigate = useNavigate();
 
-  // плавно перемещаем карту к точке и открываем/закрываем попап
+  const selectedBranch = branches.find(
+    (b) => b.id === Number(selectedBranchId)
+  ) ?? branches[0];  
+  
+
   const handleMarkerClick = (branch: Branch) => {
     onSelect(branch.id);
     if (mapRef.current?.map) {
@@ -40,15 +36,12 @@ export function BranchMap({
     }
   };
 
-  const navigate = useNavigate();
+  const handleAppointmentClick = () => {
+    if (selectedBranch) {
+      navigate("/wash-appointment", { state: { branch: selectedBranch } });
+    }
+  };
 
-const handleAppointmentClick = () => {
-  if (selectedBranch) {
-    navigate("/wash-appointment", { state: { branch: selectedBranch } });
-  }
-};
-
-  // блокируем скролл страницы, когда открыт попап
   useEffect(() => {
     document.body.classList.toggle("map-locked", !!selectedBranch);
     return () => {
@@ -61,8 +54,8 @@ const handleAppointmentClick = () => {
       <MapView
         ref={mapRef}
         initialViewState={{
-          longitude: selectedBranch?.lng ?? branches[0].lng,
-          latitude: selectedBranch?.lat ?? branches[0].lat,
+          longitude: selectedBranch.lng,
+          latitude: selectedBranch.lat,
           zoom: 12,
         }}
         mapStyle={`https://api.maptiler.com/maps/streets/style.json?key=${import.meta.env.VITE_MAPTILER_KEY}`}
@@ -73,7 +66,7 @@ const handleAppointmentClick = () => {
         touchZoomRotate={true}
         doubleClickZoom={false}
       >
-        {branches.map(branch => (
+        {branches.map((branch) => (
           <Marker
             key={branch.id}
             longitude={branch.lng}
@@ -89,37 +82,59 @@ const handleAppointmentClick = () => {
           </Marker>
         ))}
       </MapView>
+
       {selectedBranch && (
-          <div className="branch-info-panel visible">
-            <div className="branch-info-panel__content">
-                <div>
+        <div className="branch-info-panel visible">
+          <div className="branch-info-panel__content">
+            <div>
               <h3 className="branch-info-panel__title">
                 {selectedBranch.name}
               </h3>
               <p className="branch-info-panel__text">
                 {selectedBranch.address}
               </p>
-              </div>
-              <div>
-              <p style={{backgroundColor: selectedBranch?.isOpen ? "#17BA68" : "#BA1717",}}
-                className="branch-info-panel__status">
+            </div>
+            <div>
+              <p
+                style={{
+                  backgroundColor: selectedBranch.isOpen
+                    ? "#17BA68"
+                    : "#BA1717",
+                }}
+                className="branch-info-panel__status"
+              >
                 {selectedBranch.isOpen ? "Open" : "Close"}
               </p>
-              </div>
-            </div>
-            <p className="branch-info-panel__schedule">
-                Mn – Fr <span>9:00 –17:00</span>
-                St – Sn  <span>11:00 – 15:00</span>
-              </p>
-            <div className="branch-info-panel__actions">
-              <button><img src="../../src/assets/icons/ManagerOrder/call_icon.svg" alt="" /></button>
-              <button><img src="../../src/assets/icons/path-icon.svg" alt="" /></button>
-              <button onClick={handleAppointmentClick}>
-  <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="" />
-</button>
             </div>
           </div>
-        )}
+
+          <p className="branch-info-panel__schedule">
+            Mn – Fr <span>9:00 –17:00</span>
+            St – Sn <span>11:00 – 15:00</span>
+          </p>
+
+          <div className="branch-info-panel__actions">
+            <button>
+              <img
+                src="../../src/assets/icons/ManagerOrder/call_icon.svg"
+                alt="call"
+              />
+            </button>
+            <button>
+              <img
+                src="../../src/assets/icons/path-icon.svg"
+                alt="path"
+              />
+            </button>
+            <button onClick={handleAppointmentClick}>
+              <img
+                src="../../src/assets/icons/calendar-icon-yellow.svg"
+                alt="calendar"
+              />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
