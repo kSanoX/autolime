@@ -16,8 +16,12 @@ import { type RootState } from "@/store";
 import "../../styles/customer_styles/customer-calendar.scss";
 import Header from "../Header";
 import { removeAppointment } from "@/store/appointmentsSlice";
+import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
+import { customFetch } from "@/utils/customFetch";
+
 
 type Appointment = {
+    id: number;
     branchId: string;
     branchName: string;
     branchAddress: string;
@@ -32,6 +36,7 @@ export default function WashAppointmentsCalendar() {
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const dispatch = useDispatch();
+  useLoadAppointmentsFromBackend();
 
  
 
@@ -61,13 +66,35 @@ export default function WashAppointmentsCalendar() {
     setPopupVisible(true);
   };
   
-  const handleConfirmDelete = () => {
-    if (selectedAppointment) {
+  const handleConfirmDelete = async () => {
+    if (!selectedAppointment) return;
+  
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await customFetch(
+        `${import.meta.env.VITE_API_URL}/appointments/${selectedAppointment.id}/remove`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete appointment");
+      }
+  
       dispatch(removeAppointment({ date: selectedAppointment.date, time: selectedAppointment.time }));
+    } catch (err) {
+      console.error("Error deleting appointment:", err);
+    } finally {
+      setPopupVisible(false);
+      setSelectedAppointment(null);
     }
-    setPopupVisible(false);
-    setSelectedAppointment(null);
   };
+  
   
   const handleCancelDelete = () => {
     setPopupVisible(false);

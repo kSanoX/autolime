@@ -1,9 +1,11 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { useCreateAppointment } from "@/hooks/useCreateAppointment";
 import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
+import { useFetchBranches } from "@/hooks/useFetchBranches";
+import { useFetchCars } from "@/hooks/useFetchCars";
 
 import { SingleCalendarMobileSheet } from "@/components/Calendars/SingleCalendarDropDownSheet";
 import { TimePickerMobileSheet } from "@/components/ui/TimePickerMobileSheet";
@@ -19,9 +21,13 @@ export default function WashAppointment() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { cars } = useFetchCars();
+const firstCar = cars[0];
 
-  const branch = location.state?.branch;
-  const appointments = useSelector((state: RootState) => state.appointments.appointments);
+
+  const appointments = useSelector(
+    (state: RootState) => state.appointments.appointments
+  );
 
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -32,15 +38,31 @@ export default function WashAppointment() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createAppointment, loading, error, success } = useCreateAppointment();
   useLoadAppointmentsFromBackend();
-  
+  const branchId = location.state?.selectedBranchId;
+const { branches, loading: branchesLoading } = useFetchBranches();
+console.log("branchId from location.state:", branchId);
+console.log("branches:", branches);
+const branch = branches.find((b) => b.id === Number(branchId));
+console.log("Resolved branch:", branch);
+
+
 
   const isFormValid = selectedDate && pickedTime && selectedService && branch;
 
   useEffect(() => {
-    if (!branch) {
+    if (!branchId) {
+      console.warn("No branchId in location.state");
+      navigate("/branches");
+      return;
+    }
+  
+    if (!branchesLoading && !branch) {
+      console.warn("Branch not found after loading", { branchId, branches });
       navigate("/branches");
     }
-  }, [branch, navigate]);
+  }, [branchId, branch, branchesLoading, navigate]);
+  
+  
 
   const handleGoToMap = () => {
     if (branch) {
@@ -54,12 +76,19 @@ export default function WashAppointment() {
   };
 
   const handleSubmit = async () => {
-    if (!isFormValid || isSubmitting || !branch || !selectedService || !selectedDate) return;
-  
+    if (
+      !isFormValid ||
+      isSubmitting ||
+      !branch ||
+      !selectedService ||
+      !selectedDate
+    )
+      return;
+
     setIsSubmitting(true);
-  
+
     const formattedDate = selectedDate.toISOString().split("T")[0];
-  
+
     await createAppointment({
       car_wash_id: branch.id,
       date: formattedDate,
@@ -67,33 +96,35 @@ export default function WashAppointment() {
       branchName: branch.name,
       branchAddress: branch.address,
       type: selectedService.name,
+      service_id: selectedService.id,
+      car_id: firstCar.id,
     });
-  
+    
+
     setSelectedDate(undefined);
     setPickedTime("");
     setSelectedService(null);
     setIsSubmitting(false);
-  };  
-
+  };
   return (
     <div>
       <header>
-        <img src='src/assets/icons/left-arrow.svg' alt='' />
+        <img onClick={()=> navigate(-1)} src='src/assets/icons/left-arrow.svg' alt='' />
         Branches
         <span></span>
       </header>
 
-      
-
       <div className='wash-apointment-wrapper'>
-        <BranchInfoPanel
-          branch={branch}
-          extraActions={
-            <button onClick={handleGoToMap}>
-              <img src='../../src/assets/icons/geo-icon-yellow.svg' alt='geo' />
-            </button>
-          }
-        />
+      {branch && (
+  <BranchInfoPanel
+    branch={branch}
+    extraActions={
+      <button onClick={handleGoToMap}>
+        <img src='../../src/assets/icons/geo-icon-yellow.svg' alt='geo' />
+      </button>
+    }
+  />
+)}
 
         {Array.isArray(appointments) && appointments.length > 0 && (
           <div className='appointment-summary-card'>
@@ -141,8 +172,8 @@ export default function WashAppointment() {
 
         <div className='car-wash-apointment-display'>
           <h4>Сar wash appointment</h4>
-          {success && <div className="booking-status">Booking success</div>}
-          {error && <div className="booking-error">{error}</div>}
+          {success && <div className='booking-status'>Booking success</div>}
+          {!success && error && <div className='booking-error'>{error}</div>}
 
           <div className='form-group'>
             <label htmlFor='dob'>Date</label>
@@ -212,15 +243,13 @@ export default function WashAppointment() {
           applyTime={(time) => setPickedTime(time)}
         />
 
-        <TypeWashingDropDown
-          open={typeOpen}
-          setOpen={setTypeOpen}
-          selectedServiceName={selectedService?.name || ""}
-          applyType={(service: Service) => {
-            setSelectedService(service);
-            setTypeOpen(false);
-          }}
-        />
+<TypeWashingDropDown
+  open={typeOpen}
+  setOpen={setTypeOpen}
+  selectedService={selectedService}
+  applyType={(service) => setSelectedService(service)}
+  availableServices={branch?.services ?? []}
+/>
       </div>
     </div>
   );

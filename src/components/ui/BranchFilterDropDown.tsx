@@ -122,7 +122,7 @@ export function BranchFilterDropDown({
             </label>
             <label
               className={`checkbox-option ${
-                roundTheClockOnly ? "checked" : ""
+                onlyOpen ? "checked" : ""
               }`}
             >
               <input

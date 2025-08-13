@@ -38,7 +38,11 @@ export function BranchMap({
 
   const handleAppointmentClick = () => {
     if (selectedBranch) {
-      navigate("/wash-appointment", { state: { branch: selectedBranch } });
+      navigate("/wash-appointment", {
+        state: {
+          selectedBranchId: selectedBranch.id
+        },
+      });
     }
   };
 

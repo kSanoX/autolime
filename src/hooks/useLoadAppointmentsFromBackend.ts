@@ -17,11 +17,15 @@ export function useLoadAppointmentsFromBackend() {
       .then((res) => res.json())
       .then((data) => {
         const mapped = data.appointments.map((a: any) => ({
+          id: a.id,
           branchId: a.car_wash_id,
-          date: a.date, // "2025-08-14"
-          time: a.time.slice(0, 5), // "15:00"
-          type: "Standard", // 👈 хардкод
+          branchName: "Test Branch",
+          branchAddress: "123 Main St",
+          date: a.date,
+          time: a.time.slice(0, 5), 
+          type: a.services?.[0]?.name || "Unknown",
           approved: a.approved,
+          carId: a.car_id,
         }));
 
         dispatch(setAppointments(mapped));

@@ -1,12 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type Appointment = {
+  id: number;
   branchId: number;
   branchName: string;
   branchAddress: string;
   date: string;
   time: string;
   type: string;
+  carId: number;
 };
 
 type AppointmentsState = {

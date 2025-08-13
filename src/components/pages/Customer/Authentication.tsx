@@ -63,7 +63,7 @@ export default function Authentication() {
         navigate("/");
       } else {
         const serverError = data?.error || "Login failed";
-        console.warn("Server error:", serverError);
+        setError({ password: "incorrect" });
   
         if (serverError.includes("phone")) {
           setError({ phone: "not-found" });

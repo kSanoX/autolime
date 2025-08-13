@@ -11,7 +11,11 @@ export function BranchCard({ branch, onClick, isActive }: {
 
   const handleCalendarClick = (e) => {
     e.stopPropagation();
-    navigate("/wash-appointment", { state: { branch } });
+    navigate("/wash-appointment", {
+      state: {
+        selectedBranchId: branch.id,
+      },
+    });
   };
 
   const handleGoToMap = (e) => {

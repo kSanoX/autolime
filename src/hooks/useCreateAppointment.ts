@@ -10,6 +10,22 @@ type CreateAppointmentPayload = {
   branchName: string;
   branchAddress: string;
   type: string;
+  service_id: number;
+  car_id: number;
+};
+
+type CreateAppointmentResponse = {
+  success: boolean;
+  message: string;
+  appointment: {
+    id: number;
+    user_id: number;
+    car_wash_id: number;
+    car_id: number;
+    date: string;
+    time: string;
+    qr_code: string;
+  };
 };
 
 export function useCreateAppointment() {
@@ -36,6 +52,8 @@ export function useCreateAppointment() {
           car_wash_id: payload.car_wash_id,
           date: payload.date,
           time: payload.time,
+          service_id: payload.service_id,
+          car_id: payload.car_id,
         }),
       });
 
@@ -43,8 +61,11 @@ export function useCreateAppointment() {
         throw new Error("Failed to create appointment");
       }
 
+      const data: CreateAppointmentResponse = await response.json();
+
       dispatch(
         addAppointment({
+          id: data.appointment.id,
           branchId: payload.car_wash_id,
           branchName: payload.branchName,
           branchAddress: payload.branchAddress,
@@ -55,6 +76,7 @@ export function useCreateAppointment() {
       );
 
       setSuccess(true);
+      setError(null);
     } catch (err: any) {
       setError(err.message || "Unknown error");
     } finally {

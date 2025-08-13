@@ -15,6 +15,13 @@ export type Branch = {
     email: string;
     phone: string;
   };
+  services: {
+    id: number;
+    name: string;
+    pivot: {
+      car_wash_id: number;
+    };
+  }[];
 };
 
 export function useFetchBranches() {
@@ -43,7 +50,7 @@ export function useFetchBranches() {
             lat: parseFloat(latStr),
             lng: parseFloat(lngStr),
             phone: b.phone,
-            isOpen: true, //hardcoded
+            isOpen: true,
             openTime: "09:00",
             closeTime: "18:00",
             manager: {
@@ -53,8 +60,9 @@ export function useFetchBranches() {
               email: b.manager.email,
               phone: b.manager.phone,
             },
+            services: b.services ?? [],
           };
-        });
+        });        
 
         setBranches(parsed);
       })
