@@ -1,18 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "@/hooks/hooks";
+import { setCars } from "@/store/carSlice";
 import { type RootState } from "@/store";
 import { ActivePackageCard } from "@/components/ActivePackageCard";
 import { WashingPackageForm } from "@/components/WashingPackageForm";
 import type { PackageData } from "@/types";
+import { customFetch } from "@/utils/customFetch";
 
 export default function MyPackages() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const cars = useSelector((state: RootState) => state.car.cars);
   const [activePackages, setActivePackages] = useState<PackageData[]>([]);
-  const [editingPackage, setEditingPackage] = useState<PackageData | null>(
-    null
-  );
+  const [editingPackage, setEditingPackage] = useState<PackageData | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    customFetch(`${import.meta.env.VITE_API_URL}/mycars`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch cars");
+        const data = await res.json();
+        dispatch(setCars(data.cars));
+      })
+      .catch((err) => {
+        console.error("Car fetch error:", err);
+      });
+  }, []);
 
   const availableCars = cars.filter(
     (car) => !activePackages.some((pkg) => pkg.plate === car.plate)
@@ -86,9 +107,10 @@ export default function MyPackages() {
                 );
               }}
               onDelete={(plate) => {
-                setActivePackages((prev) => prev.filter((pkg) => pkg.plate !== plate));
+                setActivePackages((prev) =>
+                  prev.filter((pkg) => pkg.plate !== plate)
+                );
               }}
-              
               cars={cars}
             />
           ))

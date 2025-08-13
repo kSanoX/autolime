@@ -26,19 +26,22 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
   const shouldShowHeader = location.state?.fromRegistration === false;
   const [models, setModels] = useState<Model[]>([]);
   const { brands, loading } = useCarBrands();
+  const normalizedPlate = numberPlate.replace(/[\s-]/g, "");
+  
 
   const handlePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
     const part1 = value.slice(0, 2);
-    const part2 = value.slice(2, 6);
-    const part3 = value.slice(6, 8);
-
+    const part2 = value.slice(2, 5);
+    const part3 = value.slice(5, 7);
+  
     const formatted =
       part1 + (part2 ? " - " + part2 : "") + (part3 ? " - " + part3 : "");
-
+  
     setNumberPlate(formatted);
     setError("");
   };
+  
 
   const handleBrandSelect = async (selected: Brand) => {
     dispatch(setBrand(selected));
@@ -64,7 +67,7 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
     }
   };
 
-  const isValidPlate = /^([A-Z]{2}) - ([0-9]{4}) - ([A-Z]{2})$/.test(
+  const isValidPlate = /^([A-Z]{2}) - ([0-9]{3}) - ([A-Z]{2})$/.test(
     numberPlate
   );
   const isFormReady = brand && model && isValidPlate;
@@ -82,15 +85,19 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
     };
   
     const token = localStorage.getItem("access_token");
+    const payload = {
+      model_id: model!.id,
+      plate: normalizedPlate,
+    };
   
     try {
-      const res = await customFetch(`${import.meta.env.VITE_API_URL}/api/mycars/add`, {
+      const res = await customFetch(`${import.meta.env.VITE_API_URL}/mycars/add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCar),
+        body: JSON.stringify(payload),
       });
   
       if (!res.ok) {
@@ -160,7 +167,7 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
               <label>Number plate</label>
               <div className='input-with-prefix'>
                 <input
-                  placeholder='XX - XXXX - XX'
+                  placeholder='XX - XXX - XX'
                   className='custom-input'
                   value={numberPlate}
                   onChange={handlePlateChange}

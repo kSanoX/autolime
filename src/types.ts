@@ -1,10 +1,4 @@
-export type Car = {
-    brand: string;
-    model: string;
-    plate: string;
-  };  
-  
-  export type PackageData = {
+    export type PackageData = {
     plate: string;
     model: string;
     washes: number | "infinity";

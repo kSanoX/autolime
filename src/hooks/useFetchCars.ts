@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "@/hooks/hooks";
-import { setCars } from "@/store/carSlice";
 import { customFetch } from "@/utils/customFetch";
-import type { Car } from "@/store/carSlice";
+
+type EnrichedCar = {
+  plate: string;
+  id: number;
+  type: string;
+  model_id: number;
+};
 
 export function useFetchCars() {
-  const dispatch = useAppDispatch();
+  const [cars, setCars] = useState<EnrichedCar[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -14,7 +18,7 @@ export function useFetchCars() {
       const token = localStorage.getItem("access_token");
 
       try {
-        const res = await customFetch(`${import.meta.env.VITE_API_URL}/api/mycars`, {
+        const res = await customFetch(`${import.meta.env.VITE_API_URL}/mycars`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -24,7 +28,35 @@ export function useFetchCars() {
         if (!res.ok) throw new Error("Failed to fetch cars");
 
         const data = await res.json();
-        dispatch(setCars(data.cars));
+
+        const enriched = await Promise.all(
+          data.cars.map(async (car: any) => {
+            const brandRes = await customFetch(
+              `${import.meta.env.VITE_API_URL}/cars/brands/${car.model_id}/models`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            let type = "Unknown";
+            if (brandRes.ok) {
+              const brandData = await brandRes.json();
+              type = brandData.brand?.name || "Unknown";
+            }
+
+            return {
+              plate: car.plate,
+              type,
+              id: car.id,
+              model_id: car.model_id,
+            };
+          })
+        );
+
+        setCars(enriched);
       } catch (err) {
         setError("Error loading vehicles");
         console.error(err);
@@ -34,7 +66,7 @@ export function useFetchCars() {
     };
 
     fetchCars();
-  }, [dispatch]);
+  }, []);
 
-  return { loading, error };
+  return { cars, loading, error };
 }

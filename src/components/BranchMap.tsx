@@ -65,7 +65,7 @@ const handleAppointmentClick = () => {
           latitude: selectedBranch?.lat ?? branches[0].lat,
           zoom: 12,
         }}
-        mapStyle="https://api.maptiler.com/maps/streets/style.json?key=ypf8T2Jlul52QHyapxjT"
+        mapStyle={`https://api.maptiler.com/maps/streets/style.json?key=${import.meta.env.VITE_MAPTILER_KEY}`}
         style={{ width: "100%", height: "85vh" }}
         attributionControl={false}
         scrollZoom={{ around: "center" }}

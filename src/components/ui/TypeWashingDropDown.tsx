@@ -4,19 +4,27 @@ import { customFetch } from "@/utils/customFetch";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+export type Service = {
+  id: number;
+  name: string;
+};
+
+type Props = {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  selectedService: Service | null;
+  applyType: (service: Service) => void;
+};
+
 export function TypeWashingDropDown({
   open,
   setOpen,
-  selectedServiceName,
+  selectedService,
   applyType,
-}: {
-  open: boolean;
-  setOpen: (v: boolean) => void;
-  selectedServiceName: string;
-  applyType: (serviceName: string) => void;
-}) {
-  const [services, setServices] = useState<{ id: number; name: string }[]>([]);
+}: Props) {
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -25,6 +33,8 @@ export function TypeWashingDropDown({
     if (!token) return;
 
     setLoading(true);
+    setError("");
+
     customFetch(`${API_URL}/services-list`, {
       method: "GET",
       headers: {
@@ -35,9 +45,13 @@ export function TypeWashingDropDown({
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setServices(data.services);
+        if (data.success) {
+          setServices(data.services);
+        } else {
+          setError("Failed to load services");
+        }
       })
-      .catch((err) => console.error("Ошибка загрузки услуг:", err))
+      .catch(() => setError("Network error"))
       .finally(() => setLoading(false));
   }, [open]);
 
@@ -53,6 +67,7 @@ export function TypeWashingDropDown({
           zIndex: 999,
           paddingTop: "16px",
         }}
+        onClick={() => setOpen(false)}
       />
       <motion.div
         drag='y'
@@ -78,13 +93,7 @@ export function TypeWashingDropDown({
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "16px",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
             <div
               style={{
                 height: "6px",
@@ -110,26 +119,32 @@ export function TypeWashingDropDown({
 
           {loading ? (
             <p style={{ textAlign: "center", color: "#879AB1" }}>Loading...</p>
+          ) : error ? (
+            <p style={{ textAlign: "center", color: "red" }}>{error}</p>
           ) : (
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                justifyItems: "start",
-                alignItems: "center",
+                gap: "12px",
               }}
             >
               {services.map((service) => {
-                const isSelected = selectedServiceName === service.name;
+                const isSelected = selectedService?.id === service.id;
                 return (
                   <div
                     key={service.id}
-                    onClick={() => applyType(service.name)} // 👈 передаём название
+                    onClick={() => {
+                      applyType(service);
+                      setOpen(false);
+                    }}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       borderRadius: "16px",
                       cursor: "pointer",
+                      padding: "8px",
+                      backgroundColor: isSelected ? "#F7B23322" : "transparent",
                       transition: "all 0.3s ease",
                     }}
                   >
@@ -138,7 +153,6 @@ export function TypeWashingDropDown({
                         backgroundColor: "#183D69",
                         padding: "12px",
                         borderRadius: "16px",
-                        marginBottom: "8px",
                       }}
                     >
                       <img

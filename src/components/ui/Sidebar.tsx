@@ -40,7 +40,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              <Link to="my-packages">My packages</Link>
+              <Link to="/my-packages">My packages</Link>
             </li>
             <li>
               <svg

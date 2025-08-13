@@ -1,4 +1,12 @@
 import { motion } from "framer-motion";
+import type { CarPreview } from "@/store/carSlice";
+type Props = {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  applyCar: (car: CarPreview) => void;
+  selectedCar: CarPreview;
+  cars: CarPreview[];
+};
 
 export function CarDropDown({
   open,
@@ -6,14 +14,7 @@ export function CarDropDown({
   selectedCar,
   applyCar,
   cars,
-}: {
-  open: boolean;
-  setOpen: (v: boolean) => void;
-  selectedCar: { plate: string; brand: string; model: string };
-  applyCar: (car: { plate: string; brand: string; model: string }) => void;
-  cars: Car[];
-}) {
-
+}: Props) {
   if (!open) return null;
 
   return (
@@ -99,7 +100,8 @@ export function CarDropDown({
                 <div
                   key={car.plate}
                   onClick={() => {
-                    applyCar(car);
+                    applyCar({ plate: car.plate });
+                    console.log("Selected car:", car);
                     setOpen(false);
                   }}
                   style={{
@@ -113,8 +115,17 @@ export function CarDropDown({
                   }}
                 >
                   <span style={{ fontWeight: 500, whiteSpace: "nowrap" }}>
-                  <img style={{padding: "4px", backgroundColor: "#183D69", borderRadius: "8px", marginRight: "8px"}} src="../../src/assets/icons/hatchback_icon.svg" alt="" />
-                    {car.plate} ({car.brand} {car.model})
+                    <img
+                      style={{
+                        padding: "4px",
+                        backgroundColor: "#183D69",
+                        borderRadius: "8px",
+                        marginRight: "8px",
+                      }}
+                      src='../../src/assets/icons/hatchback_icon.svg'
+                      alt='Car icon'
+                    />
+                    {car.plate}
                   </span>
                 </div>
               );

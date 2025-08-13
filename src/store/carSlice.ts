@@ -6,6 +6,9 @@ export type Brand = {
 };
 export type Model = { id: number; name: string };
 export type Car = { brand: Brand; model: Model; plate: string };
+export type CarPreview = {
+  plate: string;
+};
 
 
 const initialState: {

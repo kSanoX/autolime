@@ -1,72 +1,129 @@
 import React, { useState, useEffect } from "react";
-import { CarBrandDropDown } from "@/components/ui/CarBrandDropDown";
-import { CarModelDropDown } from "@/components/ui/CarModelDropDown";
-import { useAppDispatch } from "../../../hooks/hooks";
-import { setBrand, setModel, updateCar, removeCar } from "@/store/carSlice";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { customFetch } from "@/utils/customFetch";
+import leftArrow from "@/assets/icons/left-arrow.svg";
+import closeIcon from "@/assets/icons/close-icon.svg";
+
 export default function EditCar() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const carToEdit = location.state?.car;
+  const { carid } = useParams();
 
-  const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
-  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
-  const [brand, setBrandLocal] = useState(carToEdit?.brand || "");
-  const [model, setModelLocal] = useState(carToEdit?.model || "");
-  const [numberPlate, setNumberPlate] = useState(carToEdit?.plate || "");
+  const [carToEdit, setCarToEdit] = useState(location.state?.car || null);
+  const [brand, setBrandLocal] = useState("");
+  const [model, setModelLocal] = useState("");
+  const [numberPlate, setNumberPlate] = useState("");
   const [error, setError] = useState("");
-  const [deletePopupShow,setDeletePopupShow] = useState(false);
+  const [deletePopupShow, setDeletePopupShow] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
+  const carId = carToEdit?.id || carid;
+
+  useEffect(() => {
+    if (!carToEdit && carId) {
+      const token = localStorage.getItem("access_token");
+      customFetch(`${import.meta.env.VITE_API_URL}/mycars/${carId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(async (res) => {
+          if (!res.ok) throw new Error("Failed to fetch car");
+          const data = await res.json();
+          setCarToEdit(data);
+          setBrandLocal(data.brand || "");
+          setModelLocal(data.model || "");
+          setNumberPlate(data.plate || "");
+        })
+        .catch((err) => {
+          console.error(err);
+          setError("Failed to load car data");
+        });
+    } else if (carToEdit) {
+      setBrandLocal(carToEdit.brand || "");
+      setModelLocal(carToEdit.model || "");
+      setNumberPlate(carToEdit.plate || "");
+    }
+  }, [carToEdit, carId]);
 
   const handlePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
     const part1 = value.slice(0, 2);
-    const part2 = value.slice(2, 6);
-    const part3 = value.slice(6, 8);
+    const part2 = value.slice(2, 5);
+    const part3 = value.slice(5, 7);
     const formatted =
       part1 + (part2 ? " - " + part2 : "") + (part3 ? " - " + part3 : "");
     setNumberPlate(formatted);
     setError("");
   };
 
-  const isValidPlate = /^([A-Z]{2}) - ([0-9]{4}) - ([A-Z]{2})$/.test(
-    numberPlate
-  );
+  const isValidPlate = /^([A-Z]{2}) - ([0-9]{3}) - ([A-Z]{2})$/.test(numberPlate);
   const isFormReady = brand && model && isValidPlate;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValidPlate) {
       setError("Invalid number plate format");
       return;
     }
 
-    dispatch(updateCar({ oldPlate: carToEdit.plate, brand, model, plate: numberPlate }));
-    navigate("/customer-my-data");
+    const token = localStorage.getItem("access_token");
+
+    try {
+      const response = await customFetch(
+        `${import.meta.env.VITE_API_URL}/mycars/${carId}/edit`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            brand,
+            model,
+            plate: numberPlate,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update car");
+
+      navigate("/customer-my-data");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save changes");
+    }
   };
-  const handleDelete = () => {
+
+  const handleDelete = async () => {
     setIsClosing(true);
-  
-    setTimeout(() => {
-      dispatch(removeCar(carToEdit.plate));
-      setDeletePopupShow(false);
+    const token = localStorage.getItem("access_token");
+
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/mycars/${carId}/remove`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });   
+
+      setTimeout(() => {
+        setDeletePopupShow(false);
+        setIsClosing(false);
+        navigate("/customer-my-data");
+      }, 300);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to delete car");
       setIsClosing(false);
-      navigate("/customer-my-data");  
-    }, 300);
+    }
   };
-  
 
   return (
     <div className='edit-car-screen'>
       <header>
-        <img
-          src='src/assets/icons/left-arrow.svg'
-          alt='Back'
-          onClick={() => navigate(-1)}
-        />
+        <img src={leftArrow} alt='Back' onClick={() => navigate(-1)} />
         <h3>Edit Vehicle</h3>
-        <img src='src/assets/icons/close-icon.svg' alt='Close' />
+        <img src={closeIcon} alt='Close' />
       </header>
 
       <div className='edit-car-content'>
@@ -74,27 +131,17 @@ export default function EditCar() {
 
         <div className='input-block'>
           <label>Car brand</label>
-          <div
-            className='input-select'
-            onClick={() => setBrandDropdownOpen(true)}
-          >
-            <span className={brand ? "active" : ""}>
-              {brand || "Choose your car brand"}
-            </span>
-            <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+          <div className='input-select disabled'>
+            <span className='active'>{brand || "Unknown brand"}</span>
+            <img src={leftArrow} alt='Locked' />
           </div>
         </div>
 
         <div className='input-block'>
           <label>Car model</label>
-          <div
-            className={`input-select ${!brand ? "disabled" : ""}`}
-            onClick={() => brand && setModelDropdownOpen(true)}
-          >
-            <span className={model ? "active" : ""}>
-              {model || "Choose your car model"}
-            </span>
-            <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+          <div className='input-select disabled'>
+            <span className='active'>{model || "Unknown model"}</span>
+            <img src={leftArrow} alt='Locked' />
           </div>
         </div>
 
@@ -102,7 +149,7 @@ export default function EditCar() {
           <label>Number plate</label>
           <div className='input-with-prefix'>
             <input
-              placeholder='XX - XXXX - XX'
+              placeholder='XX - XXX - XX'
               className='custom-input'
               value={numberPlate}
               onChange={handlePlateChange}
@@ -119,38 +166,27 @@ export default function EditCar() {
         >
           Save Changes
         </button>
-        <button className='vehicle-delete-btn' onClick={()=> setDeletePopupShow(true)}>Delete vehicle</button>
+        <button
+          className='vehicle-delete-btn'
+          onClick={() => setDeletePopupShow(true)}
+        >
+          Delete vehicle
+        </button>
       </div>
 
       {deletePopupShow && (
-  <>
-    <div
-      className={`delete-vehicle-overlay ${isClosing ? "fade-out" : ""}`}
-    ></div>
-    <div
-      className={`delete-vehicle-popup ${isClosing ? "fade-out" : ""}`}
-    >
-      <h4>Vehicle deleting</h4>
-      <p>Do you really want to remove this vehicle?</p>
-      <div className="delete-vehicle-popup-btns">
-        <button onClick={() => setDeletePopupShow(false)}>Cancel</button>
-        <button onClick={handleDelete}>Delete</button>
-      </div>
-    </div>
-  </>
-)}
-
-      <CarBrandDropDown
-        open={brandDropdownOpen}
-        setOpen={setBrandDropdownOpen}
-        applyBrand={(b) => setBrandLocal(b)}
-      />
-      <CarModelDropDown
-        open={modelDropdownOpen}
-        setOpen={setModelDropdownOpen}
-        selectedBrand={brand}
-        applyModel={(m) => setModelLocal(m)}
-      />
+        <>
+          <div className={`delete-vehicle-overlay ${isClosing ? "fade-out" : ""}`} />
+          <div className={`delete-vehicle-popup ${isClosing ? "fade-out" : ""}`}>
+            <h4>Vehicle deleting</h4>
+            <p>Do you really want to remove this vehicle?</p>
+            <div className='delete-vehicle-popup-btns'>
+              <button onClick={() => setDeletePopupShow(false)}>Cancel</button>
+              <button onClick={handleDelete}>Delete</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

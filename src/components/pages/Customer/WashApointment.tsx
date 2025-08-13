@@ -9,6 +9,11 @@ import { TimePickerMobileSheet } from "@/components/ui/TimePickerMobileSheet";
 import { TypeWashingDropDown } from "@/components/ui/TypeWashingDropDown";
 import { BranchInfoPanel } from "./BranchInfoPanel";
 
+type Service = {
+  id: number;
+  name: string;
+};
+
 export default function WashAppointment() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,12 +27,11 @@ export default function WashAppointment() {
   const [pickedTime, setPickedTime] = useState("");
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<"washing" | "polishing" | "dry-cleaning" | "complex" | "">("");
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
-  const [selectedServiceName, setSelectedServiceName] = useState("");
 
-  const isFormValid = selectedDate && pickedTime && selectedType && branch;
+  const isFormValid = selectedDate && pickedTime && selectedService && branch;
 
   useEffect(() => {
     if (!branch) {
@@ -47,7 +51,7 @@ export default function WashAppointment() {
   };
 
   const handleSubmit = () => {
-    if (!isFormValid || isSubmitting || !branch) return;
+    if (!isFormValid || isSubmitting || !branch || !selectedService) return;
 
     setIsSubmitting(true);
 
@@ -59,13 +63,13 @@ export default function WashAppointment() {
           branchAddress: branch.address,
           date: selectedDate?.toISOString() ?? "",
           time: pickedTime,
-          type: selectedType,
+          type: selectedService.name,
         })
       );
 
       setSelectedDate(undefined);
       setPickedTime("");
-      setSelectedType("");
+      setSelectedService(null);
       setIsSubmitting(false);
       setIsBookingSuccess(true);
     }, 2000);
@@ -89,7 +93,7 @@ export default function WashAppointment() {
           }
         />
 
-        {appointments.length > 0 && (
+        {Array.isArray(appointments) && appointments.length > 0 && (
           <div className='appointment-summary-card'>
             <h3>My appointments</h3>
             {appointments.map((appointment, index) => (
@@ -175,7 +179,7 @@ export default function WashAppointment() {
           <div className='input-block'>
             <label>Service</label>
             <div className='input-select' onClick={() => setTypeOpen(true)}>
-              {selectedServiceName || "-"}
+              {selectedService?.name || "-"}
               <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
             </div>
           </div>
@@ -210,10 +214,9 @@ export default function WashAppointment() {
         <TypeWashingDropDown
           open={typeOpen}
           setOpen={setTypeOpen}
-          selectedServiceName={selectedServiceName}
-          applyType={(name) => {
-            setSelectedType(name); // если ты хочешь отправлять name
-            setSelectedServiceName(name); // ✅ записываем в input
+          selectedServiceName={selectedService?.name || ""}
+          applyType={(service: Service) => {
+            setSelectedService(service);
             setTypeOpen(false);
           }}
         />

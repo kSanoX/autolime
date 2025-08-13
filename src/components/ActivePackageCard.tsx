@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Switch } from "./ui/switch";
 import { WashingPackageForm } from "./WashingPackageForm";
 import { motion, AnimatePresence } from "framer-motion";
-import type { PackageData, Car } from "@/types";
+import type { PackageData} from "@/types";
+import type { Car } from "@/store/carSlice";
 
 type Props = {
   plate: string;

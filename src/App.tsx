@@ -54,7 +54,7 @@ function AppRoutes() {
           <Route path="/change-phone" element={<PhoneNumberChanging />} />
           <Route path="/change-email" element={<EmailChanging />} />
           <Route path="/add-car" element={<AddCar showHeader={true}/>} />
-          <Route path="/edit-car" element={<EditCar/>} />
+          <Route path="/edit-car/:carid" element={<EditCar />} />
           <Route path="/branches" element={<BranchScreen/>} />
           <Route path="/wash-appointment" element={<WashAppointment/>} />
           <Route path="/my-reviews" element={<MyReviews/>} />
