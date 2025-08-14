@@ -1,11 +1,11 @@
-import Header from "@/components/Header";
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Messages() {
+  const navigate = useNavigate();
   return (
     <div>
       <header>
-        <img src='../../../src/assets/icons/left-arrow.svg' alt='' />
+        <img onClick={()=> navigate(-1)} src='../../../src/assets/icons/left-arrow.svg' alt='' />
         Messages
         <span></span>
       </header>

@@ -4,14 +4,15 @@ import { Switch } from "./ui/switch";
 import { InfinityIcon } from "./ui/InfinityIcon";
 import type { PackageData } from "@/types";
 import { CarDropDown } from "./ui/CarDropDown";
-import type { Car, CarPreview } from "@/store/carSlice";
+import type { Car } from "@/store/carSlice";
 import { useMemo } from "react";
 import { useActivatePackage } from "@/hooks/useActivatePackage";
+import { useFetchPackagePricing } from "@/hooks/useFetchPackagePricing";
 
 type Props = {
   mode: "create" | "edit";
   isVisible: boolean;
-  cars: Car[]; // полный тип
+  cars: Car[]; 
   initialPackage?: PackageData;
   onSubmit: (pkg: PackageData) => void;
   onClose: () => void;
@@ -29,21 +30,22 @@ export function WashingPackageForm({
   compact,
   activePackages,
 }: Props) {
-  const [selectedCar, setSelectedCar] = useState<CarPreview | null>(null);
   const [selectedWashCount, setSelectedWashCount] = useState<number | "infinity" | null>(null);
   const [selectedTerm, setSelectedTerm] = useState<number | null>(null);
   const [autoRenewal, setAutoRenewal] = useState(true);
   const [carDropOpen, setCarDropOpen] = useState(false);
   const { activatePackage, loading, error, success } = useActivatePackage();
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const carId = selectedCar?.id ?? null;
+  const { packages: pricingPackages } = useFetchPackagePricing(carId);  
+  const availableWashes = pricingPackages.map(pkg => pkg.washes); // [24, ...]
+const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? []; // [1, 3, 6, 12]
 
-
-  const availableCars: CarPreview[] = useMemo(() => {
+  const availableCars: Car[] = useMemo(() => {
     return mode === "create"
-      ? cars
-          .filter((car) => !activePackages.some((pkg) => pkg.plate === car.plate))
-          .map((car) => ({ plate: car.plate }))
-      : cars.map((car) => ({ plate: car.plate }));
-  }, [mode, cars, activePackages]);
+      ? cars.filter((car) => !activePackages.some((pkg) => pkg.plate === car.plate))
+      : cars;
+  }, [mode, cars, activePackages]); 
   
   useEffect(() => {
     if (mode === "edit" && initialPackage && isVisible) {
@@ -57,17 +59,54 @@ export function WashingPackageForm({
     }
   }, [mode, initialPackage, availableCars, isVisible]);
 
+
+  const price = useMemo(() => {
+    if (!selectedTerm) return null;
+  
+    const pkg = pricingPackages[0];
+    const priceObj = pkg?.prices.find(p => p.month === selectedTerm);
+  
+    return priceObj?.price ?? null;
+  }, [selectedTerm, pricingPackages]);
+  
+
+  
   const handleSubmit = async () => {
     if (!selectedCar || !selectedWashCount || !selectedTerm) return;
   
+    const packageId =
+      mode === "edit"
+        ? initialPackage?.id
+        : pricingPackages[0]?.id;
+  
+    if (!packageId) return;
+  
+    const payload = {
+      car_id: selectedCar.id,
+      number_of_washes: selectedWashCount,
+      sub_term: selectedTerm,
+      renewal: autoRenewal,
+    };
+
+    const response = await activatePackage(payload);
+
+    if (response?.success && response.url) {
+      window.location.href = response.url; // ✅ редирект на оплату
+    } else {
+      console.error("Failed to activate or missing payment URL");
+    }
+  
     await activatePackage({
-      plate: selectedCar.plate,
+      car_id: selectedCar.id,
       number_of_washes: selectedWashCount,
       sub_term: selectedTerm,
       renewal: autoRenewal,
     });
+    
   
     onSubmit({
+      id: packageId,
+      car_id: payload.car_id,
       plate: selectedCar.plate,
       washes: selectedWashCount,
       model: "",
@@ -77,7 +116,9 @@ export function WashingPackageForm({
     });
   
     onClose();
-  };  
+  };
+  
+  
 
   return (
     <AnimatePresence>
@@ -99,9 +140,7 @@ export function WashingPackageForm({
             <div className='you-vehicle'>
               <span>Your vehicle</span>
               {availableCars.length === 1 ? (
-                <p className='vehicle-number-plate'>
-                  {availableCars[0].plate}
-                </p>
+                <p className='vehicle-number-plate'>{availableCars[0].plate}</p>
               ) : (
                 <div
                   onClick={() => setCarDropOpen(true)}
@@ -123,23 +162,25 @@ export function WashingPackageForm({
           <div className='number-washers-select'>
             <p>Number of washes</p>
             <div className='washers-select-options'>
-              {[12, 24, "infinity" as const].map((count) => (
+              {availableWashes.map((count) => (
                 <div
                   key={count}
                   className={selectedWashCount === count ? "active" : ""}
                   onClick={() => setSelectedWashCount(count)}
                 >
-                  {count === "infinity" ? (
-                    <InfinityIcon
-                      color={
-                        selectedWashCount === "infinity" ? "#F7B233" : "#183D69"
-                      }
-                    />
-                  ) : (
-                    count
-                  )}
+                  {count}
                 </div>
               ))}
+              <div
+                className={selectedWashCount === "infinity" ? "active" : ""}
+                onClick={() => setSelectedWashCount("infinity")}
+              >
+                <InfinityIcon
+                  color={
+                    selectedWashCount === "infinity" ? "#F7B233" : "#183D69"
+                  }
+                />
+              </div>
             </div>
           </div>
 
@@ -147,7 +188,7 @@ export function WashingPackageForm({
           <div className='number-washers-select'>
             <p>Subscription term</p>
             <div className='pheriod-select-options'>
-              {[1, 3, 6, 12].map((term) => (
+              {availableTerms.map((term) => (
                 <div
                   key={term}
                   className={selectedTerm === term ? "active" : ""}
@@ -178,7 +219,7 @@ export function WashingPackageForm({
           {/* Price */}
           <div className='sub-price-block'>
             <p>Subscription price</p>
-            <p className='price'>₾ 700</p>
+            <p className='price'>{price !== null ? `₾ ${price}` : "—"}</p>
           </div>
 
           {/* Submit */}

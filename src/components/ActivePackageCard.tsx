@@ -4,8 +4,10 @@ import { WashingPackageForm } from "./WashingPackageForm";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PackageData} from "@/types";
 import type { Car } from "@/store/carSlice";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
+  id: number;
   plate: string;
   model: string;
   washes: number | "infinity";
@@ -32,9 +34,16 @@ export function ActivePackageCard({
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const navigate = useNavigate();
 
   const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + period);
+  const today = new Date();
+const daysLeft = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+const isExpired = endDate < today;
+const isExpiringSoon = daysLeft <= 7 && !isExpired;
+
 
   const initialPackage: PackageData = {
     plate,
@@ -49,7 +58,9 @@ export function ActivePackageCard({
     <div className='active-package-card'>
       <div className='package-header'>
         <h2>Active package</h2>
-        <span>until {endDate.toLocaleDateString("en-GB")}</span>
+        <span className={`package-status ${isExpired ? "expired" : isExpiringSoon ? "warning" : ""}`}>
+  {isExpired ? "Expired" : `until ${endDate.toLocaleDateString("en-GB")}`}
+</span>
       </div>
 
       <div className='vehicle-info'>
@@ -93,7 +104,7 @@ export function ActivePackageCard({
         <button onClick={() => setIsEditing((prev) => !prev)}>
           <img src='../../../src/assets/icons/reload-icon.svg' alt='reload' />
         </button>
-        <button>
+        <button onClick={()=> navigate("/branches")}>
           <img
             src='../../../src/assets/icons/calendar-icon-yellow.svg'
             alt='calendar'

@@ -1,4 +1,3 @@
-// hooks/useUser.ts
 import { useEffect, useState } from "react";
 import { customFetch } from "@/utils/customFetch";
 
@@ -45,18 +44,22 @@ export function useUser() {
       return;
     }
 
-    customFetch(`${API_URL}/me`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
+    const fetchUser = async () => {
+      try {
+        const res = await customFetch(`${API_URL}/me`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!res.ok) throw new Error("Failed to fetch /me");
-        return res.json();
-      })
-      .then((data: { success: boolean; user: RawUser }) => {
+
+        const data: { success: boolean; user: RawUser } = await res.json();
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
         const parsed: User = {
           id: data.user.id,
           firstName: data.user.name || "",
@@ -70,10 +73,16 @@ export function useUser() {
           createdAt: new Date(data.user.created_at),
           updatedAt: new Date(data.user.updated_at),
         };
+
         setUser(parsed);
-      })      
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
   return { user, loading, error };

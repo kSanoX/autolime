@@ -100,8 +100,9 @@ export function CarDropDown({
                 <div
                   key={car.plate}
                   onClick={() => {
-                    applyCar({ plate: car.plate });
-                    console.log("Selected car:", car);
+                    if (car.id !== selectedCar?.id) {
+                      applyCar(car);
+                    }
                     setOpen(false);
                   }}
                   style={{

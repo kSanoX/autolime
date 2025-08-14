@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { customFetch } from "@/utils/customFetch";
 
 type EnrichedCar = {
-  plate: string;
   id: number;
+  plate: string;
   type: string;
-  model_id: number;
+  model: string;
+  brand: string;
 };
 
 export function useFetchCars() {
@@ -22,7 +23,7 @@ export function useFetchCars() {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            "Accept": 'application/json',
+            Accept: "application/json",
           },
         });
 
@@ -30,32 +31,13 @@ export function useFetchCars() {
 
         const data = await res.json();
 
-        const enriched = await Promise.all(
-          data.cars.map(async (car: any) => {
-            const brandRes = await customFetch(
-              `${import.meta.env.VITE_API_URL}/cars/brands/${car.model_id}/models`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-
-            let type = "Unknown";
-            if (brandRes.ok) {
-              const brandData = await brandRes.json();
-              type = brandData.brand?.name || "Unknown";
-            }
-
-            return {
-              plate: car.plate,
-              type,
-              id: car.id,
-              model_id: car.model_id,
-            };
-          })
-        );
+        const enriched = data.cars.map((car: any) => ({
+          id: car.id,
+          plate: car.plate,
+          type: car.model?.type ?? "Unknown",
+          model: car.model?.name ?? "Unknown",
+          brand: car.model?.brand?.name ?? "Unknown",
+        }));
 
         setCars(enriched);
       } catch (err) {
