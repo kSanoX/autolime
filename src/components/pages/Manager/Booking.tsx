@@ -55,7 +55,7 @@ export default function Booking() {
 
   return (
     <div>
-      <header>Booking</header>
+      <header style={{textAlign: "center", justifyContent: "center"}}>Booking</header>
 
       <div className="reservation-staus-bar">
         <ul>

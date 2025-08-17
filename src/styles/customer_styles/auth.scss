@@ -89,6 +89,12 @@
       &:hover {
         background: #245080;
       }
+      button {
+        color: $yellowMain;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+      }
     }
   
   .input-with-icon {

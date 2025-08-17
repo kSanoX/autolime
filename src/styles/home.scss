@@ -119,24 +119,24 @@ main {
     @include font-roboto-regular-blue;
 }
 
-.home-slider {
+.home-slider-container {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    .home-slider {
+        width: 8px;
+        height: 8px;
+        background-color: $divider;
+        border-radius: 12px;
+    }
+    
   
     .active {
       border-radius: 12px;
       background-color: $yellowMain;
       width: 16px;
       height: 8px;
-    }
-  
-    div:last-child {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: $divider;
     }
 }
 

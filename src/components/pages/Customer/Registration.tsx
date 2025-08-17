@@ -151,9 +151,7 @@ export default function Registration() {
             </div>
           </div>
 
-          <div className="sign-in">
-            <button onClick={handleFinishRegistration}>Finish</button>
-          </div>
+            <button className="sign-in" onClick={handleFinishRegistration}>Finish</button>
         </div>
       </div>
     );
@@ -190,14 +188,13 @@ export default function Registration() {
             value={phone}
             onChange={handlePhoneChange}
             maxLength={13}
-            placeholder="+380XXXXXXXXX"
+            placeholder="+995 706 500 50 50"
             className="custom-input"
           />
         </div>
 
-        <div className="sign-in">
-          <button onClick={handleRegister}>Sign Up</button>
-        </div>
+        
+          <button className="sign-in" onClick={handleRegister}>Sign Up</button>
       </div>
 
       <div className="sign-up-navigate">

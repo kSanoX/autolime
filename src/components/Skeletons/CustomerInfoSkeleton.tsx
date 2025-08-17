@@ -5,8 +5,8 @@ export default function CustomerInfoSkeleton() {
     <ContentLoader
       speed={2}
       width={400}
-      height={160}
-      viewBox="0 0 400 160"
+      height={220}
+      viewBox="0 0 400 220"
       backgroundColor="#d9d9d9"
       foregroundColor="#ededed"
     >
@@ -14,14 +14,14 @@ export default function CustomerInfoSkeleton() {
       <rect x="0" y="10" rx="4" ry="4" width="180" height="24" />
 
       {/* Телефон */}
-      <rect x="0" y="50" rx="4" ry="4" width="100" height="16" /> {/* label */}
-      <rect x="0" y="70" rx="4" ry="4" width="200" height="20" /> {/* phone */}
-      <rect x="220" y="70" rx="4" ry="4" width="24" height="24" /> {/* edit icon */}
+      <rect x="0" y="50" rx="4" ry="4" width="200" height="20" />
+      <rect x="0" y="80" rx="4" ry="4" width="250" height="40" />
+      <rect x="220" y="80" rx="4" ry="4" width="24" height="25" />
 
-      {/* Email */}
-      <rect x="0" y="110" rx="4" ry="4" width="100" height="16" /> {/* label */}
-      <rect x="0" y="130" rx="4" ry="4" width="250" height="20" /> {/* email */}
-      <rect x="270" y="130" rx="4" ry="4" width="24" height="24" /> {/* edit icon */}
+      {/* Email — с отступом */}
+      <rect x="0" y="150" rx="4" ry="4" width="200" height="20" />
+      <rect x="0" y="180" rx="4" ry="4" width="320" height="40" />
+      <rect x="270" y="180" rx="4" ry="4" width="24" height="24" />
     </ContentLoader>
   );
 }

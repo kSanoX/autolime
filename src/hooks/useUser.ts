@@ -57,9 +57,7 @@ export function useUser() {
         if (!res.ok) throw new Error("Failed to fetch /me");
 
         const data: { success: boolean; user: RawUser } = await res.json();
-
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-
+        
         const parsed: User = {
           id: data.user.id,
           firstName: data.user.name || "",

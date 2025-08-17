@@ -8,6 +8,8 @@ import type { RootState } from "@/store";
 import { BranchFilterDropDown } from "./ui/BranchFilterDropDown";
 import { fetchFilteredBranches } from "@/hooks/fetchFilteredBranches";
 import Header from "./Header";
+import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
+
 
 export default function BranchScreen() {
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -30,6 +32,7 @@ export default function BranchScreen() {
   );
 
   const activeBranchIds = appointments.map((a) => a.branchId);
+  useLoadAppointmentsFromBackend();
 
   useEffect(() => {
     fetchFilteredBranches({
