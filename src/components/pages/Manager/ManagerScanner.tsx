@@ -132,31 +132,66 @@ export default function ManagerScanner(): React.JSX.Element {
 
   const scanAgain = () => {
     setScannedCode(null);
+    setShowResultCard(false);
+    setApprovalSuccess(false);
+    setIsApproved(false);
+    setApprovedOffset(0);
   
-    if (scanner && isScannerRunning) {
-      scanner
-        .stop()
-        .then(() => {
-          setIsScannerRunning(false);
-          scanner.clear().then(() => {
-            if (qrRef.current) qrRef.current.innerHTML = "";
-            setScanner(null);
-            setShowScannerUI(true);
-          });
-        })
-        .catch((e) => {
-          console.warn("Stop error (ignored):", e);
-          setIsScannerRunning(false);
-          if (qrRef.current) qrRef.current.innerHTML = "";
-          setScanner(null);
-          setShowScannerUI(true);
-        });
-    } else {
-      if (qrRef.current) qrRef.current.innerHTML = "";
-      setScanner(null);
-      setShowScannerUI(true);
-    }
+    if (qrRef.current) qrRef.current.innerHTML = "";
+  
+    const html5QrCode = new Html5Qrcode("qr-reader");
+    setScanner(html5QrCode);
+  
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        if (devices.length === 0) throw new Error("No cameras found");
+  
+        const backCamera = devices.find((d) =>
+          /back|rear|environment/i.test(d.label)
+        );
+        const cameraId = backCamera?.id || devices[0].id;
+  
+        html5QrCode
+          .start(
+            cameraId,
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+              aspectRatio: 1.0,
+              disableFlip: false,
+            },
+            (decodedText: string) => {
+              console.log("📸 QR scanned:", decodedText);
+              setScannedCode(decodedText);
+  
+              html5QrCode
+                .stop()
+                .then(() => {
+                  html5QrCode.clear().then(() => {
+                    if (qrRef.current) qrRef.current.innerHTML = "";
+                    setIsScannerRunning(false);
+                    setScanner(null);
+                    setShowScannerUI(false);
+                  });
+                })
+                .catch((err) => {
+                  console.warn("Stop error after scan:", err);
+                  setIsScannerRunning(false);
+                  setScanner(null);
+                  setShowScannerUI(false);
+                });
+            },
+            () => {}
+          )
+          .then(() => {
+            setIsCameraReady(true);
+            setIsScannerRunning(true);
+          })
+          .catch((err) => console.error("Start error:", err));
+      })
+      .catch((err) => console.error("Camera fetch error:", err));
   };
+  
   
 
   const pkgMeta = result?.package;

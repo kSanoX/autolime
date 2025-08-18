@@ -1,61 +1,63 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import ManagerOrder from '../../ManagerOrder'
-import DeleteReasonPopup from '../../DeleteReasonPopup'
-import { type RootState } from '../../../store'
-import { deleteOrder } from '../../../store/ordersSlice'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DeleteReasonPopup from "../../DeleteReasonPopup";
+import ManagerOrdersList from "./ManagerOrdersList";
+import { updateAppointmentStatus } from "@/lib/utils";
 
-type Status = 'Confirm' | 'Rescheduled' | 'Expired' | 'Deleted' | 'New'
-type Filter = 'New' | 'Confirmed' | 'Sheduled' | 'All'
+type Filter = "New" | "Confirmed" | "Sheduled" | "All";
 
-const filters: Filter[] = ['New', 'Confirmed', 'Sheduled', 'All']
+const filters: Filter[] = ["New", "Confirmed", "Sheduled", "All"];
 
 export default function Booking() {
-  const orders = useSelector((state: RootState) => state.orders)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const [activeStatus, setActiveStatus] = useState<Filter>("New");
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [deleteReason, setDeleteReason] = useState("");
+  const navigate = useNavigate();
 
-  const [activeStatus, setActiveStatus] = useState<Filter>('New')
-  const [popupVisible, setPopupVisible] = useState(false)
-  const [selectedOrderIndex, setSelectedOrderIndex] = useState<number | null>(null)
-  const [deleteReason, setDeleteReason] = useState('')
+  const handleDelete = (id: number) => {
+    setSelectedOrderId(id);
+    setPopupVisible(true);
+  };
 
-  const filteredOrders = orders.filter((order) => {
-    if (activeStatus === 'All') return true
-    if (activeStatus === 'Sheduled') return order.status === 'Rescheduled'
-    if (activeStatus === 'Confirmed') return order.status === 'Confirm'
-    return order.status === activeStatus
-  })
-
-  const handleDelete = (index: number) => {
-    setSelectedOrderIndex(index)
-    setPopupVisible(true)
-  }
-
-  const confirmDelete = () => {
-    if (selectedOrderIndex !== null) {
-      const orderId = filteredOrders[selectedOrderIndex].id
-      dispatch(deleteOrder(orderId))
+  const confirmDelete = async () => {
+    if (selectedOrderId !== null) {
+      try {
+        await updateAppointmentStatus(selectedOrderId, 3);
+        console.log("Deleted order:", selectedOrderId);
+      } catch (err) {
+        console.error("Failed to delete:", err);
+      }
     }
-    setDeleteReason('')
-    setPopupVisible(false)
-    setSelectedOrderIndex(null)
-  }
+    setDeleteReason("");
+    setPopupVisible(false);
+    setSelectedOrderId(null);
+  };  
 
-  const handleReschedule = (index: number) => {
-    const order = filteredOrders[index]
-    navigate(`/reschedule/${order.id}`, {
+  const handleReschedule = (id: number, date: string) => {
+    navigate(`/reschedule/${id}`, {
       state: {
-        selectedDate: order.date,
-        orderId: order.id,
+        selectedDate: date,
+        orderId: id,
       },
-    })
-  }
+    });
+  };
+
+  const handleConfirm = async (id: number) => {
+    try {
+      await updateAppointmentStatus(id, 1); 
+      console.log("Confirmed order:", id);
+    } catch (err) {
+      console.error("Failed to confirm:", err);
+    }
+  };
+  
 
   return (
     <div>
-      <header style={{textAlign: "center", justifyContent: "center"}}>Booking</header>
+      <header style={{ textAlign: "center", justifyContent: "center" }}>
+        Booking
+      </header>
 
       <div className="reservation-staus-bar">
         <ul>
@@ -64,7 +66,7 @@ export default function Booking() {
               key={label}
               onClick={() => setActiveStatus(label)}
               className={`status-bar-item ${
-                activeStatus === label ? 'active' : ''
+                activeStatus === label ? "active" : ""
               }`}
             >
               {label}
@@ -73,23 +75,12 @@ export default function Booking() {
         </ul>
       </div>
 
-      {filteredOrders.length === 0 ? (
-        <div className="empty-message">
-          You haven't left any new orders
-        </div>
-      ) : (
-        filteredOrders.map((order, idx) => (
-          <ManagerOrder
-            key={order.id}
-            status={order.status}
-            date={order.date}
-            type="Complex washing"
-            customer={{ name: 'Ivy Levan', phone: '+995 500 777 777' }}
-            onDelete={() => handleDelete(idx)}
-            onReschedule={() => handleReschedule(idx)}
-          />
-        ))
-      )}
+      <ManagerOrdersList
+        activeStatus={activeStatus}
+        onDelete={handleDelete}
+        onReschedule={handleReschedule}
+        onConfirm={handleConfirm}
+      />
 
       <DeleteReasonPopup
         visible={popupVisible}
@@ -99,5 +90,5 @@ export default function Booking() {
         onConfirm={confirmDelete}
       />
     </div>
-  )
+  );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import OTPVerification from "../../OTPVerification";
 import { Link, useNavigate } from "react-router-dom";
+import { customFetch } from "@/utils/customFetch";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Registration() {
@@ -15,19 +16,15 @@ export default function Registration() {
   const navigate = useNavigate();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let raw = e.target.value;
-    raw = raw.replace(/[^\d+]/g, "");
-    if (raw.includes("+")) {
-      raw = "+" + raw.replace(/\+/g, "").slice(0, 12);
-    }
+    let raw = e.target.value.replace(/[^\d]/g, "").slice(0, 9);
     setPhone(raw);
     if (error.phone) setError((prev) => ({ ...prev, phone: undefined }));
-  };
+  };  
 
   const handleRegister = async () => {
-    const cleanedPhone = phone.replace(/[^\d]/g, ""); // только цифры
+    const fullPhone = "995" + phone;
   
-    if (!cleanedPhone) {
+    if (!phone) {
       setError({ phone: "empty" });
       return;
     }
@@ -39,7 +36,7 @@ export default function Registration() {
           "Content-Type": "application/json",
           "Accept": "application/json",
         },
-        body: JSON.stringify({ phone: cleanedPhone }),
+        body: JSON.stringify({ phone: fullPhone }),
       });
   
       const data = await res.json();
@@ -67,11 +64,12 @@ export default function Registration() {
     }
   
     try {
-      const res = await fetch(`${API_URL}/register/set_password`, {
+      const res = await customFetch(`${API_URL}/register/set_password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify({
           password,
@@ -79,10 +77,9 @@ export default function Registration() {
         }),
       });
   
-      const data = await res.json();
-  
+      const data = await res.json();  
       if (data.success) {
-        localStorage.setItem("access_token", data.access_token);
+        // window.location.href = "/add-car";
         navigate("/add-car");
       } else {
         setError({ password: "server-error" });
@@ -92,7 +89,6 @@ export default function Registration() {
       setError({ password: "network" });
     }
   };
-  
   
 
   if (stage === "verify" && tempCode) {
@@ -158,62 +154,77 @@ export default function Registration() {
   }
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-logo-block">
-        <img src="../../../src/assets/logo.svg" alt="LOGO" />
+    <div className='auth-wrapper'>
+      <div className='auth-logo-block'>
+        <img src='../../../src/assets/logo.svg' alt='LOGO' />
       </div>
 
-      <div className="auth-greetings">
+      <div className='auth-greetings'>
         <h1>Create account</h1>
-        <p>Please enter your phone number <br /> to register</p>
+        <p>
+          Please enter your phone number <br /> to register
+        </p>
       </div>
 
       {error.phone === "duplicate" && (
-        <div className="phone-number-doesnt-exist-error">
+        <div className='phone-number-doesnt-exist-error'>
           <p>Phone number already exists</p>
         </div>
       )}
       {error.phone === "invalid-format" && (
-        <div className="phone-number-doesnt-exist-error">
+        <div className='phone-number-doesnt-exist-error'>
           <p>Phone number is incorrect</p>
         </div>
       )}
 
-      <div className="auth-input-block">
-        <div className="auth-phone-input">
+      <div className='auth-input-block'>
+        <div className='auth-phone-input'>
           <label>Phone number</label>
-          <input
-            type="tel"
-            inputMode="numeric"
-            value={phone}
-            onChange={handlePhoneChange}
-            maxLength={13}
-            placeholder="+995 706 500 50 50"
-            className="custom-input"
-          />
+          <div className='input-with-prefix'>
+            <span className='phone-prefix'>+995</span>
+            <input
+              type='tel'
+              inputMode='numeric'
+              value={phone}
+              onChange={handlePhoneChange}
+              maxLength={9}
+              placeholder='706500505'
+              className='custom-input'
+            />
+          </div>
         </div>
 
-        
-          <button className="sign-in" onClick={handleRegister}>Sign Up</button>
+        <button className='sign-in' onClick={handleRegister}>
+          Sign Up
+        </button>
       </div>
 
-      <div className="sign-up-navigate">
-        <p>Already have an account? <Link to="/auth"> Sign In</Link></p>
+      <div className='sign-up-navigate'>
+        <p>
+          Already have an account? <Link to='/auth'> Sign In</Link>
+        </p>
       </div>
 
-      <div className="auth-separator">
+      <div className='auth-separator'>
         <hr />
         <p>OR</p>
         <hr />
       </div>
 
-      <div className="alternative-servives-auth">
-        <div className="google-auth">
-          <a href="/"><img src="../../../src/assets/icons/google-service (1).svg" alt="google" /></a>
+      <div className='alternative-servives-auth'>
+        <div className='google-auth'>
+          <a href='/'>
+            <img
+              src='../../../src/assets/icons/google-service (1).svg'
+              alt='google'
+            />
+          </a>
           <p>Google</p>
         </div>
-        <div className="facebook-auth">
-          <a href="/"><img src="../../../src/assets/icons/facebook.svg" alt="facebook" /></a>
+        <div className='facebook-auth'>
+          <a href='/'>
+            <img src='../../../src/assets/icons/facebook.svg' alt='facebook' />
+          </a>
           <p>Facebook</p>
         </div>
       </div>

@@ -1,18 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type UserRole = "manager" | "manager";
+export type UserRole = "manager" | "customer";
 
 const initialState = {
-  role: "manager" as UserRole, // временно хардкод
+  role: null as UserRole | null,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setRole: (state, action) => {
+    setRole: (state, action: PayloadAction<UserRole>) => {
       state.role = action.payload;
-    },
+    },    
   },
 });
 

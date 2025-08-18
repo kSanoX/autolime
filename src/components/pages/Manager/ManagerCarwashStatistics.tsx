@@ -12,7 +12,7 @@ export default function CarwashStatistics() {
 
   return (
     <div>
-      <header>Carwash statistics</header>
+      <header style={{justifyContent: "center"}}>Carwash statistics</header>
       <div className='branch-block'>
         <h4>Branch</h4>
         <div className='branch-info'>

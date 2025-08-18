@@ -45,9 +45,9 @@ export default function OTPVerification({
   
       const data = await res.json();
   
-      if (data.success) {
-        localStorage.setItem("token", data.access_token); // сохраняем JWT
-        onSuccess(); // переход к вводу пароля
+      if (data.success && data.access_token) {
+        localStorage.setItem("access_token", data.access_token);  
+        onSuccess();
       } else {
         setErrorCode("invalid");
       }
@@ -58,6 +58,7 @@ export default function OTPVerification({
       setIsLoading(false);
     }
   };
+  
 
   const allDigitsFilled = otp.every((digit) => /^\d$/.test(digit));
   const buttonIsActive = allDigitsFilled && !isLoading;

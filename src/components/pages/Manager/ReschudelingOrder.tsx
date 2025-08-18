@@ -19,6 +19,7 @@ export default function ReschudelingOrder() {
   const [selectedDateObj, setSelectedDateObj] = useState<Date | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [timePickerOpen, setTimePickerOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
 
   const isSaveEnabled = selectedDateObj !== null && pickedTime !== ""
 
@@ -35,12 +36,23 @@ export default function ReschudelingOrder() {
 
   const handleCalendarOpen = () => setCalendarOpen(true)
   const handleSave = () => {
-    if (!orderId || !selectedDateObj || !pickedTime) return
-
-    const formattedDate = format(selectedDateObj, "d MMMM yyyy") + " · " + pickedTime
-    dispatch(updateOrder({ id: orderId, date: formattedDate, status: "Rescheduled" }))
-    navigate(-1)
-  }
+    if (!orderId || !selectedDateObj || !pickedTime) return;
+  
+    setIsSaving(true);
+  
+    const formattedDate =
+      format(selectedDateObj, "d MMMM yyyy") + " · " + pickedTime;
+  
+    dispatch(
+      updateOrder({ id: orderId, date: formattedDate, status: "Rescheduled" })
+    );
+  
+    setTimeout(() => {
+      setIsSaving(false);
+      navigate(-1);
+    }, 500);
+  };
+  
 
   return (
     <div>
@@ -97,13 +109,13 @@ export default function ReschudelingOrder() {
 
         <div className='rescheduling-save-block'>
           <button
-            disabled={!isSaveEnabled}
+            disabled={!isSaveEnabled || isSaving}
             className={`rescheduling-save-btn ${
               isSaveEnabled ? "active" : "inactive"
             }`}
             onClick={handleSave}
           >
-            Save
+            {isSaving ? <span className='spinner' /> : "Save"}
           </button>
         </div>
       </div>

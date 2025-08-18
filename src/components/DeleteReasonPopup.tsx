@@ -38,14 +38,13 @@ export default function DeleteReasonPopup({
         <p className='leave-a-description'>
           To delete a order, please leave a description of the reason
         </p>
-        <span className='lable'>lable</span>
         <div className='textarea-wrapper'>
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             maxLength={500}
             placeholder='Input text'
-            className={isValid ? 'active' : ''}
+            className={isValid ? "active" : ""}
           />
           <span className='char-counter'>{chars}/500</span>
         </div>
@@ -53,13 +52,13 @@ export default function DeleteReasonPopup({
           <button onClick={onCancel}>Leave</button>
           <button
             disabled={!isValid}
-            className={isValid ? '' : 'disabled'}
-            onClick={() => onConfirm()}
+            className={`confirm-btn ${!isValid ? "disabled" : ""}`}
+            onClick={onConfirm}
           >
             OK
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

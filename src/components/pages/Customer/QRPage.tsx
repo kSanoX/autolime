@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useFetchCars } from "@/hooks/useFetchCars";
-import { useSelector } from "react-redux";
-import { type RootState } from "@/store";
 import { customFetch } from "@/utils/customFetch";
 import Header from "@/components/Header";
 import "../../../styles/customer_styles/qr-page.scss";
@@ -24,7 +22,6 @@ export default function QRPage() {
   const [activePackageId, setActivePackageId] = useState<number | null>(null);
   const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
 
-  // Связь: машина → пакет
   const carIdToPackage = Object.fromEntries(
     carPackages.map((p) => [p.car.id, p])
   );

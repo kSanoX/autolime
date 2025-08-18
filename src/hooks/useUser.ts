@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { customFetch } from "@/utils/customFetch";
+import { setRole, type UserRole } from "@/store/userSlice";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -35,6 +37,7 @@ export function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -57,7 +60,7 @@ export function useUser() {
         if (!res.ok) throw new Error("Failed to fetch /me");
 
         const data: { success: boolean; user: RawUser } = await res.json();
-        
+
         const parsed: User = {
           id: data.user.id,
           firstName: data.user.name || "",
@@ -73,6 +76,18 @@ export function useUser() {
         };
 
         setUser(parsed);
+
+        const roleMap: Record<number, UserRole> = {
+          1: "manager",
+          0: "user",
+        };
+
+        const mappedRole = roleMap[data.user.role];
+        if (mappedRole) {
+          dispatch(setRole(mappedRole));
+        } else {
+          console.warn("Unknown role:", data.user.role);
+        }
       } catch (err) {
         setError(err as Error);
       } finally {
@@ -81,7 +96,7 @@ export function useUser() {
     };
 
     fetchUser();
-  }, []);
+  }, [dispatch]);
 
   return { user, loading, error };
 }

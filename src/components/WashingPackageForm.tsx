@@ -38,8 +38,10 @@ export function WashingPackageForm({
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const carId = selectedCar?.id ?? null;
   const { packages: pricingPackages } = useFetchPackagePricing(carId);  
-  const availableWashes = pricingPackages.map(pkg => pkg.washes); // [24, ...]
-const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? []; // [1, 3, 6, 12]
+  const availableWashes = pricingPackages.map(pkg => pkg.washes);
+const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? [];
+const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const availableCars: Car[] = useMemo(() => {
     return mode === "create"
@@ -74,12 +76,15 @@ const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? []; // [1
   const handleSubmit = async () => {
     if (!selectedCar || !selectedWashCount || !selectedTerm) return;
   
-    const packageId =
-      mode === "edit"
-        ? initialPackage?.id
-        : pricingPackages[0]?.id;
+    setIsSubmitting(true); // ⏳ запускаем спиннер
   
-    if (!packageId) return;
+    const packageId =
+      mode === "edit" ? initialPackage?.id : pricingPackages[0]?.id;
+  
+    if (!packageId) {
+      setIsSubmitting(false);
+      return;
+    }
   
     const payload = {
       car_id: selectedCar.id,
@@ -87,39 +92,38 @@ const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? []; // [1
       sub_term: selectedTerm,
       renewal: autoRenewal,
     };
-
-    const response = await activatePackage(payload);
-
-    if (response?.success && response.url) {
-      window.location.href = response.url; // ✅ редирект на оплату
-    } else {
-      console.error("Failed to activate or missing payment URL");
+  
+    try {
+      const response = await activatePackage(payload);
+  
+      if (response?.success && response.url) {
+        window.location.href = response.url;
+        return;
+      } else {
+        console.error("Failed to activate or missing payment URL");
+      }
+  
+      await activatePackage(payload);
+  
+      onSubmit({
+        id: packageId,
+        car_id: payload.car_id,
+        plate: selectedCar.plate,
+        washes: selectedWashCount,
+        model: "",
+        period: selectedTerm,
+        startDate: initialPackage?.startDate ?? new Date(),
+        autoRenewal,
+      });
+  
+      onClose();
+    } catch (err) {
+      console.error("Submit error:", err);
+    } finally {
+      setIsSubmitting(false);
     }
-  
-    await activatePackage({
-      car_id: selectedCar.id,
-      number_of_washes: selectedWashCount,
-      sub_term: selectedTerm,
-      renewal: autoRenewal,
-    });
-    
-  
-    onSubmit({
-      id: packageId,
-      car_id: payload.car_id,
-      plate: selectedCar.plate,
-      washes: selectedWashCount,
-      model: "",
-      period: selectedTerm,
-      startDate: initialPackage?.startDate ?? new Date(),
-      autoRenewal,
-    });
-  
-    onClose();
   };
   
-  
-
   return (
     <AnimatePresence>
       {isVisible && (
@@ -226,11 +230,20 @@ const availableTerms = pricingPackages[0]?.prices.map(p => p.month) ?? []; // [1
           <button
             className='activate-package-btn'
             disabled={
-              !selectedCar || !selectedTerm || selectedWashCount === null
+              !selectedCar ||
+              !selectedTerm ||
+              selectedWashCount === null ||
+              isSubmitting
             }
             onClick={handleSubmit}
           >
-            {mode === "edit" ? "Update package" : "Activate package"}
+            {isSubmitting ? (
+              <span className='spinner' />
+            ) : mode === "edit" ? (
+              "Update package"
+            ) : (
+              "Activate package"
+            )}
           </button>
         </motion.div>
       )}

@@ -5,7 +5,7 @@
     margin: 16px;
     border-radius: 16px;
     box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
-    height: 90vh;
+    // height: 100vh;
     .auth-logo-block {
         display: flex;
         align-items: center;
@@ -209,7 +209,7 @@
   }
 
   .auth-separator {
-    display: flex;
+    display: none; //flex
     align-items: center;
     justify-content: center;
     margin-top: 24px;
@@ -223,7 +223,7 @@
   }
 
   .alternative-servives-auth {
-    display: flex;
+    display: none; //flex
     justify-content: center;
     align-items: center;
     gap: 16px;

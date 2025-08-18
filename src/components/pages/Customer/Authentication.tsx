@@ -26,11 +26,11 @@ export default function Authentication() {
   };
 
   const handleLogin = async () => {
-    const trimmedPhone = phone.trim();
     const trimmedPassword = password.trim();
+    const fullPhone = "995" + phone.trim();
   
     const newError: { phone?: string; password?: string } = {};
-    if (!trimmedPhone) newError.phone = "required";
+    if (!phone) newError.phone = "required";
     if (!trimmedPassword) newError.password = "required";
   
     if (Object.keys(newError).length > 0) {
@@ -41,16 +41,12 @@ export default function Authentication() {
   
     setIsLoading(true);
   
-    const sanitizedPhone = trimmedPhone.startsWith("+")
-      ? trimmedPhone.slice(1)
-      : trimmedPhone;
-  
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          phone: sanitizedPhone,
+          phone: fullPhone.replace("+", ""), // сервер ожидает без "+"
           password: trimmedPassword,
         }),
       });
@@ -76,7 +72,8 @@ export default function Authentication() {
     } finally {
       setIsLoading(false);
     }
-  };  
+  };
+  
   
   
 
@@ -107,17 +104,19 @@ export default function Authentication() {
         {/* PHONE */}
         <div className='auth-phone-input'>
           <label>Phone number</label>
-          <input
-            type='tel'
-            inputMode='numeric'
-            value={phone}
-            onChange={handlePhoneChange}
-            maxLength={13}
-            placeholder='+995 500 500 555'
-            className='custom-input'
-          />
+          <div className='input-with-prefix'>
+            <span className='phone-prefix'>+995</span>
+            <input
+              type='tel'
+              inputMode='numeric'
+              value={phone}
+              onChange={handlePhoneChange}
+              maxLength={9} // только цифры после +995
+              placeholder='500500555'
+              className='custom-input'
+            />
+          </div>
         </div>
-
         {/* PASSWORD */}
         <div className='auth-password-input'>
           <label>Password</label>
@@ -159,7 +158,7 @@ export default function Authentication() {
         </div>
 
         {/* Submit */}
-        <button className="sign-in" onClick={handleLogin} disabled={isLoading}>
+        <button className='sign-in' onClick={handleLogin} disabled={isLoading}>
           {isLoading ? <span className='spinner' /> : "Sign In"}
         </button>
       </div>

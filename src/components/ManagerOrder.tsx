@@ -10,6 +10,7 @@ interface ManagerOrderProps {
   customer: { name: string; phone: string }
   onDelete: () => void
   onReschedule?: () => void
+  onConfirmed: ()=> void
 }
 
 const statusColorMap: Record<
@@ -75,7 +76,8 @@ export default function ManagerOrder({
   customer,
   type,
   onDelete,
-  onReschedule
+  onReschedule,
+  onConfirmed
 }: ManagerOrderProps) {
   const isConfirmed = status === 'Confirm'
   const isNew = status === 'New'
@@ -100,7 +102,7 @@ export default function ManagerOrder({
     <img src='../../src/assets/icons/ManagerOrder/refresh.svg' alt='refresh' />
   </button>
 )}
-        <button className='order-btn' disabled={isDeleted}>
+        <button className='order-btn' disabled={isDeleted} onClick={onConfirmed}>
           <img src='../../src/assets/icons/ManagerOrder/confirmed.svg' alt='confirmed' />
           
         </button>

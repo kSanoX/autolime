@@ -28,49 +28,54 @@ import ManagerScanner from "./components/pages/Manager/ManagerScanner";
 import Messages from "./components/pages/Messages";
 import Help from "./components/pages/Help";
 import Contacts from "./components/Contacts";
+import MyData from "./components/pages/Manager/MyData";
+import { CarCheckRoute } from "./components/CarCheckRoute";
 
 function AppRoutes() {
   const role = useUserRole();
 
   return (
     <Routes>
-      {/* Публичные маршруты */}
+      {/* Public routes */}
       <Route path="/auth" element={<Authentication />} />
       <Route path="/register" element={<Registration />} />
 
-      {/* Защищённые маршруты */}
+      {/* Secure routes */}
       <Route element={<ProtectedRoute />}>
-        {role === "manager" ? (
-          <Route element={<ManagerLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<ManagerCalendar />} />
-            <Route path="/carwash-statistics" element={<ManagerCarwashStatistics />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/reschedule/:id" element={<ReschudelingOrder />} />
-            <Route path="/manager-qr-page" element={<ManagerScanner />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/help" element={<Help />} />
-          </Route>
-        ) : (
-          <Route element={<CustomerLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/customer-my-data" element={<CustomerMyData />} />
-            <Route path="/change-phone" element={<PhoneNumberChanging />} />
-            <Route path="/change-email" element={<EmailChanging />} />
-            <Route path="/add-car" element={<AddCar showHeader={true} />} />
-            <Route path="/edit-car/:carid" element={<EditCar />} />
-            <Route path="/branches" element={<BranchScreen />} />
-            <Route path="/wash-appointment" element={<WashAppointment />} />
-            <Route path="/my-reviews" element={<MyReviews />} />
-            <Route path="/my-packages" element={<MyPackages />} />
-            <Route path="/customer-calendar" element={<CustomerCalendar />} />
-            <Route path="/customer-qr-page" element={<QRPage />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/help" element={<Help />} />
-          </Route>
-        )}
+  <Route path="/add-car" element={<AddCar showHeader={true} />} /> {/* access always */}
+
+  <Route element={<CarCheckRoute />}>
+    {role === "manager" ? (
+      <Route element={<ManagerLayout />}>
+        <Route path="/" element={<ManagerCalendar />} />
+        <Route path="/profile" element={<MyData />} />
+        <Route path="/carwash-statistics" element={<ManagerCarwashStatistics />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/reschedule/:id" element={<ReschudelingOrder />} />
+        <Route path="/manager-qr-page" element={<ManagerScanner />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/help" element={<Help />} />
       </Route>
+    ) : (
+      <Route element={<CustomerLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/customer-my-data" element={<CustomerMyData />} />
+        <Route path="/change-phone" element={<PhoneNumberChanging />} />
+        <Route path="/change-email" element={<EmailChanging />} />
+        <Route path="/edit-car/:carid" element={<EditCar />} />
+        <Route path="/branches" element={<BranchScreen />} />
+        <Route path="/wash-appointment" element={<WashAppointment />} />
+        <Route path="/my-reviews" element={<MyReviews />} />
+        <Route path="/my-packages" element={<MyPackages />} />
+        <Route path="/customer-calendar" element={<CustomerCalendar />} />
+        <Route path="/customer-qr-page" element={<QRPage />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/help" element={<Help />} />
+      </Route>
+    )}
+  </Route>
+</Route>
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to={role === "manager" ? "/" : "/customer-my-data"} replace />} />
