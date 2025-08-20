@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useUser } from "@/hooks/useUser";
 import CustomerInfoSkeleton from "./Skeletons/CustomerInfoSkeleton";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 export default function CustomerContactInfo() {
-  const { user, loading } = useUser();
+  const user = useSelector((state: RootState) => state.user.data);
 
   const emailStatus = user?.emailVerified ? " (Confirmed)" : " (Unconfirmed)";
   const emailColor = user?.emailVerified ? "#4CAF50" : "#BA1717";
@@ -13,7 +15,7 @@ export default function CustomerContactInfo() {
       <div className='customer-contact-info-container'>
         <h1>Contact information</h1>
 
-        {loading || !user ? (
+        {!user ? (
           <CustomerInfoSkeleton />
         ) : (
           <>
@@ -26,7 +28,10 @@ export default function CustomerContactInfo() {
               </div>
               <div>
                 <Link to='/change-phone'>
-                  <img src='src/assets/icons/edit-note-icon.svg' alt='editNote' />
+                  <img
+                    src='src/assets/icons/edit-note-icon.svg'
+                    alt='editNote'
+                  />
                 </Link>
               </div>
             </div>
@@ -48,7 +53,10 @@ export default function CustomerContactInfo() {
               </div>
               <div>
                 <Link to='/change-email'>
-                  <img src='src/assets/icons/edit-note-icon.svg' alt='editNote' />
+                  <img
+                    src='src/assets/icons/edit-note-icon.svg'
+                    alt='editNote'
+                  />
                 </Link>
               </div>
             </div>

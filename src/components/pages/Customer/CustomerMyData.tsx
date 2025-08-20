@@ -7,10 +7,12 @@ import MyVehicles from "./MyVehicles";
 import NotificationSettings from "./NotificationSettings";
 import { useUser } from "@/hooks/useUser";
 import { useEditUser } from "@/hooks/useEditUser";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 export default function CustomerMyData() {
   const navigate = useNavigate();
-  const { user, loading } = useUser();
+  const user = useSelector((state: RootState) => state.user.data);
   const { editUser} = useEditUser();
 
   const [firstName, setFirstName] = useState("");

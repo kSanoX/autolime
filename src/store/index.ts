@@ -4,6 +4,7 @@ import userReducer from './userSlice'
 import carReducer from './carSlice'
 import appointmentsReducer from './appointmentsSlice'
 import plateSlice from './plateSlice'
+import langReducer from "./langSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     user: userReducer,
     car: carReducer,
     appointments: appointmentsReducer,
-    plateSlice, 
+    plateSlice,
+    lang: langReducer,
   },
 })
 

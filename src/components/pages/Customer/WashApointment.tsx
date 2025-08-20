@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { type RootState } from "@/store";
 import { useCreateAppointment } from "@/hooks/useCreateAppointment";
 import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
@@ -20,7 +20,6 @@ type Service = {
 export default function WashAppointment() {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { cars } = useFetchCars();
 const firstCar = cars[0];
 
@@ -109,23 +108,29 @@ console.log("Resolved branch:", branch);
   return (
     <div>
       <header>
-        <img onClick={()=> navigate(-1)} src='src/assets/icons/left-arrow.svg' alt='' />
+        <img
+          onClick={() => navigate(-1)}
+          src='src/assets/icons/left-arrow.svg'
+          alt=''
+        />
         Branches
         <span></span>
       </header>
 
       <div className='wash-apointment-wrapper'>
-      {branch && (
-  <BranchInfoPanel
-    branch={branch}
-    extraActions={
-      <button onClick={handleGoToMap}>
-        <img src='../../src/assets/icons/geo-icon-yellow.svg' alt='geo' />
-      </button>
-    }
-  />
-)}
-
+        {branch && (
+          <BranchInfoPanel
+            branch={branch}
+            extraActions={
+              <button onClick={handleGoToMap}>
+                <img
+                  src='../../src/assets/icons/geo-icon-yellow.svg'
+                  alt='geo'
+                />
+              </button>
+            }
+          />
+        )}
         {Array.isArray(appointments) && appointments.length > 0 && (
           <div className='appointment-summary-card'>
             <h3>My appointments</h3>
@@ -137,9 +142,7 @@ console.log("Resolved branch:", branch);
                       src='../../../src/assets/icons/branch/summary-calendar.svg'
                       alt='calendar'
                     />
-                    <span>
-                      {new Date(appointment.date).toLocaleDateString("en-GB")}
-                    </span>
+                    <span>{appointment.date}</span>
                   </div>
                   <div className='appointment-detail'>
                     <img
@@ -234,7 +237,7 @@ console.log("Resolved branch:", branch);
           setOpen={setCalendarOpen}
           applyDate={setSelectedDate}
           initialDate={selectedDate}
-          title='Select date of birth'
+          title='Select date'
         />
 
         <TimePickerMobileSheet
@@ -243,13 +246,13 @@ console.log("Resolved branch:", branch);
           applyTime={(time) => setPickedTime(time)}
         />
 
-<TypeWashingDropDown
-  open={typeOpen}
-  setOpen={setTypeOpen}
-  selectedService={selectedService}
-  applyType={(service) => setSelectedService(service)}
-  availableServices={branch?.services ?? []}
-/>
+        <TypeWashingDropDown
+          open={typeOpen}
+          setOpen={setTypeOpen}
+          selectedService={selectedService}
+          applyType={(service) => setSelectedService(service)}
+          availableServices={branch?.services ?? []}
+        />
       </div>
     </div>
   );

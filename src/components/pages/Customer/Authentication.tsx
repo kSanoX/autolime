@@ -1,4 +1,6 @@
+import { fetchUserData } from "@/lib/fetchUserData";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -9,6 +11,7 @@ export default function Authentication() {
   const [error, setError] = useState<{ phone?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
@@ -56,6 +59,7 @@ export default function Authentication() {
   
       if (res.ok && data.access_token) {
         localStorage.setItem("access_token", data.access_token);
+        await fetchUserData(dispatch);
         navigate("/");
       } else {
         const serverError = data?.error || "Login failed";

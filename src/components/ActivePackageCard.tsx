@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Switch } from "./ui/switch";
 import { WashingPackageForm } from "./WashingPackageForm";
 import { motion, AnimatePresence } from "framer-motion";
-import type { PackageData} from "@/types";
+import type { PackageData } from "@/types";
 import type { Car } from "@/store/carSlice";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Props = {
   id: number;
@@ -32,6 +33,7 @@ export function ActivePackageCard({
   onDelete,
   cars,
 }: Props) {
+  const t = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const navigate = useNavigate();
@@ -39,11 +41,10 @@ export function ActivePackageCard({
   const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + period);
   const today = new Date();
-const daysLeft = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const daysLeft = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-const isExpired = endDate < today;
-const isExpiringSoon = daysLeft <= 7 && !isExpired;
-
+  const isExpired = endDate < today;
+  const isExpiringSoon = daysLeft <= 7 && !isExpired;
 
   const initialPackage: PackageData = {
     plate,
@@ -57,14 +58,16 @@ const isExpiringSoon = daysLeft <= 7 && !isExpired;
   return (
     <div className='active-package-card'>
       <div className='package-header'>
-        <h2>Active package</h2>
+        <h2>{t("ActivePackageCard.header")}</h2>
         <span className={`package-status ${isExpired ? "expired" : isExpiringSoon ? "warning" : ""}`}>
-  {isExpired ? "Expired" : `until ${endDate.toLocaleDateString("en-GB")}`}
-</span>
+          {isExpired
+            ? t("ActivePackageCard.status.expired")
+            : t("ActivePackageCard.status.until").replace("{{date}}", endDate.toLocaleDateString("en-GB"))}
+        </span>
       </div>
 
       <div className='vehicle-info'>
-        <span>Your vehicle</span>
+        <span>{t("ActivePackageCard.vehicle.label")}</span>
         <p className='vehicle-plate'>
           {plate} <span>({model})</span>
         </p>
@@ -73,24 +76,26 @@ const isExpiringSoon = daysLeft <= 7 && !isExpired;
       <div className='package-details'>
         <div className='detail-block'>
           <span className='detail-label'>
-            <img src='../../../src/assets/icons/drop-icon.svg' alt='' /> Washes
+            <img src='../../../src/assets/icons/drop-icon.svg' alt={t("ActivePackageCard.details.washes.iconAlt")} />
+            {t("ActivePackageCard.details.washes.label")}
           </span>
           <span className='detail-value'>
-            {washes === "infinity" ? "∞" : washes}
+            {washes === "infinity" ? t("ActivePackageCard.details.washes.infinity") : washes}
           </span>
-          <span className='deatil-name'>remaining</span>
+          <span className='deatil-name'>{t("ActivePackageCard.details.washes.remaining")}</span>
         </div>
         <div className='detail-block'>
           <span className='detail-label'>
-            <img src='../../../src/assets/icons/time.svg' alt='' /> Period
+            <img src='../../../src/assets/icons/time.svg' alt={t("ActivePackageCard.details.period.iconAlt")} />
+            {t("ActivePackageCard.details.period.label")}
           </span>
           <span className='detail-value'>{period}</span>
-          <span className='deatil-name'>month</span>
+          <span className='deatil-name'>{t("ActivePackageCard.details.period.unit")}</span>
         </div>
       </div>
 
       <div className='switch-block-active-package'>
-        <span>Auto-renewal</span>
+        <span>{t("ActivePackageCard.autoRenewal")}</span>
         <Switch
           onCheckedChange={(val) => setAutoRenewal(val)}
           checked={autoRenewal}
@@ -98,20 +103,17 @@ const isExpiringSoon = daysLeft <= 7 && !isExpired;
       </div>
 
       <div className='package-actions'>
-      <button onClick={() => setShowDeletePopup(true)}>
-  <img src='../../../src/assets/icons/trash-icon.svg' alt='Delete' />
-</button>
+        <button onClick={() => setShowDeletePopup(true)}>
+          <img src='../../../src/assets/icons/trash-icon.svg' alt={t("ActivePackageCard.actions.deleteAlt")} />
+        </button>
         <button onClick={() => setIsEditing((prev) => !prev)}>
-          <img src='../../../src/assets/icons/reload-icon.svg' alt='reload' />
+          <img src='../../../src/assets/icons/reload-icon.svg' alt={t("ActivePackageCard.actions.editAlt")} />
         </button>
-        <button onClick={()=> navigate("/branches")}>
-          <img
-            src='../../../src/assets/icons/calendar-icon-yellow.svg'
-            alt='calendar'
-          />
+        <button onClick={() => navigate("/branches")}>
+          <img src='../../../src/assets/icons/calendar-icon-yellow.svg' alt={t("ActivePackageCard.actions.calendarAlt")} />
         </button>
-        <button>
-          <img src='../../../src/assets/icons/qr-icon-yellow.svg' alt='qr' />
+        <button onClick={() => navigate("/customer-qr-page")}>
+          <img src='../../../src/assets/icons/qr-icon-yellow.svg' alt={t("ActivePackageCard.actions.qrAlt")} />
         </button>
       </div>
 
@@ -139,26 +141,29 @@ const isExpiringSoon = daysLeft <= 7 && !isExpired;
           </motion.div>
         )}
       </AnimatePresence>
+
       {showDeletePopup && (
-  <>
-    <div className='package-delete-backdrop' onClick={() => setShowDeletePopup(false)} />
-    <div className='package-delete-popup'>
-      <h2>Package canceling</h2>
-      <p>Do you really want to cancel this vehicle?</p>
-      <div className='package-delete-popup-btns'>
-        <button onClick={() => setShowDeletePopup(false)}>Cancel</button>
-        <button
-  onClick={() => {
-    onDelete?.(plate);
-    setShowDeletePopup(false);
-  }}
->
-  Delete
-</button>
-      </div>
-    </div>
-  </>
-)}
+        <>
+          <div className='package-delete-backdrop' onClick={() => setShowDeletePopup(false)} />
+          <div className='package-delete-popup'>
+            <h2>{t("ActivePackageCard.deletePopup.title")}</h2>
+            <p>{t("ActivePackageCard.deletePopup.message")}</p>
+            <div className='package-delete-popup-btns'>
+              <button onClick={() => setShowDeletePopup(false)}>
+                {t("ActivePackageCard.deletePopup.cancel")}
+              </button>
+              <button
+                onClick={() => {
+                  onDelete?.(plate);
+                  setShowDeletePopup(false);
+                }}
+              >
+                {t("ActivePackageCard.deletePopup.confirm")}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

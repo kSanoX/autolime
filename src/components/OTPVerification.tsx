@@ -1,12 +1,9 @@
 import { useState, useRef } from "react";
-const API_URL = import.meta.env.VITE_API_URL;
 
 export default function OTPVerification({
-  tempCode,
-  onSuccess,
+  onVerify,
 }: {
-  tempCode: number;
-  onSuccess: () => void;
+  onVerify: (code: string) => Promise<void>;
 }) {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [errorCode, setErrorCode] = useState<"none" | "invalid">("none");
@@ -15,12 +12,10 @@ export default function OTPVerification({
 
   const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value)) return;
-
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     setErrorCode("none");
-
     if (value && index < otp.length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -34,31 +29,17 @@ export default function OTPVerification({
 
   const handleVerify = async () => {
     const code = otp.join("");
+    if (!/^\d{6}$/.test(code)) return;
     setIsLoading(true);
-  
     try {
-      const res = await fetch(`${API_URL}/register/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ temp_code: tempCode, code }),
-      });
-  
-      const data = await res.json();
-  
-      if (data.success && data.access_token) {
-        localStorage.setItem("access_token", data.access_token);  
-        onSuccess();
-      } else {
-        setErrorCode("invalid");
-      }
+      await onVerify(code);
     } catch (err) {
-      console.error("Ошибка верификации:", err);
+      console.error("Verification error:", err);
       setErrorCode("invalid");
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   const allDigitsFilled = otp.every((digit) => /^\d$/.test(digit));
   const buttonIsActive = allDigitsFilled && !isLoading;
@@ -80,9 +61,7 @@ export default function OTPVerification({
             type="text"
             inputMode="numeric"
             maxLength={1}
-            ref={(el) => {
-              inputRefs.current[i] = el;
-            }}
+            ref={(el) => (inputRefs.current[i] = el)}
             value={digit}
             onChange={(e) => handleChange(e.target.value, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}

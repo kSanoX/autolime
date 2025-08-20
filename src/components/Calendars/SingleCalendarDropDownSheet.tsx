@@ -154,7 +154,7 @@ export function SingleCalendarMobileSheet({
             </button>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "center" }} ref={calendarRef}>
+          <div style={{ display: "flex", justifyContent: "center", height: "260px", }}  ref={calendarRef}>
             <Calendar
               month={month}
               onMonthChange={setMonth}

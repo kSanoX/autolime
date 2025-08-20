@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import { customFetch } from "@/utils/customFetch";
 import { useCarBrands } from "@/hooks/useCarBrands";
 import type { Brand, Model, Car } from "@/store/carSlice";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function AddCar({ showHeader }: { showHeader?: boolean }) {
   const dispatch = useAppDispatch();
@@ -27,6 +28,7 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
   const [models, setModels] = useState<Model[]>([]);
   const { brands, loading } = useCarBrands();
   const normalizedPlate = numberPlate.replace(/[\s-]/g, "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
 
   const handlePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,8 +75,11 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
   const isFormReady = brand && model && isValidPlate;
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
+  
     if (!isValidPlate) {
       setError("Invalid number plate format");
+      setIsSubmitting(false); // ⬅️ сброс при валидации
       return;
     }
   
@@ -109,9 +114,12 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
       setSubmitted(true);
     } catch (err) {
       console.error(err);
-      setError("Server error: unable to add car");
+      setError("Number plate is already exist");
+    } finally {
+      setIsSubmitting(false);
     }
-  };  
+  };
+  
 
   const resetForm = () => {
     dispatch(setBrand(null));
@@ -121,68 +129,84 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
     setError("");
     setAddedCar(null);
   };
+  const t = useTranslation();
 
   return (
     <div className='add-car-screen'>
       {shouldShowHeader && (
         <header>
           <img src='src/assets/icons/left-arrow.svg' alt='Back' />
-          <h3>Add Vehicle</h3>
+          <h3>{t("AddCar.header.title")}</h3>
           <img src='src/assets/icons/close-icon.svg' alt='Close' />
         </header>
       )}
       <div className='add-car-content'>
-        <h1>Add Car</h1>
+        <h1>{t("AddCar.title")}</h1>
         {!submitted ? (
           <>
-            <p className='add-car-title-info'>Enter your vehicle's data</p>
-
+            <p className='add-car-title-info'>{t("AddCar.subtitle")}</p>
+            {error && (
+              <span className='plate-error'>
+                {error === "Invalid number plate format"
+                  ? t("AddCar.errors.invalidPlate")
+                  : t("AddCar.errors.plateExists")}
+              </span>
+            )}
             <div className='input-block'>
-              <label>Car brand</label>
+              <label>{t("AddCar.labels.brand")}</label>
               <div
                 className='input-select'
                 onClick={() => setBrandDropdownOpen(true)}
               >
                 <span className={brand ? "active" : ""}>
-                  {brand?.name || "Choose your car brand"}
+                  {brand?.name || t("AddCar.placeholders.chooseBrand")}
                 </span>
-                <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+                <img
+                  src='src/assets/icons/left-arrow.svg'
+                  alt={t("AddCar.icons.arrowAlt")}
+                />
               </div>
             </div>
 
             <div className='input-block'>
-              <label>Car model</label>
+              <label>{t("AddCar.labels.model")}</label>
               <div
                 className={`input-select ${!brand ? "disabled" : ""}`}
                 onClick={() => brand && setModelDropdownOpen(true)}
               >
                 <span className={model ? "active" : ""}>
-                  {model?.name || "Choose your car model"}
+                  {model?.name || t("AddCar.placeholders.chooseModel")}
                 </span>
-                <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+                <img
+                  src='src/assets/icons/left-arrow.svg'
+                  alt={t("AddCar.icons.arrowAlt")}
+                />
               </div>
             </div>
 
             <div className='number-plate-input'>
-              <label>Number plate</label>
+              <label>{t("AddCar.labels.plate")}</label>
               <div className='input-with-prefix'>
                 <input
-                  placeholder='XX - XXX - XX'
+                  placeholder={t("AddCar.placeholders.plate")}
                   className='custom-input'
                   value={numberPlate}
                   onChange={handlePlateChange}
                   maxLength={14}
                 />
               </div>
-              {error && <span className='plate-error'>{error}</span>}
             </div>
 
             <button
               className={`add-car-btn ${isFormReady ? "active" : ""}`}
               onClick={handleSubmit}
-              disabled={!isFormReady}
+              disabled={!isFormReady || isSubmitting}
             >
-              Add
+              {isSubmitting ? (
+                <span className='spinner' />
+              ) : (
+                t("AddCar.buttons.add")
+              )}
             </button>
           </>
         ) : (
@@ -194,15 +218,19 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
                 textAlign: "center",
               }}
             >
-              <span style={{ fontWeight: "700" }}> Congratulations!</span> Your
-              vehicle has been <br /> successfully added
+              <span style={{ fontWeight: "700" }}>
+                {t("AddCar.success.message")}
+              </span>
             </p>
 
             <div className='car-preview'>
-              <img src='images/hatchback_image.png' alt='added car' />
+              <img
+                src='images/hatchback_image.png'
+                alt={t("AddCar.success.carAlt")}
+              />
               <div>
                 <h4>{addedCar?.plate}</h4>
-                <span className='car-type'>SUV</span>
+                <span className='car-type'>{t("AddCar.success.carType")}</span>
               </div>
             </div>
 
@@ -212,14 +240,14 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
                 onClick={resetForm}
                 style={{ backgroundColor: "#83D69", color: "#F7B233" }}
               >
-                Add one more
+                {t("AddCar.buttons.addAnother")}
               </button>
               <button
                 className='add-car-btn secondary'
                 onClick={() => navigate("/customer-my-data")}
                 style={{ background: "#83D69", color: "#F7B233" }}
               >
-                Use the app
+                {t("AddCar.buttons.useApp")}
               </button>
             </div>
           </div>
@@ -227,20 +255,20 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
       </div>
 
       <CarBrandDropDown
-  open={brandDropdownOpen}
-  setOpen={setBrandDropdownOpen}
-  applyBrand={handleBrandSelect} 
-  brands={brands}
-  loading={loading}
-/>
+        open={brandDropdownOpen}
+        setOpen={setBrandDropdownOpen}
+        applyBrand={handleBrandSelect}
+        brands={brands}
+        loading={loading}
+      />
 
-<CarModelDropDown
-  open={modelDropdownOpen}
-  setOpen={setModelDropdownOpen}
-  selectedBrand={brand}
-  models={models}
-  applyModel={(m) => dispatch(setModel(m))}
-/>
+      <CarModelDropDown
+        open={modelDropdownOpen}
+        setOpen={setModelDropdownOpen}
+        selectedBrand={brand}
+        models={models}
+        applyModel={(m) => dispatch(setModel(m))}
+      />
     </div>
   );
 }

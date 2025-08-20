@@ -1,57 +1,34 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import DeleteReasonPopup from "../../DeleteReasonPopup";
 import ManagerOrdersList from "./ManagerOrdersList";
-import { updateAppointmentStatus } from "@/lib/utils";
+import { useManagerActions } from "@/hooks/useManagerActions";
+import { useAllRecords } from "@/hooks/useAllRecords";
 
 type Filter = "New" | "Confirmed" | "Sheduled" | "All";
-
 const filters: Filter[] = ["New", "Confirmed", "Sheduled", "All"];
 
 export default function Booking() {
   const [activeStatus, setActiveStatus] = useState<Filter>("New");
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
-  const [deleteReason, setDeleteReason] = useState("");
-  const navigate = useNavigate();
-
-  const handleDelete = (id: number) => {
-    setSelectedOrderId(id);
-    setPopupVisible(true);
-  };
-
-  const confirmDelete = async () => {
-    if (selectedOrderId !== null) {
-      try {
-        await updateAppointmentStatus(selectedOrderId, 3);
-        console.log("Deleted order:", selectedOrderId);
-      } catch (err) {
-        console.error("Failed to delete:", err);
-      }
-    }
-    setDeleteReason("");
-    setPopupVisible(false);
-    setSelectedOrderId(null);
-  };  
-
-  const handleReschedule = (id: number, date: string) => {
-    navigate(`/reschedule/${id}`, {
-      state: {
-        selectedDate: date,
-        orderId: id,
-      },
-    });
-  };
-
-  const handleConfirm = async (id: number) => {
-    try {
-      await updateAppointmentStatus(id, 1); 
-      console.log("Confirmed order:", id);
-    } catch (err) {
-      console.error("Failed to confirm:", err);
-    }
-  };
-  
+  const [refreshFlag, setRefreshFlag] = useState(0);
+  const { appointments, refetch } = useAllRecords();
+  const managerActions = useManagerActions({
+    appointments,
+    refetch: () => {
+      refetch();
+      setRefreshFlag((prev) => prev + 1); 
+    },
+  });
+  const {
+    popupVisible,
+    setPopupVisible,
+    deleteReason,
+    setDeleteReason,
+    handleDelete,
+    setSelectedOrder,
+    confirmDelete,
+    handleConfirm,
+    handleReschedule,
+  } = managerActions;
 
   return (
     <div>
@@ -59,7 +36,7 @@ export default function Booking() {
         Booking
       </header>
 
-      <div className="reservation-staus-bar">
+      <div className='reservation-staus-bar'>
         <ul>
           {filters.map((label) => (
             <li
@@ -77,17 +54,22 @@ export default function Booking() {
 
       <ManagerOrdersList
         activeStatus={activeStatus}
+        appointments={appointments}
+        refetch={refetch}
         onDelete={handleDelete}
         onReschedule={handleReschedule}
         onConfirm={handleConfirm}
       />
-
       <DeleteReasonPopup
         visible={popupVisible}
         reason={deleteReason}
         setReason={setDeleteReason}
-        onCancel={() => setPopupVisible(false)}
         onConfirm={confirmDelete}
+        onCancel={() => {
+          setDeleteReason("");
+          setSelectedOrder(null);
+          setPopupVisible(false);
+        }}
       />
     </div>
   );

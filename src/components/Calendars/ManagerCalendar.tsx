@@ -11,11 +11,9 @@ import {
   isSameDay,
 } from "date-fns";
 import ManagerOrder from "../ManagerOrder";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { deleteOrder } from "@/store/ordersSlice";
 import DeleteReasonPopup from "../DeleteReasonPopup";
 import { useAllRecords } from "@/hooks/useAllRecords";
+import { useManagerActions } from "@/hooks/useManagerActions";
 
 type Status = "Confirm" | "Rescheduled" | "Expired" | "Deleted" | "New";
 const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -23,13 +21,20 @@ const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 export default function ManagerCalendarGrid() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
-  const [deleteReason, setDeleteReason] = useState("");
+  const { appointments, refetch } = useAllRecords();
+  const managerActions = useManagerActions({ appointments, refetch }); // передаём внутрь
 
-  const { appointments, loading, error } = useAllRecords();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const {
+    popupVisible,
+    setPopupVisible,
+    setSelectedOrder,
+    deleteReason,
+    setDeleteReason,
+    handleDelete,
+    confirmDelete,
+    handleReschedule,
+    handleConfirm,
+  } = managerActions;
 
   function mapApprovedToStatus(code: number): Status {
     switch (code) {
@@ -48,7 +53,6 @@ export default function ManagerCalendarGrid() {
     }
   }
 
-  // Преобразуем записи
   const orders = appointments.map((a) => {
     const parsedDate = new Date(`${a.date}T${a.time}`);
     return {
@@ -66,19 +70,16 @@ export default function ManagerCalendarGrid() {
 
   const validOrders = orders.filter((order) => order.status !== "Deleted");
 
-  // Группировка по дням
   const ordersByDay = new Map<string, Status[]>();
   validOrders.forEach((order) => {
     const key = order.parsedDate.toDateString();
     ordersByDay.set(key, [...(ordersByDay.get(key) || []), order.status]);
   });
 
-  // Выбранные заказы
   const selectedOrders = validOrders.filter((order) =>
     isSameDay(order.parsedDate, selectedDate)
   );
 
-  // Подсчёт по статусам
   const countByStatus = {
     new: 0,
     rescheduled: 0,
@@ -90,22 +91,6 @@ export default function ManagerCalendarGrid() {
     if (key in countByStatus) countByStatus[key]++;
   });
 
-  const confirmDelete = () => {
-    if (selectedOrder) {
-      dispatch(deleteOrder(selectedOrder.id));
-    }
-    setDeleteReason("");
-    setSelectedOrder(null);
-    setPopupVisible(false);
-  };
-
-  const cancelDelete = () => {
-    setDeleteReason("");
-    setSelectedOrder(null);
-    setPopupVisible(false);
-  };
-
-  // Генерация дней месяца
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -204,18 +189,9 @@ export default function ManagerCalendarGrid() {
           date={order.date}
           type={order.type}
           customer={order.customer}
-          onDelete={() => {
-            setSelectedOrder(order);
-            setPopupVisible(true);
-          }}
-          onReschedule={() =>
-            navigate(`/reschedule/${order.id}`, {
-              state: {
-                selectedDate: order.date,
-                orderId: order.id,
-              },
-            })
-          }
+          onDelete={() => handleDelete(order)}
+          onReschedule={() => handleReschedule(order.id, order.date)}
+          onConfirmed={() => handleConfirm(order.id)}
         />
       ))}
 
@@ -224,7 +200,11 @@ export default function ManagerCalendarGrid() {
         reason={deleteReason}
         setReason={setDeleteReason}
         onConfirm={confirmDelete}
-        onCancel={cancelDelete}
+        onCancel={() => {
+          setDeleteReason("");
+          setSelectedOrder(null);
+          setPopupVisible(false);
+        }}
       />
     </div>
   );

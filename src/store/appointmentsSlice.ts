@@ -23,12 +23,10 @@ export const appointmentsSlice = createSlice({
   name: "appointments",
   initialState,
   reducers: {
-    // Добавить новую запись
     addAppointment: (state, action: PayloadAction<Appointment>) => {
       state.appointments.push(action.payload);
     },
 
-    // Удалить запись по дате и времени
     removeAppointment: (
       state,
       action: PayloadAction<{ date: string; time: string }>
@@ -38,12 +36,10 @@ export const appointmentsSlice = createSlice({
       );
     },
 
-    // Очистить все записи
     clearAppointments: (state) => {
       state.appointments = [];
     },
 
-    // Загрузить записи с бэка
     setAppointments: (state, action: PayloadAction<Appointment[]>) => {
       state.appointments = action.payload;
     },

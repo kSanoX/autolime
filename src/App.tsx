@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "./store";
 import { useUserRole } from "./hooks/useUserRole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useUser } from "@/hooks/useUser";
+import { useEffect } from "react";
+import { setTranslations } from "./store/langSlice";
 
 import Home from "./components/pages/Home";
 import ManagerCalendar from "./components/Calendars/ManagerCalendar";
@@ -30,9 +33,19 @@ import Help from "./components/pages/Help";
 import Contacts from "./components/Contacts";
 import MyData from "./components/pages/Manager/MyData";
 import { CarCheckRoute } from "./components/CarCheckRoute";
+import { customFetch } from "./utils/customFetch";
+
 
 function AppRoutes() {
   const role = useUserRole();
+  const dispatch = useDispatch();
+  useUser();
+  useEffect(() => {
+    customFetch(`${import.meta.env.VITE_API_URL}/lang/en`)
+      .then((res) => res.json())
+      .then((data) => dispatch(setTranslations(data)))
+      .catch((err) => console.error("Failed to load translations:", err));
+  }, [dispatch]);
 
   return (
     <Routes>

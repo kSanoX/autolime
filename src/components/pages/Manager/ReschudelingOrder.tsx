@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
 import { format } from "date-fns"
-import { updateOrder } from "../../../store/ordersSlice"
 import { SingleCalendarMobileSheet } from "../../Calendars/SingleCalendarDropDownSheet"
 import { TimePickerMobileSheet } from "../../ui/TimePickerMobileSheet"
+import { updateAppointmentStatus } from "@/lib/utils"
 
 
 export default function ReschudelingOrder() {
+  
   const location = useLocation()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
-
-  const { selectedDate, orderId } = location.state || {}
-
   const [datePart, setDatePart] = useState("")
   const [pickedTime, setPickedTime] = useState("")
   const [selectedDateObj, setSelectedDateObj] = useState<Date | null>(null)
@@ -21,7 +17,16 @@ export default function ReschudelingOrder() {
   const [timePickerOpen, setTimePickerOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false);
 
-  const isSaveEnabled = selectedDateObj !== null && pickedTime !== ""
+  const isSaveEnabled = selectedDateObj !== null && pickedTime !== "";
+  const {
+    orderId,
+    selectedDate,
+    customerName,
+    customerPhone,
+    serviceType,
+    refetch,
+  } = location.state || {};
+  
 
   useEffect(() => {
     if (selectedDate?.includes(" · ")) {
@@ -35,22 +40,23 @@ export default function ReschudelingOrder() {
   }, [selectedDate])
 
   const handleCalendarOpen = () => setCalendarOpen(true)
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!orderId || !selectedDateObj || !pickedTime) return;
   
     setIsSaving(true);
   
-    const formattedDate =
-      format(selectedDateObj, "d MMMM yyyy") + " · " + pickedTime;
+    const formattedDate = format(selectedDateObj, "yyyy-MM-dd"); 
+    const formattedTime = pickedTime;
   
-    dispatch(
-      updateOrder({ id: orderId, date: formattedDate, status: "Rescheduled" })
-    );
-  
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      await updateAppointmentStatus(orderId, 3, formattedDate, formattedTime);
+      refetch();
       navigate(-1);
-    }, 500);
+    } catch (err) {
+      console.error("Reschedule failed:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
   
 
@@ -65,12 +71,12 @@ export default function ReschudelingOrder() {
       <div className='rescheduling-order-container'>
         <div className='rescheduling-customer-info'>
           <div>
-            <p className='rescheduling-customer-info-name'>Ivy Levan</p>
-            <p className='rescheduling-customer-info-phone'>+995 500 777 777</p>
+            <p className='rescheduling-customer-info-name'>{customerName || "—"}</p>
+            <p className='rescheduling-customer-info-phone'>{customerPhone || "—"}</p>
           </div>
           <div>
             <img src='../../src/assets/icons/ManagerOrder/Vector.svg' alt='' />
-            <p className='rescheduling-washing-type'>Complex washing</p>
+            <p className='rescheduling-washing-type'>{serviceType || "—"}</p>
           </div>
         </div>
 

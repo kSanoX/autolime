@@ -1,4 +1,10 @@
+import { useSelector } from "react-redux";
+import { type RootState } from "@/store";
+
 export default function MyData() {
+  const user = useSelector((state: RootState) => state.user.data);
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className='my-data-container'>
@@ -8,26 +14,26 @@ export default function MyData() {
         <h2>My information</h2>
         <div className="name-info">
           <div className="f-name">
-            <p>Fiest Name</p>
-            <p className='bold'>Ivy</p>
+            <p>First Name</p>
+            <p className='bold'>{user.firstName}</p>
           </div>
           <div className="s-name">
-            <p>Second name</p>
-            <p className='bold'>Levan</p>
+            <p>Second Name</p>
+            <p className='bold'>{user.lastName}</p>
           </div>
         </div>
         <div className="phone-number">
           <p>Phone number</p>
-          <p className='bold'>+995 500 500 555</p>
+          <p className='bold'>{user.phone}</p>
         </div>
         <div className="type">
           <p>Role</p>
-          <p className='bold'>Wash manager</p>
+          <p className='bold'>Wash manager</p> {/* хардкод */}
         </div>
         <div className="branch">
           <p>Branch</p>
-          <p className='bold'>Geocar on Shartava</p>
-          <p>57 Zhiuli Shartava St, Tbilisi</p>
+          <p className='bold'>Geocar on Shartava</p> {/* хардкод */}
+          <p>57 Zhiuli Shartava St, Tbilisi</p> {/* хардкод */}
         </div>
       </div>
 

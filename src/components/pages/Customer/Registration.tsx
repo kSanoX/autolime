@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import OTPVerification from "../../OTPVerification";
 import { Link, useNavigate } from "react-router-dom";
 import { customFetch } from "@/utils/customFetch";
+import { useUser } from "@/hooks/useUser";
+import { fetchUserData } from "@/lib/fetchUserData";
+import { useDispatch } from "react-redux";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Registration() {
@@ -10,6 +13,7 @@ export default function Registration() {
   const [stage, setStage] = useState<"register" | "verify" | "set-password">("register");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const togglePassword = () => setShowPassword((prev) => !prev);
   const [tempCode, setTempCode] = useState<number | null>(null);
@@ -51,12 +55,36 @@ export default function Registration() {
     } catch (err) {
       console.error("Ошибка запроса:", err);
     }
-  };  
-  
+  };
 
   const handleOTPVerified = () => {
     setStage("set-password");
+  };  
+
+  const handleVerifyOTP = async (code: string) => {
+    try {
+      const res = await fetch(`${API_URL}/register/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ temp_code: tempCode, code }),
+      });
+  
+      const data = await res.json();
+  
+      if (data.success && data.access_token) {
+        localStorage.setItem("access_token", data.access_token);
+        handleOTPVerified();
+      } else {
+        throw new Error("Invalid code");
+      }
+    } catch (err) {
+      console.error("Ошибка верификации:", err);
+      throw err;
+    }
   };
+
+  
+  
   const handleFinishRegistration = async () => {
     if (password.length < 6) {
       setError({ password: "too-short" });
@@ -80,6 +108,7 @@ export default function Registration() {
       const data = await res.json();  
       if (data.success) {
         // window.location.href = "/add-car";
+        await fetchUserData(dispatch);
         navigate("/add-car");
       } else {
         setError({ password: "server-error" });
@@ -92,7 +121,7 @@ export default function Registration() {
   
 
   if (stage === "verify" && tempCode) {
-    return <OTPVerification tempCode={tempCode} onSuccess={handleOTPVerified} />;
+    return <OTPVerification onVerify={handleVerifyOTP} />;
   }
 
   if (stage === "set-password") {

@@ -1,14 +1,17 @@
-import { useAllRecords } from "@/hooks/useAllRecords";
+import { useAllRecords, type Appointment } from "@/hooks/useAllRecords";
 import ManagerOrder from "../../ManagerOrder";
+import { useEffect } from "react";
 
 type Status = "New" | "Confirm" | "Deleted" | "Rescheduled" | "Expired";
 type Filter = "New" | "Confirmed" | "Sheduled" | "All";
 
 interface ManagerOrdersListProps {
     activeStatus: Filter;
-    onDelete: (id: number) => void;
+    onDelete: (order: any) => void;
     onReschedule: (id: number, date: string) => void;
     onConfirm: (id: number) => void;
+    appointments: Appointment[];
+  refetch: () => void;
   }  
 
 export default function ManagerOrdersList({
@@ -16,11 +19,8 @@ export default function ManagerOrdersList({
   onDelete,
   onReschedule,
   onConfirm,
+  appointments,
 }: ManagerOrdersListProps) {
-  const { appointments, loading, error } = useAllRecords();
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
 
   function mapApprovedToStatus(code: number): Status {
     switch (code) {
@@ -55,18 +55,18 @@ export default function ManagerOrdersList({
     <div>
       {filteredAppointments.map((a) => (
         <ManagerOrder
-        key={a.id}
-        status={mapApprovedToStatus(a.approved)}
-        date={`${a.date} · ${a.time.slice(0, 5)}`}
-        type={a.services.map((s) => s.name).join(", ")}
-        customer={{
-          name: `${a.user.name} ${a.user.surname}`,
-          phone: a.user.phone,
-        }}
-        onDelete={() => onDelete(a.id)}
-        onReschedule={() => onReschedule(a.id, a.date)}
-        onConfirmed={() => onConfirm(a.id)}
-      />      
+          key={a.id}
+          status={mapApprovedToStatus(a.approved)}
+          date={`${a.date} · ${a.time.slice(0, 5)}`}
+          type={a.services.map((s) => s.name).join(", ")}
+          customer={{
+            name: `${a.user.name} ${a.user.surname}`,
+            phone: a.user.phone,
+          }}
+          onDelete={() => onDelete(a)}
+          onReschedule={() => onReschedule(a.id, a.date)}
+          onConfirmed={() => onConfirm(a.id)}
+        />
       ))}
     </div>
   );

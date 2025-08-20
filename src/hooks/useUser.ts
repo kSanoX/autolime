@@ -1,40 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { customFetch } from "@/utils/customFetch";
-import { setRole, type UserRole } from "@/store/userSlice";
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-type RawUser = {
-  id: number;
-  name: string;
-  surname: string;
-  sex: "male" | "female";
-  date_of_birth: string;
-  phone: string;
-  email: string;
-  email_verified_at: string | null;
-  role: number;
-  created_at: string;
-  updated_at: string;
-};
-
-type User = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  sex: "male" | "female" | null;
-  dateOfBirth: Date | null;
-  phone: string;
-  email: string;
-  emailVerified: boolean;
-  role: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { setRole, setUser, type UserRole, type User } from "@/store/userSlice";
 
 export function useUser() {
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
@@ -49,7 +18,7 @@ export function useUser() {
 
     const fetchUser = async () => {
       try {
-        const res = await customFetch(`${API_URL}/me`, {
+        const res = await customFetch(`${import.meta.env.VITE_API_URL}/me`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,11 +44,11 @@ export function useUser() {
           updatedAt: new Date(data.user.updated_at),
         };
 
-        setUser(parsed);
+        dispatch(setUser(parsed));
 
         const roleMap: Record<number, UserRole> = {
           1: "manager",
-          0: "user",
+          0: "customer",
         };
 
         const mappedRole = roleMap[data.user.role];
@@ -98,5 +67,5 @@ export function useUser() {
     fetchUser();
   }, [dispatch]);
 
-  return { user, loading, error };
+  return { loading, error };
 }

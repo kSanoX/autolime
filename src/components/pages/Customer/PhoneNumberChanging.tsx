@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OTPVerification from "../../OTPVerification";
+import { customFetch } from "@/utils/customFetch";
 
 export default function PhoneNumberChanging() {
   const [phoneDigits, setPhoneDigits] = useState("");
@@ -8,6 +9,7 @@ export default function PhoneNumberChanging() {
   const [error, setError] = useState(false);
   const [stage, setStage] = useState<"change" | "verify">("change");
   const navigate = useNavigate();
+  const [tempCode, setTempCode] = useState<number | null>(null);
 
   const formatPhoneDigits = (raw: string): string => {
     const onlyDigits = raw.replace(/\D/g, "").slice(0, 9);
@@ -20,31 +22,86 @@ export default function PhoneNumberChanging() {
     if (error) setError(false);
   };
 
-  const handleSaveNewPhone = (): void => {
+  const handleSaveNewPhone = async (): Promise<void> => {
     setIsSubmitting(true);
+    setError(false);
+
     const cleaned = phoneDigits.replace(/\D/g, "");
-    const mockedExistingNumber = "123456789";
-
-    setTimeout(() => {
-      if (cleaned.length !== 9) {
-        alert("❗ Phone number must be 9 digits");
-      } else if (cleaned === mockedExistingNumber) {
-        setError(true);
-      } else {
-        setStage("verify");
-      }
+    if (cleaned.length !== 9) {
+      alert("❗ Phone number must be 9 digits");
       setIsSubmitting(false);
-    }, 1200);
-  };
+      return;
+    }
 
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/change_phone`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ phone: `995${cleaned}` }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Failed to initiate phone change");
+      }
+
+      setTempCode(data.temp_code);
+      setStage("verify");
+
+      sessionStorage.setItem("temp_code", data.temp_code);
+      sessionStorage.setItem("new_phone", `995${cleaned}`);
+    } catch (err) {
+      console.error(err);
+      setError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
   const isValid = phoneDigits.replace(/\D/g, "").length === 9;
 
-  if (stage === "verify") {
-    return (
-      <OTPVerification
-        onSuccess={() => alert("Phone number changed successfully!")}
-      />
-    );
+  const handleVerifyOTP = async (code: string) => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await customFetch(`${import.meta.env.VITE_API_URL}/change_phone/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          temp_code: tempCode,
+          code,
+          phone: `995${phoneDigits.replace(/\D/g, "")}`,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (data.success) {
+        alert("Phone number changed successfully!");
+        sessionStorage.removeItem("new_phone");
+        navigate("/profile");
+      } else {
+        throw new Error(data.message || "Verification failed");
+      }
+    } catch (err) {
+      console.error("Phone verification error:", err);
+      alert("Invalid code or expired session");
+    }
+  };
+  
+
+  if (stage === "verify" && tempCode !== null) {
+    return <OTPVerification onVerify={handleVerifyOTP} />;
   }  
 
   return (

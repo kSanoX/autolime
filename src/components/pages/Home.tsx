@@ -9,10 +9,12 @@ import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 import { useState, useEffect } from "react";
 import { differenceInMonths } from "date-fns";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 
 export default function Home() {
-  const { user, loading, error } = useUser();
+  const user = useSelector((state: RootState) => state.user.data);
   const { cars, loading: carsLoading, error: carsError } = useFetchCars();
   const { packages, isLoading: packagesLoading, error: packagesError } = useMyPackages();
 
@@ -69,9 +71,8 @@ export default function Home() {
       <Header logoVariant='image' />
       <main>
         <h3>
-          Hello, <b>{loading ? "..." : user?.firstName || "Guest"}</b>
+          Hello, <b>{user?.firstName || "Guest"}</b>
         </h3>
-        {error && <p className='error'>Failed to load user</p>}
 
         <div className='auto_container'>
           <div className='auto_info'>
