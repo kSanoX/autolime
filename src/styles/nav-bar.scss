@@ -46,3 +46,11 @@
     margin: 0;
   }
 }
+
+.qr-nav-bar-item {
+  .qr-active {
+    border-radius: 12px;
+    background-color: $yellowMain;
+    outline: 4px solid #F9C566;
+  }
+}

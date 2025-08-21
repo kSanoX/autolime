@@ -14,6 +14,7 @@ import ManagerOrder from "../ManagerOrder";
 import DeleteReasonPopup from "../DeleteReasonPopup";
 import { useAllRecords } from "@/hooks/useAllRecords";
 import { useManagerActions } from "@/hooks/useManagerActions";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Status = "Confirm" | "Rescheduled" | "Expired" | "Deleted" | "New";
 const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -22,7 +23,8 @@ export default function ManagerCalendarGrid() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { appointments, refetch } = useAllRecords();
-  const managerActions = useManagerActions({ appointments, refetch }); // передаём внутрь
+  const managerActions = useManagerActions({ appointments, refetch });
+  const t = useTranslation();
 
   const {
     popupVisible,
@@ -99,7 +101,7 @@ export default function ManagerCalendarGrid() {
 
   return (
     <div>
-      <header style={{ justifyContent: "center" }}>Calendar</header>
+      <header style={{ justifyContent: "center" }}>{t("ManagerCalendarGrid.header")}</header>
 
       {/* Навигация */}
       <div className="calendar-header">
@@ -164,20 +166,19 @@ export default function ManagerCalendarGrid() {
 
         <div className="calendar-status-list">
           <div className="calendar-status-list new">
-            <p>New</p>
+            <p>{t("ManagerCalendarGrid.statusLabels.new")}</p>
             <span>{countByStatus.new}</span>
           </div>
           <div className="calendar-status-list rescheduled">
-            <p>Rescheduled</p>
+            <p>{t("ManagerCalendarGrid.statusLabels.rescheduled")}</p>
             <span>{countByStatus.rescheduled}</span>
           </div>
           <div className="calendar-status-list confirmed">
-            <p>Confirmed</p>
+            <p>{t("ManagerCalendarGrid.statusLabels.confirmed")}</p>
             <span>{countByStatus.confirm}</span>
           </div>
         </div>
 
-        <div>Free time slots</div>
         <div className="calendar-orders-list"></div>
       </div>
 

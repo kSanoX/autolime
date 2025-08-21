@@ -34,6 +34,7 @@ import Contacts from "./components/Contacts";
 import MyData from "./components/pages/Manager/MyData";
 import { CarCheckRoute } from "./components/CarCheckRoute";
 import { customFetch } from "./utils/customFetch";
+import RenewPasswordPage from "./components/pages/RenewPasswordPage";
 
 
 function AppRoutes() {
@@ -52,6 +53,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/auth" element={<Authentication />} />
       <Route path="/register" element={<Registration />} />
+      <Route path="/renew-password" element={<RenewPasswordPage/>} />
 
       {/* Secure routes */}
       <Route element={<ProtectedRoute />}>

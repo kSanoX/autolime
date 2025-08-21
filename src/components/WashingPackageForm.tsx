@@ -8,6 +8,7 @@ import type { Car } from "@/store/carSlice";
 import { useMemo } from "react";
 import { useActivatePackage } from "@/hooks/useActivatePackage";
 import { useFetchPackagePricing } from "@/hooks/useFetchPackagePricing";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Props = {
   mode: "create" | "edit";
@@ -30,6 +31,7 @@ export function WashingPackageForm({
   compact,
   activePackages,
 }: Props) {
+  const t = useTranslation();
   const [selectedWashCount, setSelectedWashCount] = useState<number | "infinity" | null>(null);
   const [selectedTerm, setSelectedTerm] = useState<number | null>(null);
   const [autoRenewal, setAutoRenewal] = useState(true);
@@ -76,7 +78,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = async () => {
     if (!selectedCar || !selectedWashCount || !selectedTerm) return;
   
-    setIsSubmitting(true); // ⏳ запускаем спиннер
+    setIsSubmitting(true);
   
     const packageId =
       mode === "edit" ? initialPackage?.id : pricingPackages[0]?.id;
@@ -136,13 +138,13 @@ const [isSubmitting, setIsSubmitting] = useState(false);
         >
           <h1>{mode === "edit" ? "Update package" : "Washing package"}</h1>
           <p className='package-warn'>
-            Package price depends on the type of vehicle
+            {t("WashingPackageForm.warning")}
           </p>
 
           {/* Vehicle selector */}
           {mode === "create" && (
             <div className='you-vehicle'>
-              <span>Your vehicle</span>
+              <span>{t("WashingPackageForm.vehicle.label")}</span>
               {availableCars.length === 1 ? (
                 <p className='vehicle-number-plate'>{availableCars[0].plate}</p>
               ) : (
@@ -164,7 +166,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 
           {/* Wash count */}
           <div className='number-washers-select'>
-            <p>Number of washes</p>
+            <p>{t("WashingPackageForm.washes.label")}</p>
             <div className='washers-select-options'>
               {availableWashes.map((count) => (
                 <div
@@ -190,7 +192,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 
           {/* Term */}
           <div className='number-washers-select'>
-            <p>Subscription term</p>
+            <p>{t("WashingPackageForm.term.label")}</p>
             <div className='pheriod-select-options'>
               {availableTerms.map((term) => (
                 <div
@@ -204,7 +206,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
                       color: selectedTerm === term ? "#F7B233" : "#183D69",
                     }}
                   >
-                    month
+                    {t("WashingPackageForm.term.unit")}
                   </span>
                 </div>
               ))}
@@ -213,7 +215,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 
           {/* Renewal */}
           <div className='renewal'>
-            <div>Auto-renewal</div>
+            <div>{t("WashingPackageForm.renewal.label")}</div>
             <Switch
               checked={autoRenewal}
               onCheckedChange={(val) => setAutoRenewal(val)}
@@ -222,7 +224,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 
           {/* Price */}
           <div className='sub-price-block'>
-            <p>Subscription price</p>
+            <p>{t("WashingPackageForm.price.label")}</p>
             <p className='price'>{price !== null ? `₾ ${price}` : "—"}</p>
           </div>
 
@@ -240,9 +242,9 @@ const [isSubmitting, setIsSubmitting] = useState(false);
             {isSubmitting ? (
               <span className='spinner' />
             ) : mode === "edit" ? (
-              "Update package"
+            t("WashingPackageForm.button.edit")
             ) : (
-              "Activate package"
+              t("WashingPackageForm.button.create")
             )}
           </button>
         </motion.div>

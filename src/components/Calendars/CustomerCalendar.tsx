@@ -20,6 +20,7 @@ import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromB
 import { customFetch } from "@/utils/customFetch";
 import { useFetchBranches, type Branch } from "@/hooks/useFetchBranches";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 type Appointment = {
@@ -33,6 +34,7 @@ type Appointment = {
   };
 
 export default function WashAppointmentsCalendar() {
+  const t = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [popupVisible, setPopupVisible] = useState(false);
@@ -154,7 +156,7 @@ branches.forEach((b) => branchMap.set(b.id, b));
 
         <div className='appointments-panel'>
           {selectedAppointments.length === 0 ? (
-            <p className='no-events'>No appointments</p>
+            <p className='no-events'>{t("WashAppointmentsCalendar.noAppointments")}</p>
           ) : (
             selectedAppointments.map((a, i) => (
               <div key={i} className='appointment-card'>
@@ -169,7 +171,7 @@ branches.forEach((b) => branchMap.set(b.id, b));
                       <p className='appointment-address'>{branch.address}</p>
                     </>
                   ) : (
-                    <p className='appointment-branch'>Branch not found</p>
+                    <p className='appointment-branch'>{t("WashAppointmentsCalendar.branchNotFound")}</p>
                   );
                 })()}
                 <div className='functional-block-caledar'>

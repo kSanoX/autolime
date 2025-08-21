@@ -11,12 +11,14 @@ import { useState, useEffect } from "react";
 import { differenceInMonths } from "date-fns";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 export default function Home() {
   const user = useSelector((state: RootState) => state.user.data);
   const { cars, loading: carsLoading, error: carsError } = useFetchCars();
   const { packages, isLoading: packagesLoading, error: packagesError } = useMyPackages();
+  const t = useTranslation();
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -71,7 +73,7 @@ export default function Home() {
       <Header logoVariant='image' />
       <main>
         <h3>
-          Hello, <b>{user?.firstName || "Guest"}</b>
+        {t("Home.greeting")} <b>{user?.firstName || "Guest"}</b>
         </h3>
 
         <div className='auto_container'>
@@ -87,7 +89,7 @@ export default function Home() {
                 <b>{carsLoading ? "..." : selectedCar?.plate || "No plate"}</b>
               </h2>
               <p>{carsLoading ? "..." : selectedCar?.type || "Unknown type"}</p>
-              {carsError && <p className='error'>Failed to load cars</p>}
+              {carsError && <p className='error'>{t("Booking.fallback.error")}</p>}
             </div>
             <img
               className='cursor-pointer'
@@ -121,10 +123,10 @@ export default function Home() {
                 <span>
                   <img src='../../src/assets/icons/whashes.svg' alt='whashes' />
                 </span>
-                <p>Washes</p>
+                <p>{t("Home.washes.title")}</p>
               </div>
               <h2>{remainingWashes ?? "--"}</h2>
-              <p className='status'>remaining</p>
+              <p className='status'>{t("Home.washes.remaining")}</p>
               <div className='data'>
                 {remainingWashes != null && totalWashes != null
                   ? `${remainingWashes}/${totalWashes}`
@@ -137,12 +139,12 @@ export default function Home() {
                 <span>
                   <img src='../../src/assets/icons/time.svg' alt='time' />
                 </span>
-                <p>Period</p>
+                <p>{t("Home.period.title")}</p>
               </div>
               <h2>
-  {packagePeriod ?? "--"} <span>month</span>
+  {packagePeriod ?? "--"} <span>{t("Home.period.unit")}</span>
 </h2>
-              <p className='status'>expiration date</p>
+              <p className='status'>{t("Home.period.expiration")}</p>
               <div className='data'>{expirationDate ?? "--"}</div>
             </div>
           </div>
@@ -160,9 +162,9 @@ export default function Home() {
 
           <div className='promo'>
             <div className='promo-text'>
-              <p className='promo-regular-text'>специальное предложение</p>
+              <p className='promo-regular-text'>{t("Home.promo.regular")}</p>
               <p className='promo-bold-text'>
-                ПОЛУЧИ <span>10% СКИДКИ</span> <br /> ПРОДЛИВШИ ПОДПИСКУ
+                <span>{t("Home.promo.bold")}</span>
               </p>
             </div>
             <a href='/'>

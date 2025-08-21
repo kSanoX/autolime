@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function MobileDropdownSheet({
   open,
@@ -10,13 +11,14 @@ export function MobileDropdownSheet({
   setPeriod: (p: string) => void;
 }) {
   if (!open) return null;
+  const t = useTranslation();
 
   const OPTIONS = [
-    "ToDay",
-    "Yesterday",
-    "Last 7 Days",
-    "Last Month",
-    "Custom period",
+    t("MobileDropdownSheet.options.today"),
+    t("MobileDropdownSheet.options.yesterday"),
+    t("MobileDropdownSheet.options.last7Days"),
+    t("MobileDropdownSheet.options.lastMonth"),
+    t("MobileDropdownSheet.options.custom"),
   ];
 
   return (
@@ -89,7 +91,7 @@ export function MobileDropdownSheet({
               padding: "0px",
             }}
           >
-            Choose statistic period
+                {t("MobileDropdownSheet.title")}
           </h3>
 
           {/* Options */}

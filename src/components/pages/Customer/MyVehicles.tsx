@@ -2,21 +2,23 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/hooks/hooks";
 import { useFetchCars } from "@/hooks/useFetchCars";
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 export default function MyVehicles() {
   const vehicles = useAppSelector((state) => state.car.cars);
   const navigate = useNavigate();
   const { cars, loading, error } = useFetchCars();
+  const t = useTranslation();
 
   return (
     <div className='vehicles-wrapper'>
-      <h1>My vehicles</h1>
+      <h1>{t("MyVehicles.title")}</h1>
 
-      {loading && <p>Loading vehicles...</p>}
+      {loading && <p>{t("MyVehicles.loading")}</p>}
       {error && <p className='error'>{error}</p>}
 
-      {!loading && cars.length === 0 && <p>No vehicles found</p>}
+      {!loading && cars.length === 0 && <p>{t("MyVehicles.empty")}</p>}
 
       {cars.map((car, index) => (
         <div key={index}>
@@ -43,7 +45,7 @@ export default function MyVehicles() {
       ))}
 
       <Link to='/add-car'>
-        <button>Add Car</button>
+        <button>{t("MyVehicles.buttons.add")}</button>
       </Link>
     </div>
   );

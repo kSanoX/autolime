@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
-
+import { useTranslation } from "@/hooks/useTranslation";
 export default function Authentication() {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -12,6 +12,7 @@ export default function Authentication() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const t = useTranslation();
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
@@ -31,19 +32,19 @@ export default function Authentication() {
   const handleLogin = async () => {
     const trimmedPassword = password.trim();
     const fullPhone = "995" + phone.trim();
-  
+
     const newError: { phone?: string; password?: string } = {};
-    if (!phone) newError.phone = "required";
-    if (!trimmedPassword) newError.password = "required";
-  
+    if (!phone) newError.phone = t("Authentication.errors.phoneRequired");
+    if (!trimmedPassword) newError.password = t("Authentication.errors.passwordRequired");    
+
     if (Object.keys(newError).length > 0) {
       setError(newError);
       console.warn("Validation failed:", newError);
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
@@ -53,10 +54,10 @@ export default function Authentication() {
           password: trimmedPassword,
         }),
       });
-  
+
       const data = await res.json();
       console.log("Response:", data);
-  
+
       if (res.ok && data.access_token) {
         localStorage.setItem("access_token", data.access_token);
         await fetchUserData(dispatch);
@@ -64,7 +65,7 @@ export default function Authentication() {
       } else {
         const serverError = data?.error || "Login failed";
         setError({ password: "incorrect" });
-  
+
         if (serverError.includes("phone")) {
           setError({ phone: "not-found" });
         } else if (serverError.includes("password")) {
@@ -77,53 +78,46 @@ export default function Authentication() {
       setIsLoading(false);
     }
   };
-  
-  
-  
 
   return (
     <div className='auth-wrapper'>
       <div className='auth-logo-block'>
-        <img src='../../../src/assets/logo.svg' alt='LOGO' />
+        <img
+          src='../../../src/assets/logo.svg'
+          alt={t("Authentication.logoAlt")}
+        />
       </div>
 
       <div className='auth-greetings'>
-        <h1>Welcome</h1>
-        <p>Enter your phone number and password to access your account</p>
+        <h1>{t("Authentication.greeting.title")}</h1>
+        <p>{t("Authentication.greeting.subtitle")}</p>
       </div>
 
-      {error.phone === "not-found" && (
-        <div className='phone-number-doesnt-exist-error'>
-          <p>Phone number doesn't exist</p>
-        </div>
-      )}
+      {error.phone === "required" && <p>{t("Authentication.errors.phoneRequired")}</p>}
+{error.password === "required" && <p>{t("Authentication.errors.passwordRequired")}</p>}
 
-      {error.password === "incorrect" && (
-        <div className='incorrect-password-error'>
-          <p>Password is incorrect</p>
-        </div>
-      )}
 
       <div className='auth-input-block'>
         {/* PHONE */}
         <div className='auth-phone-input'>
-          <label>Phone number</label>
+          <label>{t("Authentication.labels.phone")}</label>
           <div className='input-with-prefix'>
-            <span className='phone-prefix'>+995</span>
+            <span className='phone-prefix'>{t("Authentication.prefix")}</span>
             <input
               type='tel'
               inputMode='numeric'
               value={phone}
               onChange={handlePhoneChange}
-              maxLength={9} // только цифры после +995
-              placeholder='500500555'
+              maxLength={9}
+              placeholder={t("Authentication.placeholders.phone")}
               className='custom-input'
             />
           </div>
         </div>
+
         {/* PASSWORD */}
         <div className='auth-password-input'>
-          <label>Password</label>
+          <label>{t("Authentication.labels.password")}</label>
           <div className='input-with-icon'>
             <input
               type={showPassword ? "text" : "password"}
@@ -133,7 +127,7 @@ export default function Authentication() {
                 if (error.password)
                   setError((prev) => ({ ...prev, password: undefined }));
               }}
-              placeholder='Input your password'
+              placeholder={t("Authentication.placeholders.password")}
               className='custom-input'
             />
             <svg
@@ -158,24 +152,29 @@ export default function Authentication() {
 
         {/* Forgot */}
         <div className='forgot-password'>
-          <a href='/forgot'>Forgot password?</a>
+          <a href='/forgot'>{t("Authentication.forgotPassword")}</a>
         </div>
 
         {/* Submit */}
         <button className='sign-in' onClick={handleLogin} disabled={isLoading}>
-          {isLoading ? <span className='spinner' /> : "Sign In"}
+          {isLoading ? (
+            <span className='spinner' />
+          ) : (
+            t("Authentication.buttons.signIn")
+          )}
         </button>
       </div>
 
       <div className='sign-up-navigate'>
         <p>
-          Don't have an account? <Link to='/register'> Sign Up</Link>
+          {t("Authentication.signupPrompt")}{" "}
+          <Link to='/register'>{t("Authentication.buttons.signUp")}</Link>
         </p>
       </div>
 
       <div className='auth-separator'>
         <hr />
-        <p>OR</p>
+        <p>{t("Authentication.separator")}</p>
         <hr />
       </div>
 
@@ -184,16 +183,19 @@ export default function Authentication() {
           <a href='/'>
             <img
               src='../../../src/assets/icons/google-service (1).svg'
-              alt='google'
+              alt={t("Authentication.social.googleAlt")}
             />
           </a>
-          <p>Google</p>
+          <p>{t("Authentication.social.google")}</p>
         </div>
         <div className='facebook-auth'>
           <a href='/'>
-            <img src='../../../src/assets/icons/facebook.svg' alt='facebook' />
+            <img
+              src='../../../src/assets/icons/facebook.svg'
+              alt={t("Authentication.social.facebookAlt")}
+            />
           </a>
-          <p>Facebook</p>
+          <p>{t("Authentication.social.facebook")}</p>
         </div>
       </div>
     </div>

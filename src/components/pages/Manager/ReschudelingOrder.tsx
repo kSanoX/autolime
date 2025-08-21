@@ -4,10 +4,11 @@ import { format } from "date-fns"
 import { SingleCalendarMobileSheet } from "../../Calendars/SingleCalendarDropDownSheet"
 import { TimePickerMobileSheet } from "../../ui/TimePickerMobileSheet"
 import { updateAppointmentStatus } from "@/lib/utils"
+import { useTranslation } from "@/hooks/useTranslation"
 
 
 export default function ReschudelingOrder() {
-  
+  const t = useTranslation();
   const location = useLocation()
   const navigate = useNavigate()
   const [datePart, setDatePart] = useState("")
@@ -66,7 +67,7 @@ export default function ReschudelingOrder() {
         <button className='rescheduling-back-btn' onClick={() => navigate(-1)}>
           <img src='../../src/assets/icons/left-arrow.svg' alt='Back' />
         </button>
-        <h2 className='rescheduling-title'>Rescheduling the order</h2>
+        <h2 className='rescheduling-title'>{t("ReschedulingOrder.header.title")}</h2>
       </header>
       <div className='rescheduling-order-container'>
         <div className='rescheduling-customer-info'>
@@ -82,7 +83,7 @@ export default function ReschudelingOrder() {
 
         <div className='rescheduling-customer-date-container'>
           <div className='rescheduling-date'>
-            <p>Date</p>
+            <p>{t("ReschedulingOrder.form.date.label")}</p>
             <div
               className='rescheduling-calendar-dropdown'
               onClick={handleCalendarOpen}
@@ -102,7 +103,7 @@ export default function ReschudelingOrder() {
               }}
             />
 
-            <p>Time</p>
+            <p>{t("ReschedulingOrder.form.time.label")}</p>
             <div
               onClick={() => setTimePickerOpen(true)}
               className='rescheduling-time-date'
@@ -121,7 +122,7 @@ export default function ReschudelingOrder() {
             }`}
             onClick={handleSave}
           >
-            {isSaving ? <span className='spinner' /> : "Save"}
+            {isSaving ? <span className='spinner' /> : t("ReschedulingOrder.save.button")}
           </button>
         </div>
       </div>

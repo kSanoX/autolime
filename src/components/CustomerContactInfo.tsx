@@ -3,17 +3,22 @@ import { useUser } from "@/hooks/useUser";
 import CustomerInfoSkeleton from "./Skeletons/CustomerInfoSkeleton";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function CustomerContactInfo() {
   const user = useSelector((state: RootState) => state.user.data);
+  const t = useTranslation();
 
-  const emailStatus = user?.emailVerified ? " (Confirmed)" : " (Unconfirmed)";
+  const emailStatus = user?.emailVerified
+    ? t("CustomerContactInfo.email.confirmed")
+    : t("CustomerContactInfo.email.unconfirmed");
+
   const emailColor = user?.emailVerified ? "#4CAF50" : "#BA1717";
 
   return (
     <div className='customer-contact-info-wrapper'>
       <div className='customer-contact-info-container'>
-        <h1>Contact information</h1>
+        <h1>{t("CustomerContactInfo.title")}</h1>
 
         {!user ? (
           <CustomerInfoSkeleton />
@@ -21,7 +26,7 @@ export default function CustomerContactInfo() {
           <>
             <div className='customer-phone-number'>
               <div>
-                <p>Phone number</p>
+                <p>{t("CustomerContactInfo.phone.label")}</p>
                 <p>
                   <span className='dot-status'></span> +{user.phone}
                 </p>
@@ -30,7 +35,7 @@ export default function CustomerContactInfo() {
                 <Link to='/change-phone'>
                   <img
                     src='src/assets/icons/edit-note-icon.svg'
-                    alt='editNote'
+                    alt={t("CustomerContactInfo.phone.editAlt")}
                   />
                 </Link>
               </div>
@@ -39,7 +44,7 @@ export default function CustomerContactInfo() {
             <div className='customer-email'>
               <div>
                 <p>
-                  Email{" "}
+                  {t("CustomerContactInfo.email.label")}{" "}
                   <span
                     className='verification-status'
                     style={{ color: emailColor }}
@@ -55,7 +60,7 @@ export default function CustomerContactInfo() {
                 <Link to='/change-email'>
                   <img
                     src='src/assets/icons/edit-note-icon.svg'
-                    alt='editNote'
+                    alt={t("CustomerContactInfo.email.editAlt")}
                   />
                 </Link>
               </div>

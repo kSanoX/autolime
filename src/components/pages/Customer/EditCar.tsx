@@ -3,6 +3,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { customFetch } from "@/utils/customFetch";
 import leftArrow from "@/assets/icons/left-arrow.svg";
 import closeIcon from "@/assets/icons/close-icon.svg";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function EditCar() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function EditCar() {
   const [error, setError] = useState("");
   const [deletePopupShow, setDeletePopupShow] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const t = useTranslation();
 
   const carId = carToEdit?.id || carid;
 
@@ -122,15 +124,15 @@ export default function EditCar() {
     <div className='edit-car-screen'>
       <header>
         <img src={leftArrow} alt='Back' onClick={() => navigate(-1)} />
-        <h3>Edit Vehicle</h3>
+        <h3>{t("EditCar.header.title")}</h3>
         <img src={closeIcon} alt='Close' />
       </header>
 
       <div className='edit-car-content'>
-        <p className='edit-car-title-info'>Update your vehicle's data</p>
+        <p className='edit-car-title-info'>{t("EditCar.titleInfo")}</p>
 
         <div className='input-block'>
-          <label>Car brand</label>
+          <label>{t("EditCar.labels.brand")}</label>
           <div className='input-select disabled'>
             <span className='active'>{brand || "Unknown brand"}</span>
             <img src={leftArrow} alt='Locked' />
@@ -138,7 +140,7 @@ export default function EditCar() {
         </div>
 
         <div className='input-block'>
-          <label>Car model</label>
+          <label>{t("EditCar.labels.model")}</label>
           <div className='input-select disabled'>
             <span className='active'>{model || "Unknown model"}</span>
             <img src={leftArrow} alt='Locked' />
@@ -146,7 +148,7 @@ export default function EditCar() {
         </div>
 
         <div className='number-plate-input'>
-          <label>Number plate</label>
+          <label>{t("EditCar.labels.plate")}</label>
           <div className='input-with-prefix'>
             <input
               placeholder='XX - XXX - XX'
@@ -164,13 +166,13 @@ export default function EditCar() {
           onClick={handleSubmit}
           disabled={!isFormReady}
         >
-          Save Changes
+          {t("EditCar.buttons.save")}
         </button>
         <button
           className='vehicle-delete-btn'
           onClick={() => setDeletePopupShow(true)}
         >
-          Delete vehicle
+          {t("EditCar.buttons.delete")}
         </button>
       </div>
 
@@ -178,11 +180,11 @@ export default function EditCar() {
         <>
           <div className={`delete-vehicle-overlay ${isClosing ? "fade-out" : ""}`} />
           <div className={`delete-vehicle-popup ${isClosing ? "fade-out" : ""}`}>
-            <h4>Vehicle deleting</h4>
-            <p>Do you really want to remove this vehicle?</p>
+            <h4>{t("EditCar.popup.title")}</h4>
+            <p>{t("EditCar.popup.message")}</p>
             <div className='delete-vehicle-popup-btns'>
-              <button onClick={() => setDeletePopupShow(false)}>Cancel</button>
-              <button onClick={handleDelete}>Delete</button>
+              <button onClick={() => setDeletePopupShow(false)}>{t("EditCar.buttons.cancel")}</button>
+              <button onClick={handleDelete}>{t("EditCar.buttons.confirmDelete")}</button>
             </div>
           </div>
         </>

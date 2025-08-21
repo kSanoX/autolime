@@ -6,6 +6,7 @@ import { useCreateAppointment } from "@/hooks/useCreateAppointment";
 import { useLoadAppointmentsFromBackend } from "@/hooks/useLoadAppointmentsFromBackend";
 import { useFetchBranches } from "@/hooks/useFetchBranches";
 import { useFetchCars } from "@/hooks/useFetchCars";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import { SingleCalendarMobileSheet } from "@/components/Calendars/SingleCalendarDropDownSheet";
 import { TimePickerMobileSheet } from "@/components/ui/TimePickerMobileSheet";
@@ -18,6 +19,7 @@ type Service = {
 };
 
 export default function WashAppointment() {
+  const t = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { cars } = useFetchCars();
@@ -113,7 +115,7 @@ console.log("Resolved branch:", branch);
           src='src/assets/icons/left-arrow.svg'
           alt=''
         />
-        Branches
+        {t("WashAppointment.header.title")}
         <span></span>
       </header>
 
@@ -133,7 +135,7 @@ console.log("Resolved branch:", branch);
         )}
         {Array.isArray(appointments) && appointments.length > 0 && (
           <div className='appointment-summary-card'>
-            <h3>My appointments</h3>
+            <h3>{t("WashAppointment.appointments.title")}</h3>
             {appointments.map((appointment, index) => (
               <div key={index} className='flexible-appointment-detail'>
                 <div>
@@ -165,7 +167,7 @@ console.log("Resolved branch:", branch);
                       src='../../../src/assets/icons/branch/summary-applied.svg'
                       alt='status'
                     />
-                    <span>Applied</span>
+                    <span>{t("WashAppointment.appointments.status")}</span>
                   </div>
                 </div>
               </div>
@@ -174,12 +176,12 @@ console.log("Resolved branch:", branch);
         )}
 
         <div className='car-wash-apointment-display'>
-          <h4>Сar wash appointment</h4>
-          {success && <div className='booking-status'>Booking success</div>}
+          <h4>{t("WashAppointment.form.title")}</h4>
+          {success && <div className='booking-status'>{t("WashAppointment.form.success")}</div>}
           {!success && error && <div className='booking-error'>{error}</div>}
 
           <div className='form-group'>
-            <label htmlFor='dob'>Date</label>
+            <label htmlFor='dob'>{t("WashAppointment.form.date.label")}</label>
             <div className='input-select' onClick={() => setCalendarOpen(true)}>
               <input
                 type='text'
@@ -201,7 +203,7 @@ console.log("Resolved branch:", branch);
           </div>
 
           <div className='input-block'>
-            <label>Time</label>
+            <label>{t("WashAppointment.form.time.label")}</label>
             <div
               className='input-select'
               onClick={() => setTimePickerOpen(true)}
@@ -212,7 +214,7 @@ console.log("Resolved branch:", branch);
           </div>
 
           <div className='input-block'>
-            <label>Service</label>
+            <label>{t("WashAppointment.form.service.label")}</label>
             <div className='input-select' onClick={() => setTypeOpen(true)}>
               {selectedService?.name || "-"}
               <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
@@ -227,7 +229,7 @@ console.log("Resolved branch:", branch);
             {isSubmitting ? (
               <div className='loader-spinner' />
             ) : (
-              "Book a service"
+              t("WashAppointment.form.submit.button")
             )}
           </button>
         </div>
@@ -237,7 +239,7 @@ console.log("Resolved branch:", branch);
           setOpen={setCalendarOpen}
           applyDate={setSelectedDate}
           initialDate={selectedDate}
-          title='Select date'
+          title={t("WashAppointment.form.date.pickerTitle")}
         />
 
         <TimePickerMobileSheet

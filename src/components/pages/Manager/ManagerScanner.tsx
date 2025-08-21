@@ -22,59 +22,49 @@ export default function ManagerScanner(): React.JSX.Element {
 
   useEffect(() => {
     if (scanner || !showScannerUI || !qrRef.current) return;
-
-    const html5QrCode = new Html5Qrcode("qr-reader"); 
+  
+    const html5QrCode = new Html5Qrcode("qr-reader");
     setScanner(html5QrCode);
-
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices.length === 0) throw new Error("No cameras found");
-
-        const backCamera = devices.find((d) =>
-          /back|rear|environment/i.test(d.label)
-        );
-        const cameraId = backCamera?.id || devices[0].id;
-
-        html5QrCode
-          .start(
-            cameraId,
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-              aspectRatio: 1.0,
-              disableFlip: false,
-            },
-            (decodedText: string) => {
-              console.log("📸 QR scanned:", decodedText);
-              setScannedCode(decodedText);
-            
-              if (scanner) {
-                scanner.stop().then(() => {
-                  scanner.clear().then(() => {
-                    if (qrRef.current) qrRef.current.innerHTML = "";
-                    setIsScannerRunning(false);
-                    setScanner(null);
-                    setShowScannerUI(false);
-                  });
-                }).catch((err) => {
-                  console.warn("Stop error after scan:", err);
-                  setIsScannerRunning(false);
-                  setScanner(null);
-                  setShowScannerUI(false);
-                });
-              }
-            },            
-            () => {}
-          ).then(() => {
-            setIsCameraReady(true);
-            setIsScannerRunning(true);
-          })
-          
-          .then(() => setIsCameraReady(true))
-          .catch((err) => console.error("Start error:", err));
+  
+    html5QrCode
+      .start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          disableFlip: false,
+        },
+        (decodedText: string) => {
+          console.log("QR scanned:", decodedText);
+          setScannedCode(decodedText);
+  
+          html5QrCode
+            .stop()
+            .then(() => {
+              html5QrCode.clear().then(() => {
+                if (qrRef.current) qrRef.current.innerHTML = "";
+                setIsScannerRunning(false);
+                setScanner(null);
+                setShowScannerUI(false);
+              });
+            })
+            .catch((err) => {
+              console.warn("Stop error after scan:", err);
+              setIsScannerRunning(false);
+              setScanner(null);
+              setShowScannerUI(false);
+            });
+        },
+        () => {}
+      )
+      .then(() => {
+        setIsCameraReady(true);
+        setIsScannerRunning(true);
       })
-      .catch((err) => console.error("Camera fetch error:", err));
+      .catch((err) => console.error("Start error:", err));
   }, [showScannerUI]);
+  
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -142,56 +132,44 @@ export default function ManagerScanner(): React.JSX.Element {
     const html5QrCode = new Html5Qrcode("qr-reader");
     setScanner(html5QrCode);
   
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices.length === 0) throw new Error("No cameras found");
+    html5QrCode
+      .start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          disableFlip: false,
+        },
+        (decodedText: string) => {
+          console.log("QR scanned:", decodedText);
+          setScannedCode(decodedText);
   
-        const backCamera = devices.find((d) =>
-          /back|rear|environment/i.test(d.label)
-        );
-        const cameraId = backCamera?.id || devices[0].id;
-  
-        html5QrCode
-          .start(
-            cameraId,
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-              aspectRatio: 1.0,
-              disableFlip: false,
-            },
-            (decodedText: string) => {
-              console.log("📸 QR scanned:", decodedText);
-              setScannedCode(decodedText);
-  
-              html5QrCode
-                .stop()
-                .then(() => {
-                  html5QrCode.clear().then(() => {
-                    if (qrRef.current) qrRef.current.innerHTML = "";
-                    setIsScannerRunning(false);
-                    setScanner(null);
-                    setShowScannerUI(false);
-                  });
-                })
-                .catch((err) => {
-                  console.warn("Stop error after scan:", err);
-                  setIsScannerRunning(false);
-                  setScanner(null);
-                  setShowScannerUI(false);
-                });
-            },
-            () => {}
-          )
-          .then(() => {
-            setIsCameraReady(true);
-            setIsScannerRunning(true);
-          })
-          .catch((err) => console.error("Start error:", err));
+          html5QrCode
+            .stop()
+            .then(() => {
+              html5QrCode.clear().then(() => {
+                if (qrRef.current) qrRef.current.innerHTML = "";
+                setIsScannerRunning(false);
+                setScanner(null);
+                setShowScannerUI(false);
+              });
+            })
+            .catch((err) => {
+              console.warn("Stop error after scan:", err);
+              setIsScannerRunning(false);
+              setScanner(null);
+              setShowScannerUI(false);
+            });
+        },
+        () => {}
+      )
+      .then(() => {
+        setIsCameraReady(true);
+        setIsScannerRunning(true);
       })
-      .catch((err) => console.error("Camera fetch error:", err));
+      .catch((err) => console.error("Start error:", err));
   };
-  
   
 
   const pkgMeta = result?.package;
@@ -230,7 +208,7 @@ export default function ManagerScanner(): React.JSX.Element {
         )}
       </div>
       <div className='scanner-result'>
-        {loading && <p>🔄 Checking QR code...</p>}
+        {loading && <p>Checking QR code...</p>}
         {error && <p className='error'>{error.message}</p>}
         {isValid && showResultCard && (
           <div className='qr-result-card'>

@@ -1,8 +1,10 @@
 import React from "react";
 import "../../styles/sidebar.scss";
 import { Link } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Sidebar({ onClose }: { onClose: () => void }) {
+  const t = useTranslation();
   return (
     <div className='sidebar-overlay' onClick={onClose}>
       <div className='sidebar' onClick={(e) => e.stopPropagation()}>
@@ -25,7 +27,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>{" "}
-              <Link to="/my-reviews">My reviews</Link>
+              <Link to="/my-reviews">{t("Sidebar.menu.myReviews")}</Link>
             </li>
             <li>
               <svg
@@ -40,7 +42,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              <Link to="/my-packages">My packages</Link>
+              <Link to="/my-packages">{t("Sidebar.menu.myPackages")}</Link>
             </li>
             <li>
               <svg
@@ -55,7 +57,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              <Link to="/messages">Messages</Link>
+              <Link to="/messages">{t("Sidebar.menu.messages")}</Link>
             </li>
           </ul>
           </div>
@@ -82,7 +84,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   fill='#183D69'
                 />
               </svg>
-              <Link to="/contacts">Contacts</Link>
+              <Link to="/contacts">{t("Sidebar.menu.contacts")}</Link>
             </li>
             <li>
               <svg
@@ -104,7 +106,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                   </clipPath>
                 </defs>
               </svg>
-              <Link to="/help">Help</Link>
+              <Link to="/help">{t("Sidebar.menu.help")}</Link>
             </li>
           </ul>
           </div>

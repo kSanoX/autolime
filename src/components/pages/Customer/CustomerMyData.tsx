@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { useEditUser } from "@/hooks/useEditUser";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function CustomerMyData() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function CustomerMyData() {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [sexOpen, setSexOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const t = useTranslation();
 
   const isFormFilled =
     firstName.trim() &&
@@ -59,7 +61,7 @@ export default function CustomerMyData() {
           alt='back'
           onClick={() => navigate(-1)}
         />
-        <h2>My Data</h2>
+        <h2>{t("CustomerMyData.header.title")}</h2>
         <svg
           width='18'
           height='18'
@@ -77,17 +79,25 @@ export default function CustomerMyData() {
       </header>
 
       <div className='customer-data-wrapper'>
-        <h1>My Information</h1>
+        <h1>{t("CustomerMyData.form.title")}</h1>
         <form className='customer-data-form'>
           {[
-            { label: "First Name", value: firstName, setter: setFirstName },
-            { label: "Second Name", value: secondName, setter: setSecondName },
+            {
+              label: t("CustomerMyData.form.fields.firstName"),
+              value: firstName,
+              setter: setFirstName,
+            },
+            {
+              label: t("CustomerMyData.form.fields.secondName"),
+              value: secondName,
+              setter: setSecondName,
+            },
           ].map(({ label, value, setter }) => (
             <div className='form-group' key={label}>
               <label>{label}</label>
               <input
                 type='text'
-                placeholder='---'
+                placeholder={t("CustomerMyData.form.placeholders.text")}
                 value={value}
                 onChange={(e) => setter(e.target.value)}
               />
@@ -95,7 +105,7 @@ export default function CustomerMyData() {
           ))}
 
           <div className='form-group'>
-            <label>Date of Birth</label>
+          <label>{t("CustomerMyData.form.fields.dateOfBirth")}</label>
             <div
               className='input-with-icon-customer'
               onClick={() => setCalendarOpen(true)}
@@ -103,7 +113,7 @@ export default function CustomerMyData() {
             >
               <input
                 type='text'
-                placeholder='--/--/----'
+                placeholder={t("CustomerMyData.form.placeholders.date")}
                 value={
                   selectedDate
                     ? selectedDate.toLocaleDateString("en-GB", {
@@ -124,11 +134,11 @@ export default function CustomerMyData() {
             setOpen={setCalendarOpen}
             applyDate={setSelectedDate}
             initialDate={selectedDate}
-            title='Select date of birth'
+            title={t("CustomerMyData.form.calendarTitle")}
           />
 
           <div className='form-group'>
-            <label>Sex</label>
+          <label>{t("CustomerMyData.form.fields.sex")}</label>
             <div
               className='input-with-icon-customer'
               style={{ cursor: "pointer" }}
@@ -169,15 +179,15 @@ export default function CustomerMyData() {
           <div className='save-data-modal-window'>
             <div className='save-data-modal-cap'>
               <img src='src/assets/icons/danger.svg' alt='danger' />
-              <h4>Unsaved data</h4>
+              <h4>{t("CustomerMyData.modal.title")}</h4>
             </div>
-            <p>You have unsaved changes to your information.</p>
+            <p>{t("CustomerMyData.modal.message")}</p>
             <div className='actions'>
               <button className='leave' onClick={() => setModalOpen(false)}>
-                Leave
+              {t("CustomerMyData.modal.buttons.leave")}
               </button>
               <button className='save' onClick={handleSave}>
-                Save
+              {t("CustomerMyData.modal.buttons.save")}
               </button>
             </div>
           </div>

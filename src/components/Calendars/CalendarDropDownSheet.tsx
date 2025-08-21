@@ -24,7 +24,6 @@ export function CalendarMobileSheet({
   useEffect(() => {
     setRange(initialRange);
   }, [initialRange]);
-
   useDrag(
     ({ down, swipe }) => {
       if (!down) {

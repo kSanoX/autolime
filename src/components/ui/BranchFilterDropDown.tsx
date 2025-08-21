@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import "../../../src/styles/dropdowns/branch-filter.scss";
 import { useFetchServices } from "@/hooks/useFetchServices";
-
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 type BranchFilterProps = {
@@ -27,6 +27,8 @@ export function BranchFilterDropDown({
   setOnlyOpen,
   onApplyFilters,
 }: BranchFilterProps) {
+  const t = useTranslation();
+  const { services, loading } = useFetchServices();
   if (!open) return null;
 
   const toggleService = (id: number) => {
@@ -34,15 +36,15 @@ export function BranchFilterDropDown({
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   };
+
   const hasActiveFilters =
-  selectedServices.length > 0 || roundTheClockOnly || onlyOpen;
+    selectedServices.length > 0 || roundTheClockOnly || onlyOpen;
 
   const handleClearFilters = () => {
     setSelectedServices([]);
     setRoundTheClockOnly(false);
     setOnlyOpen(false);
   };
-  const { services, loading } = useFetchServices();
 
   return (
     <>
@@ -64,12 +66,12 @@ export function BranchFilterDropDown({
           </div>
 
           <div className='filter-flexible-cap'>
-            <h3>Filter</h3>
+            <h3>{t("BranchFilterDropDown.title")}</h3>
             <span
               className={`clear-filter ${hasActiveFilters ? "active" : ""}`}
               onClick={handleClearFilters}
             >
-              Clear filter{" "}
+              {t("BranchFilterDropDown.clear")}
               <svg
                 width='16'
                 height='16'
@@ -88,7 +90,7 @@ export function BranchFilterDropDown({
           </div>
 
           <div className='filter-section'>
-            <h4>Services</h4>
+            <h4>{t("BranchFilterDropDown.sections.services")}</h4>
             {services.map((service) => (
               <label
                 key={service.id}
@@ -107,30 +109,22 @@ export function BranchFilterDropDown({
           </div>
 
           <div className='filter-section'>
-            <h4>Opening hours</h4>
-            <label
-              className={`checkbox-option ${
-                roundTheClockOnly ? "checked" : ""
-              }`}
-            >
+            <h4>{t("BranchFilterDropDown.sections.hours")}</h4>
+            <label className={`checkbox-option ${roundTheClockOnly ? "checked" : ""}`}>
               <input
                 type='checkbox'
                 checked={roundTheClockOnly}
                 onChange={() => setRoundTheClockOnly(!roundTheClockOnly)}
               />
-              Round the clock only
+              {t("BranchFilterDropDown.options.roundTheClock")}
             </label>
-            <label
-              className={`checkbox-option ${
-                onlyOpen ? "checked" : ""
-              }`}
-            >
+            <label className={`checkbox-option ${onlyOpen ? "checked" : ""}`}>
               <input
                 type='checkbox'
                 checked={onlyOpen}
                 onChange={() => setOnlyOpen(!onlyOpen)}
               />
-              Only open
+              {t("BranchFilterDropDown.options.onlyOpen")}
             </label>
           </div>
 
@@ -141,10 +135,11 @@ export function BranchFilterDropDown({
               setOpen(false);
             }}
           >
-            Apply filters
+            {t("BranchFilterDropDown.button")}
           </button>
         </div>
       </motion.div>
     </>
   );
 }
+

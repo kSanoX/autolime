@@ -4,7 +4,7 @@ export function ProtectedRoute() {
   const token = localStorage.getItem("access_token");
   const location = useLocation();
 
-  const publicPaths = ["/auth", "/register"];
+  const publicPaths = ["/auth", "/register, /renew-password"];
   const isPublic = publicPaths.includes(location.pathname);
 
   if (!token && !isPublic) {

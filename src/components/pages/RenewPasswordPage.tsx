@@ -1,41 +1,42 @@
 import React, { useState } from "react";
-import OTPVerification from "../../OTPVerification";
+import OTPVerification from "../OTPVerification";
 import { Link, useNavigate } from "react-router-dom";
 import { customFetch } from "@/utils/customFetch";
 import { fetchUserData } from "@/lib/fetchUserData";
 import { useDispatch } from "react-redux";
-const API_URL = import.meta.env.VITE_API_URL;
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function Registration() {
+const API_URL = import.meta.env.VITE_API_URL;
+
+export default function PasswordChangePage() {
   const t = useTranslation();
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<{ phone?: string; password?: string }>({});
-  const [stage, setStage] = useState<"register" | "verify" | "set-password">("register");
+  const [stage, setStage] = useState<"request" | "verify" | "set-password">("request");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch();
-
-  const togglePassword = () => setShowPassword((prev) => !prev);
   const [tempCode, setTempCode] = useState<number | null>(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let raw = e.target.value.replace(/[^\d]/g, "").slice(0, 9);
+  const togglePassword = () => setShowPassword((prev) => !prev);
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/[^\d]/g, "").slice(0, 9);
     setPhone(raw);
     if (error.phone) setError((prev) => ({ ...prev, phone: undefined }));
-  };  
+  };
 
-  const handleRegister = async () => {
+  const handleRequestPasswordChange = async () => {
     const fullPhone = "995" + phone;
-  
+
     if (!phone) {
       setError({ phone: "empty" });
       return;
     }
-  
+
     try {
-      const res = await fetch(`${API_URL}/register`, {
+      const res = await customFetch(`${API_URL}/change_password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,14 +44,13 @@ export default function Registration() {
         },
         body: JSON.stringify({ phone: fullPhone }),
       });
-  
+
       const data = await res.json();
-  
+
       if (data.success) {
         setTempCode(data.temp_code);
         setStage("verify");
       } else {
-        console.log("Ошибка:", data.error);
         setError({ phone: data.error });
       }
     } catch (err) {
@@ -58,42 +58,35 @@ export default function Registration() {
     }
   };
 
-  const handleOTPVerified = () => {
-    setStage("set-password");
-  };  
-
-  const handleVerifyOTP = async (code: string) => {
+  const handleVerifyCode = async (code: string) => {
     try {
-      const res = await fetch(`${API_URL}/register/verify`, {
+      const res = await fetch(`${API_URL}/change_password/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ temp_code: tempCode, code }),
       });
-  
+
       const data = await res.json();
-  
+
       if (data.success && data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        handleOTPVerified();
+        setStage("set-password");
       } else {
         throw new Error("Invalid code");
       }
     } catch (err) {
       console.error("Ошибка верификации:", err);
-      throw err;
     }
   };
 
-  
-  
-  const handleFinishRegistration = async () => {
+  const handleSetNewPassword = async () => {
     if (password.length < 6) {
       setError({ password: "too-short" });
       return;
     }
-  
+
     try {
-      const res = await customFetch(`${API_URL}/register/set_password`, {
+      const res = await customFetch(`${API_URL}/change_password/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,10 +98,11 @@ export default function Registration() {
           temp_code: tempCode,
         }),
       });
-  
-      const data = await res.json();  
-      if (data.success) {
-        // window.location.href = "/add-car";
+
+      const data = await res.json();
+
+      if (data.success && data.access_token) {
+        localStorage.setItem("access_token", data.access_token);
         await fetchUserData(dispatch);
         navigate("/add-car");
       } else {
@@ -119,10 +113,9 @@ export default function Registration() {
       setError({ password: "network" });
     }
   };
-  
 
   if (stage === "verify" && tempCode) {
-    return <OTPVerification onVerify={handleVerifyOTP} />;
+    return <OTPVerification onVerify={handleVerifyCode} />;
   }
 
   if (stage === "set-password") {
@@ -133,19 +126,19 @@ export default function Registration() {
         </div>
 
         <div className="auth-greetings">
-        <h1>{t("Registration.stage.register.title")}</h1>
-<p>{t("Registration.stage.register.subtitle")}</p>
+          <h1>{t("PasswordChange.setPassword.title")}</h1>
+          <p>{t("PasswordChange.setPassword.subtitle")}</p>
         </div>
 
         {error.password === "too-short" && (
           <div className="incorrect-password-error">
-            <p>{t("Registration.stage.setPassword.title.errors.tooShort")}</p>
+            <p>{t("PasswordChange.setPassword.errors.tooShort")}</p>
           </div>
         )}
 
         <div className="auth-input-block">
           <div className="auth-password-input">
-            <label>{t("Registration.stage.setPassword.label")}</label>
+            <label>{t("PasswordChange.setPassword.label")}</label>
             <div className="input-with-icon">
               <input
                 type={showPassword ? "text" : "password"}
@@ -154,7 +147,7 @@ export default function Registration() {
                   setPassword(e.target.value);
                   if (error.password) setError((prev) => ({ ...prev, password: undefined }));
                 }}
-                placeholder="Create your password"
+                placeholder="Create your new password"
                 className="custom-input"
               />
               <svg
@@ -177,65 +170,61 @@ export default function Registration() {
             </div>
           </div>
 
-            <button className="sign-in" onClick={handleFinishRegistration}>{t("Registration.stage.setPassword.finish")}</button>
+          <button className="sign-in" onClick={handleSetNewPassword}>
+            {t("PasswordChange.setPassword.finish")}
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='auth-wrapper'>
-      <div className='auth-logo-block'>
-        <img src='../../../src/assets/logo.svg' alt='LOGO' />
+    <div className="auth-wrapper">
+      <div className="auth-logo-block">
+        <img src="../../../src/assets/logo.svg" alt="LOGO" />
       </div>
 
-      <div className='auth-greetings'>
-        <h1>{t("Registration.stage.register.title")}</h1>
-        <p>
-        {t("Registration.stage.register.subtitle")}
-        </p>
+      <div className="auth-greetings">
+        <h1>{t("PasswordChange.request.title")}</h1>
+        <p>{t("PasswordChange.request.subtitle")}</p>
       </div>
 
-      {error.phone === "duplicate" && (
-        <div className='phone-number-doesnt-exist-error'>
-          <p>{t("Registration.stage.register.errors.duplicate")}</p>
-        </div>
-      )}
-      {error.phone === "invalid-format" && (
-        <div className='phone-number-doesnt-exist-error'>
-          <p>{t("Registration.stage.register.errors.invalidFormat")}</p>
+      {error.phone && (
+        <div className="phone-number-error">
+          <p>{t(`PasswordChange.request.errors.${error.phone}`)}</p>
         </div>
       )}
 
-      <div className='auth-input-block'>
-        <div className='auth-phone-input'>
-          <label>{t("Registration.stage.register.label")}</label>
-          <div className='input-with-prefix'>
-            <span className='phone-prefix'>+995</span>
+      <div className="auth-input-block">
+        <div className="auth-phone-input">
+          <label>{t("PasswordChange.request.label")}</label>
+          <div className="input-with-prefix">
+            <span className="phone-prefix">+995</span>
             <input
-              type='tel'
-              inputMode='numeric'
+              type="tel"
+              inputMode="numeric"
               value={phone}
               onChange={handlePhoneChange}
               maxLength={9}
-              placeholder='706500505'
-              className='custom-input'
+              placeholder="706500505"
+              className="custom-input"
             />
           </div>
         </div>
 
-        <button className='sign-in' onClick={handleRegister}>
-        {t("Registration.stage.register.button")}
+        <button className="sign-in" onClick={handleRequestPasswordChange}>
+          {t("PasswordChange.request.button")}
         </button>
       </div>
 
-      <div className='sign-up-navigate'>
+      <div className="sign-up-navigate">
         <p>
-        {t("Registration.stage.register.navigate.text")}<Link to='/auth'> {t("Registration.stage.register.navigate.link")}</Link>
+          {t("PasswordChange.request.navigate.text")}
+          <Link to="/auth"> {t("PasswordChange.request.navigate.link")}</Link>
         </p>
       </div>
 
-      <div className='auth-separator'>
+      {/* <div className='auth-separator'>
         <hr />
         <p>OR</p>
         <hr />
@@ -257,7 +246,7 @@ export default function Registration() {
           </a>
           <p>Facebook</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

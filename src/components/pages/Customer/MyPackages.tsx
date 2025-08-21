@@ -9,12 +9,14 @@ import { WashingPackageForm } from "@/components/WashingPackageForm";
 import type { PackageData } from "@/types";
 import { customFetch } from "@/utils/customFetch";
 import { useMyPackages } from "@/hooks/useActivePackages";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function MyPackages() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const cars = useSelector((state: RootState) => state.car.cars);
   const { packages, isLoading, error } = useMyPackages();
+  const t = useTranslation();
 
   const [editingPackage, setEditingPackage] = useState<PackageData | null>(null);
 
@@ -66,20 +68,20 @@ export default function MyPackages() {
           src='../../../src/assets/icons/left-arrow.svg'
           alt='Back'
         />
-        My packages
+        {t("MyPackages.header.title")}
         <span></span>
       </header>
 
       <div className='my-packages-wrapper'>
         <div className='swap-type-display-packages'>
-          <button>Active</button>
-          <button>History</button>
+          <button>{t("MyPackages.tabs.active")}</button>
+          <button>{t("MyPackages.tabs.history")}</button>
         </div>
 
         {isLoading ? (
-          <p>Загрузка...</p>
+          <p>{t("MyPackages.loading")}</p>
         ) : error ? (
-          <p>Ошибка: {error.message}</p>
+          <p>{t("MyPackages.error")}{error.message}</p>
         ) : (
           <>
             {showForm && (
@@ -97,7 +99,7 @@ export default function MyPackages() {
             )}
 
             {transformedPackages.length === 0 ? (
-              <p className='no-packages'>No active packages</p>
+              <p className='no-packages'>{t("MyPackages.empty")}</p>
             ) : (
               transformedPackages.map((pkg) => (
                 <ActivePackageCard
@@ -109,14 +111,12 @@ export default function MyPackages() {
                   startDate={pkg.startDate}
                   autoRenewal={pkg.autoRenewal}
                   setAutoRenewal={(val) => {
-                    // можно сделать PATCH на бэкенд
-                    console.log(`Set autoRenewal for ${pkg.plate} →`, val);
                   }}
                   onEdit={(updated) => {
                     setEditingPackage(updated);
                   }}
                   onDelete={(plate) => {
-                    console.log(`Удалить пакет для ${plate}`);
+                    console.log(`Delete package for ${plate}`);
                   }}
                   cars={cars}
                 />

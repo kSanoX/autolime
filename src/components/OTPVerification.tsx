@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function OTPVerification({
   onVerify,
@@ -9,6 +10,7 @@ export default function OTPVerification({
   const [errorCode, setErrorCode] = useState<"none" | "invalid">("none");
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const t = useTranslation();
 
   const handleChange = (value: string, index: number) => {
     if (!/^\d?$/.test(value)) return;
@@ -46,11 +48,11 @@ export default function OTPVerification({
 
   return (
     <div className="otp-wrapper">
-      <h2>We sent a verification code to your phone number. Please enter to verify.</h2>
+      <h2>{t("OTPVerification.title")}</h2>
 
       {errorCode === "invalid" && (
         <div className="incorrect-code-error">
-          <p>Code is not valid</p>
+          <p>{t("OTPVerification.error.invalid")}</p>
         </div>
       )}
 
@@ -76,12 +78,12 @@ export default function OTPVerification({
         disabled={!buttonIsActive}
         className={`send-button ${buttonIsActive ? "active" : ""}`}
       >
-        {isLoading ? <span className="spinner" /> : "Send"}
+        {isLoading ? <span className="spinner" /> : t("OTPVerification.button.send")}
       </button>
 
       <div className="send-code-again">
         <p>
-          Didn't get the code? <a href="#">Send again</a>
+        {t("OTPVerification.resend.text")} <a href="#">{t("OTPVerification.resend.link")}</a>
         </p>
       </div>
     </div>

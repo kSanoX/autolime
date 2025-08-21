@@ -3,6 +3,7 @@ import DeleteReasonPopup from "../../DeleteReasonPopup";
 import ManagerOrdersList from "./ManagerOrdersList";
 import { useManagerActions } from "@/hooks/useManagerActions";
 import { useAllRecords } from "@/hooks/useAllRecords";
+import { useTranslation } from "@/hooks/useTranslation";
 
 type Filter = "New" | "Confirmed" | "Sheduled" | "All";
 const filters: Filter[] = ["New", "Confirmed", "Sheduled", "All"];
@@ -11,6 +12,7 @@ export default function Booking() {
   const [activeStatus, setActiveStatus] = useState<Filter>("New");
   const [refreshFlag, setRefreshFlag] = useState(0);
   const { appointments, refetch } = useAllRecords();
+  const t = useTranslation();
   const managerActions = useManagerActions({
     appointments,
     refetch: () => {
@@ -33,7 +35,7 @@ export default function Booking() {
   return (
     <div>
       <header style={{ textAlign: "center", justifyContent: "center" }}>
-        Booking
+        {t("Booking.header")}
       </header>
 
       <div className='reservation-staus-bar'>
@@ -42,11 +44,9 @@ export default function Booking() {
             <li
               key={label}
               onClick={() => setActiveStatus(label)}
-              className={`status-bar-item ${
-                activeStatus === label ? "active" : ""
-              }`}
+              className={`status-bar-item ${activeStatus === label ? "active" : ""}`}
             >
-              {label}
+              {t(`Booking.filters.${label}`)}
             </li>
           ))}
         </ul>

@@ -4,8 +4,11 @@ import { customFetch } from "@/utils/customFetch";
 import Header from "@/components/Header";
 import "../../../styles/customer_styles/qr-page.scss";
 import { useMyPackages } from "@/hooks/useActivePackages";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function QRPage() {
+  const t = useTranslation();
+
   const {
     packages: carPackages,
     isLoading: packagesLoading,
@@ -62,8 +65,8 @@ export default function QRPage() {
   if (carsLoading || packagesLoading) {
     return (
       <div className="qr-page-wrapper">
-        <Header title="QR" logoVariant="qr" />
-        <p className="loading">Loading data...</p>
+        <Header title={t("QRPage.header.title")} logoVariant="qr" />
+        <p className="loading">{t("QRPage.loading")}</p>
       </div>
     );
   }
@@ -71,28 +74,28 @@ export default function QRPage() {
   if (carsError || packagesError) {
     return (
       <div className="qr-page-wrapper">
-        <Header title="QR" logoVariant="qr" />
-        <p className="error">Failed to load data</p>
+        <Header title={t("QRPage.header.title")} logoVariant="qr" />
+        <p className="error">{t("QRPage.error")}</p>
       </div>
     );
   }
 
   return (
     <div>
-      <Header title="QR" logoVariant="qr" />
+      <Header title={t("QRPage.header.title")} logoVariant="qr" />
       <div className="qr-page-wrapper">
         {/* QR Overlay */}
         {activePlate && (
           <div className="qr-overlay">
             <button className="close-btn" onClick={closeOverlay}>
-              ✕
+              {t("QRPage.overlay.close")}
             </button>
             <div className="qr-container">
               <p className="plate-label">{activePlate}</p>
               {qrImageUrl ? (
                 <img src={qrImageUrl} alt="QR Code" className="qr-image" />
               ) : (
-                <p>Loading QR...</p>
+                <p>{t("QRPage.overlay.loading")}</p>
               )}
             </div>
           </div>
@@ -100,7 +103,7 @@ export default function QRPage() {
 
         {/* Машины */}
         {cars.length === 0 ? (
-          <p className="no-cars">You have no registered cars.</p>
+          <p className="no-cars">{t("QRPage.noCars")}</p>
         ) : (
           <div className="car-list">
             {cars.map((car) => {
@@ -111,7 +114,7 @@ export default function QRPage() {
                 <div key={car.id} className="car-card">
                   <img src="/images/hatchback_image.png" alt={car.type} />
                   <p className="car-plate">{car.plate}</p>
-                  <p className="car-model">{car.type}</p>
+                  <p className="car-model">{t("QRPage.car.model")}: {car.type}</p>
 
                   {canGenerateQR && (
                     <button
@@ -122,11 +125,14 @@ export default function QRPage() {
                       }}
                     >
                       <img
-                        src="/src/assets/icons/qr-icon-yellow.svg"
-                        alt="Show QR"
+                        src="../../../src/assets/icons/qr_icon.svg"
+                        alt=""
                       />
                     </button>
                   )}
+                  <span style={{ textAlign: "end", color: "#4B6D95" }}>
+                    Generate QR
+                  </span>
                 </div>
               );
             })}
