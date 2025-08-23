@@ -50,9 +50,16 @@ export default function Registration() {
         setTempCode(data.temp_code);
         setStage("verify");
       } else {
-        console.log("Ошибка:", data.error);
-        setError({ phone: data.error });
-      }
+        const serverPhoneError = data.error?.phone?.[0] || "";
+      
+        if (serverPhoneError.includes("уже существует")) {
+          setError({ phone: "duplicate" });
+        } else if (serverPhoneError.includes("Неверный формат")) {
+          setError({ phone: "invalid-format" });
+        } else {
+          setError({ phone: "unknown" });
+        }
+      }      
     } catch (err) {
       console.error("Ошибка запроса:", err);
     }
@@ -191,18 +198,23 @@ export default function Registration() {
 
       <div className='auth-greetings'>
         <h1>{t("Registration.stage.register.title")}</h1>
-        <p>
-        {t("Registration.stage.register.subtitle")}
-        </p>
+        <p>{t("Registration.stage.register.subtitle")}</p>
       </div>
 
+      {error.phone === "empty" && (
+        <div className='incorrect-password-error'>
+          <p>{t("Registration.stage.register.errors.empty")}</p>
+        </div>
+      )}
+
       {error.phone === "duplicate" && (
-        <div className='phone-number-doesnt-exist-error'>
+        <div className='incorrect-password-error'>
           <p>{t("Registration.stage.register.errors.duplicate")}</p>
         </div>
       )}
+
       {error.phone === "invalid-format" && (
-        <div className='phone-number-doesnt-exist-error'>
+        <div className='incorrect-password-error'>
           <p>{t("Registration.stage.register.errors.invalidFormat")}</p>
         </div>
       )}
@@ -225,13 +237,17 @@ export default function Registration() {
         </div>
 
         <button className='sign-in' onClick={handleRegister}>
-        {t("Registration.stage.register.button")}
+          {t("Registration.stage.register.button")}
         </button>
       </div>
 
       <div className='sign-up-navigate'>
         <p>
-        {t("Registration.stage.register.navigate.text")}<Link to='/auth'> {t("Registration.stage.register.navigate.link")}</Link>
+          {t("Registration.stage.register.navigate.text")}
+          <Link to='/auth'>
+            {" "}
+            {t("Registration.stage.register.navigate.link")}
+          </Link>
         </p>
       </div>
 

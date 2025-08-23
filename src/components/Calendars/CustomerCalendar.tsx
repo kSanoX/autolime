@@ -22,16 +22,15 @@ import { useFetchBranches, type Branch } from "@/hooks/useFetchBranches";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 
-
 type Appointment = {
-    id: number;
-    branchId: string;
-    branchName: string;
-    branchAddress: string;
-    date: string;
-    time: string;
-    type: string;
-  };
+  id: number;
+  branchId: string;
+  branchName: string;
+  branchAddress: string;
+  date: string;
+  time: string;
+  type: string;
+};
 
 export default function WashAppointmentsCalendar() {
   const t = useTranslation();
@@ -39,19 +38,15 @@ export default function WashAppointmentsCalendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const { branches, loading: branchesLoading } = useFetchBranches();
+  const { branches } = useFetchBranches();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useLoadAppointmentsFromBackend();
+
   const branchMap = new Map<number, Branch>();
-branches.forEach((b) => branchMap.set(b.id, b));
+  branches.forEach((b) => branchMap.set(b.id, b));
 
-
- 
-
-  const appointments = useSelector(
-    (state: RootState) => state.appointments.appointments
-  );
+  const appointments = useSelector((state: RootState) => state.appointments.appointments);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -74,10 +69,10 @@ branches.forEach((b) => branchMap.set(b.id, b));
     setSelectedAppointment(appointment);
     setPopupVisible(true);
   };
-  
+
   const handleConfirmDelete = async () => {
     if (!selectedAppointment) return;
-  
+
     try {
       const token = localStorage.getItem("access_token");
       const response = await customFetch(
@@ -90,11 +85,9 @@ branches.forEach((b) => branchMap.set(b.id, b));
           },
         }
       );
-  
-      if (!response.ok) {
-        throw new Error("Failed to delete appointment");
-      }
-  
+
+      if (!response.ok) throw new Error("Failed to delete appointment");
+
       dispatch(removeAppointment({ date: selectedAppointment.date, time: selectedAppointment.time }));
     } catch (err) {
       console.error("Error deleting appointment:", err);
@@ -103,38 +96,30 @@ branches.forEach((b) => branchMap.set(b.id, b));
       setSelectedAppointment(null);
     }
   };
-  
-  
+
   const handleCancelDelete = () => {
     setPopupVisible(false);
     setSelectedAppointment(null);
   };
-  
 
   return (
     <div>
-      <Header logoVariant='calendar' />
-      <div className='wash-calendar'>
-        <div className='calendar-header'>
-          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-            &lt;
-          </button>
+      <Header logoVariant="calendar" />
+      <div className="wash-calendar">
+        <div className="calendar-header">
+          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>&lt;</button>
           <span>{format(currentMonth, "MMMM yyyy")}</span>
-          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-            &gt;
-          </button>
+          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>&gt;</button>
         </div>
 
-        <div className='calendar-grid-wrapper'>
-          <div className='calendar-daynames'>
+        <div className="calendar-grid-wrapper">
+          <div className="calendar-daynames">
             {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
-              <div key={day} className='calendar-dayname'>
-                {day}
-              </div>
+              <div key={day} className="calendar-dayname">{day}</div>
             ))}
           </div>
 
-          <div className='calendar-grid'>
+          <div className="calendar-grid">
             {days.map((day) => {
               const isSelected = isSameDay(day, selectedDate);
               const key = day.toDateString();
@@ -147,67 +132,63 @@ branches.forEach((b) => branchMap.set(b.id, b));
                   onClick={() => setSelectedDate(day)}
                 >
                   <div>{format(day, "d")}</div>
-                  {hasAppointments && <div className='dot' />}
+                  {hasAppointments && <div className="dot" />}
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className='appointments-panel'>
+        <div className="appointments-panel">
           {selectedAppointments.length === 0 ? (
-            <p className='no-events'>{t("WashAppointmentsCalendar.noAppointments")}</p>
+            <p className="no-events">{t("WashAppointmentsCalendar.noAppointments")}</p>
           ) : (
-            selectedAppointments.map((a, i) => (
-              <div key={i} className='appointment-card'>
-                <p className='appointment-date-time'>
-                  {format(parseISO(a.date), "dd MMMM yyyy")} ·{a.time}
-                </p>
-                {(() => {
-                  const branch = branchMap.get(Number(a.branchId));
-                  return branch ? (
+            selectedAppointments.map((a, i) => {
+              const branch = branchMap.get(Number(a.branchId));
+              return (
+                <div key={i} className="appointment-card">
+                  <p className="appointment-date-time">
+                    {format(parseISO(a.date), "dd MMMM yyyy")} · {a.time}
+                  </p>
+                  {branch ? (
                     <>
-                      <p className='appointment-branch'>{branch.name}</p>
-                      <p className='appointment-address'>{branch.address}</p>
+                      <p className="appointment-branch">{branch.name}</p>
+                      <p className="appointment-address">{branch.address}</p>
                     </>
                   ) : (
-                    <p className='appointment-branch'>{t("WashAppointmentsCalendar.branchNotFound")}</p>
-                  );
-                })()}
-                <div className='functional-block-caledar'>
-                  <button onClick={() => handleDeleteClick(a)}>
-                    <img
-                      src='../../src/assets/icons/trash-icon.svg'
-                      alt='delete'
-                    />
-                  </button>
-                  <button>
-                    <img
-                      src='../../src/assets/icons/ManagerOrder/call_icon.svg'
-                      alt=''
-                    />
-                  </button>
-                  <button>
-                    <img src='../../src/assets/icons/path-icon.svg' alt='' />
-                  </button>
-                  <button onClick={()=> navigate("/customer-qr-page")}>
-                    <img
-                      src='../../src/assets/icons/qr-icon-yellow.svg'
-                      alt=''
-                    />
-                  </button>
+                    <p className="appointment-branch">{t("WashAppointmentsCalendar.branchNotFound")}</p>
+                  )}
+                  <div className="functional-block-caledar">
+                    <button onClick={() => handleDeleteClick(a)}>
+                      <img src="../../src/assets/icons/trash-icon.svg" alt="delete" />
+                    </button>
+                    {branch?.manager?.phone && (
+                      <a href={`tel:+${branch.manager.phone}`}>
+                        <button>
+                          <img src="../../src/assets/icons/ManagerOrder/call_icon.svg" alt="call" />
+                        </button>
+                      </a>
+                    )}
+                    <button>
+                      <img src="../../src/assets/icons/path-icon.svg" alt="map" />
+                    </button>
+                    <button onClick={() => navigate("/customer-qr-page")}>
+                      <img src="../../src/assets/icons/qr-icon-yellow.svg" alt="qr" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
+
       {popupVisible && (
-        <div className='delete-popup-backdrop'>
-          <div className='delete-popup'>
+        <div className="delete-popup-backdrop">
+          <div className="delete-popup">
             <h3>Cancel appointment</h3>
             <p>Do you really want to cancel this appointment?</p>
-            <div className='popup-actions'>
+            <div className="popup-actions">
               <button onClick={handleCancelDelete}>Cancel</button>
               <button onClick={handleConfirmDelete}>Delete</button>
             </div>

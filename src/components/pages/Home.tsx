@@ -12,6 +12,7 @@ import { differenceInMonths } from "date-fns";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { useTranslation } from "@/hooks/useTranslation";
+const NO_API_URL = import.meta.env.VITE_NO_API_URL;
 
 
 export default function Home() {
@@ -108,7 +109,7 @@ export default function Home() {
                       <img src={qrIcon} alt='QR icon' />
                     </div>
                     <img
-                      src='/images/hatchback_image.png'
+                      src={`${NO_API_URL}${car.image}`}
                       alt='hatchback_image'
                     />
                   </div>

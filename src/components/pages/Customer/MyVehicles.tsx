@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/hooks/hooks";
 import { useFetchCars } from "@/hooks/useFetchCars";
 import { useTranslation } from "@/hooks/useTranslation";
-
+const NO_API_URL = import.meta.env.VITE_NO_API_URL;
 
 export default function MyVehicles() {
   const vehicles = useAppSelector((state) => state.car.cars);
@@ -22,7 +22,17 @@ export default function MyVehicles() {
 
       {cars.map((car, index) => (
         <div key={index}>
-          <img src='images/hatchback_image.png' alt='vehicle-image' />
+          <div className='image-wrapper'>
+            <img
+              className='vehicles-image'
+              src={
+                car.image
+                  ? `${NO_API_URL}${car.image}`
+                  : "/assets/icons/default-car.svg"
+              }
+              alt='vehicle'
+            />
+          </div>
           <div className='vehicles-flex'>
             <div className='vehicles-info'>
               <h4 className='auto-number'>{car.plate}</h4>
@@ -30,7 +40,9 @@ export default function MyVehicles() {
             </div>
             <div>
               <button
-                onClick={() => navigate(`/edit-car/${car.id}`, { state: { car } })}
+                onClick={() =>
+                  navigate(`/edit-car/${car.id}`, { state: { car } })
+                }
                 style={{ padding: "0px" }}
               >
                 <img

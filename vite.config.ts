@@ -13,6 +13,6 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ['a0108a34e382.ngrok-free.app']
+    allowedHosts: ['98056846e5dc.ngrok-free.app']
   },
 });

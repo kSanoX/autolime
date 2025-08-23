@@ -5,11 +5,11 @@ import { SexDropDown } from "@/components/ui/SexDropDown";
 import CustomerContactInfo from "@/components/CustomerContactInfo";
 import MyVehicles from "./MyVehicles";
 import NotificationSettings from "./NotificationSettings";
-import { useUser } from "@/hooks/useUser";
 import { useEditUser } from "@/hooks/useEditUser";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { useTranslation } from "@/hooks/useTranslation";
+import { customFetch } from "@/utils/customFetch";
 
 export default function CustomerMyData() {
   const navigate = useNavigate();
@@ -23,6 +23,10 @@ export default function CustomerMyData() {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [sexOpen, setSexOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [wash, setWash] = useState(false);
+const [subscription, setSubscription] = useState(true);
+const [promo, setPromo] = useState(false);
+
   const t = useTranslation();
 
   const isFormFilled =
@@ -37,6 +41,10 @@ export default function CustomerMyData() {
       setSecondName(user.lastName);
       setSelectedDate(user.dateOfBirth ?? undefined);
       setSelectedSex(user.sex ?? "");
+
+      setWash(user.enablePushWashAppointment);
+      setSubscription(user.enablePushRenewalSubscription);
+      setPromo(user.enablePushSpecialPromotions);
     }
   }, [user]);
 
@@ -48,10 +56,29 @@ export default function CustomerMyData() {
       date_of_birth: selectedDate?.toISOString().split("T")[0],
     });
   
+    try {
+      const token = localStorage.getItem("access_token");
+      await customFetch(`${import.meta.env.VITE_API_URL}/push_settings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          wash_appointment: wash,
+          renewal_subscription: subscription,
+          special_promotions: promo,
+        }),
+      });
+    } catch (err) {
+      console.error("Ошибка сохранения push-настроек:", err);
+    }
+  
     if (success) {
       setModalOpen(false);
     }
-  };  
+  };
+  
 
   return (
     <div className='customer-data-container'>
@@ -105,7 +132,7 @@ export default function CustomerMyData() {
           ))}
 
           <div className='form-group'>
-          <label>{t("CustomerMyData.form.fields.dateOfBirth")}</label>
+            <label>{t("CustomerMyData.form.fields.dateOfBirth")}</label>
             <div
               className='input-with-icon-customer'
               onClick={() => setCalendarOpen(true)}
@@ -138,7 +165,7 @@ export default function CustomerMyData() {
           />
 
           <div className='form-group'>
-          <label>{t("CustomerMyData.form.fields.sex")}</label>
+            <label>{t("CustomerMyData.form.fields.sex")}</label>
             <div
               className='input-with-icon-customer'
               style={{ cursor: "pointer" }}
@@ -184,10 +211,10 @@ export default function CustomerMyData() {
             <p>{t("CustomerMyData.modal.message")}</p>
             <div className='actions'>
               <button className='leave' onClick={() => setModalOpen(false)}>
-              {t("CustomerMyData.modal.buttons.leave")}
+                {t("CustomerMyData.modal.buttons.leave")}
               </button>
               <button className='save' onClick={handleSave}>
-              {t("CustomerMyData.modal.buttons.save")}
+                {t("CustomerMyData.modal.buttons.save")}
               </button>
             </div>
           </div>
@@ -196,7 +223,14 @@ export default function CustomerMyData() {
 
       <CustomerContactInfo />
       <MyVehicles />
-      <NotificationSettings />
+      <NotificationSettings
+        wash={wash}
+        setWash={setWash}
+        subscription={subscription}
+        setSubscription={setSubscription}
+        promo={promo}
+        setPromo={setPromo}
+      />
     </div>
   );
 }

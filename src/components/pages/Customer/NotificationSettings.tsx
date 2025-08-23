@@ -1,24 +1,25 @@
-import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function NotificationSettings() {
-  const [wash, setWash] = React.useState(false);
-  const [subscription, setSubscription] = React.useState(true);
-  const [promo, setPromo] = React.useState(false);
+export default function NotificationSettings({
+  wash,
+  setWash,
+  subscription,
+  setSubscription,
+  promo,
+  setPromo,
+}: {
+  wash: boolean;
+  setWash: (v: boolean) => void;
+  subscription: boolean;
+  setSubscription: (v: boolean) => void;
+  promo: boolean;
+  setPromo: (v: boolean) => void;
+}) {
   const t = useTranslation();
 
   return (
-    <div
-      style={{
-        padding: "16px",
-        backgroundColor: "#fff",
-        borderRadius: "16px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-        margin: "16px",
-        fontFamily: "Roboto, sans-serif",
-      }}
-    >
+    <div style={{ padding: "16px", backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)", margin: "16px", fontFamily: "Roboto, sans-serif" }}>
       <h1 style={{ fontSize: "20px", color: "#183D69", fontWeight: 600, marginBottom: "24px" }}>
         {t("NotificationSettings.title")}
       </h1>

@@ -15,7 +15,10 @@ export interface User {
   role: number;
   createdAt: Date;
   updatedAt: Date;
-}
+  enablePushWashAppointment: boolean;
+  enablePushRenewalSubscription: boolean;
+  enablePushSpecialPromotions: boolean;
+};
 
 interface UserState {
   role: UserRole | null;

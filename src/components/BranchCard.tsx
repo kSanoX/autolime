@@ -29,19 +29,30 @@ export function BranchCard({ branch, onClick, isActive }: {
     });
   };
 
-  const extraButton = isActive ? (
-    <button onClick={handleGoToMap}>
-      <img src="../../src/assets/icons/geo-icon-yellow.svg" alt="geo" />
-    </button>
-  ) : (
-    <button onClick={handleCalendarClick}>
-      <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="calendar" />
-    </button>
-  );
+  // const extraButton = isActive ? (
+  //   <button onClick={handleGoToMap}>
+  //     <img src="../../src/assets/icons/geo-icon-yellow.svg" alt="geo" />
+  //   </button>
+  // ) : (
+  //   <button onClick={handleCalendarClick}>
+  //     <img src="../../src/assets/icons/calendar-icon-yellow.svg" alt="calendar" />
+  //   </button>
+  // );
 
   return (
     <div onClick={onClick} className={`branch-card ${isActive ? "active-branch" : ""}`}>
-      <BranchInfoPanel branch={branch} extraActions={extraButton} />
+      <BranchInfoPanel
+  branch={branch}
+  onGoToMap={(e) => {
+    e.stopPropagation();
+    handleGoToMap(e);
+  }}
+  onGoToCalendar={(e) => {
+    e.stopPropagation();
+    handleCalendarClick(e);
+  }}
+/>
+
       {isActive && (
   <img
     src="../src/assets/icons/calendar-ok.svg"

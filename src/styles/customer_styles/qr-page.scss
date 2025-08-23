@@ -15,6 +15,7 @@
         @include font-roboto-bold-blue;
         font-size: 24px;
         font-weight: 600;
+        margin-top: 24px;
     }
     .car-model {
         @include font-roboto-regular-blue;
@@ -37,8 +38,11 @@
       }
 }
 
-
-
+.car-list { 
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .qr-overlay {
     position: fixed;

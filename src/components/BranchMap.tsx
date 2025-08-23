@@ -171,12 +171,14 @@ export function BranchMap({
           </p>
 
           <div className='branch-info-panel__actions'>
+          <a href={`tel:+${selectedBranch.manager.phone}`}>
             <button>
               <img
                 src='../../src/assets/icons/ManagerOrder/call_icon.svg'
                 alt='call'
               />
             </button>
+            </a>
             <button onClick={handleRouteClick}>
               <img src='../../src/assets/icons/path-icon.svg' alt='path' />
             </button>

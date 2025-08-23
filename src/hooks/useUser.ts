@@ -42,7 +42,10 @@ export function useUser() {
           role: data.user.role,
           createdAt: new Date(data.user.created_at),
           updatedAt: new Date(data.user.updated_at),
-        };
+          enablePushWashAppointment: Boolean(data.user.enable_push_wash_appointment),
+          enablePushRenewalSubscription: Boolean(data.user.enable_push_renewal_subscription),
+          enablePushSpecialPromotions: Boolean(data.user.enable_push_special_promotions),
+        };        
 
         dispatch(setUser(parsed));
 

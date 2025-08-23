@@ -35,6 +35,7 @@ import MyData from "./components/pages/Manager/MyData";
 import { CarCheckRoute } from "./components/CarCheckRoute";
 import { customFetch } from "./utils/customFetch";
 import RenewPasswordPage from "./components/pages/RenewPasswordPage";
+import SettingsPage from "./components/pages/SettingsPage";
 
 
 function AppRoutes() {
@@ -70,6 +71,7 @@ function AppRoutes() {
         <Route path="/manager-qr-page" element={<ManagerScanner />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/help" element={<Help />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
     ) : (
       <Route element={<CustomerLayout />}>
@@ -87,6 +89,7 @@ function AppRoutes() {
         <Route path="/messages" element={<Messages />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/help" element={<Help />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
     )}
   </Route>

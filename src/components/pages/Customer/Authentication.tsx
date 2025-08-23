@@ -88,13 +88,23 @@ export default function Authentication() {
         />
       </div>
 
-      <div className='auth-greetings'>
-        <h1>{t("Authentication.greeting.title")}</h1>
-        <p>{t("Authentication.greeting.subtitle")}</p>
-      </div>
+      <div className="auth-greetings">
+  <h1>{t("Authentication.greeting.title")}</h1>
+  <p>{t("Authentication.greeting.subtitle")}</p>
+</div>
 
-      {error.phone === "required" && <p>{t("Authentication.errors.phoneRequired")}</p>}
-{error.password === "required" && <p>{t("Authentication.errors.passwordRequired")}</p>}
+{error.phone === "required" && (
+  <p className="incorrect-password-error">{t("Authentication.errors.phoneRequired")}</p>
+)}
+{error.password === "required" && (
+  <p className="incorrect-password-error">{t("Authentication.errors.passwordRequired")}</p>
+)}
+{error.phone === "not-found" && (
+  <p className="incorrect-password-error">{t("Authentication.errors.phoneNotFound")}</p>
+)}
+{error.password === "incorrect" && (
+  <p className="incorrect-password-error">{t("Authentication.errors.passwordIncorrect")}</p>
+)}
 
 
       <div className='auth-input-block'>
@@ -152,7 +162,7 @@ export default function Authentication() {
 
         {/* Forgot */}
         <div className='forgot-password'>
-          <a href='/forgot'>{t("Authentication.forgotPassword")}</a>
+          <Link to='/renew-password'>{t("Authentication.forgotPassword")}</Link>
         </div>
 
         {/* Submit */}

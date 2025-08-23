@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import "../../../styles/customer_styles/qr-page.scss";
 import { useMyPackages } from "@/hooks/useActivePackages";
 import { useTranslation } from "@/hooks/useTranslation";
+const NO_API_URL = import.meta.env.VITE_NO_API_URL;
 
 export default function QRPage() {
   const t = useTranslation();
@@ -15,11 +16,7 @@ export default function QRPage() {
     error: packagesError,
   } = useMyPackages();
 
-  const {
-    cars,
-    loading: carsLoading,
-    error: carsError,
-  } = useFetchCars();
+  const { cars, loading: carsLoading, error: carsError } = useFetchCars();
 
   const [activePlate, setActivePlate] = useState<string | null>(null);
   const [activePackageId, setActivePackageId] = useState<number | null>(null);
@@ -64,36 +61,36 @@ export default function QRPage() {
 
   if (carsLoading || packagesLoading) {
     return (
-      <div className="qr-page-wrapper">
-        <Header title={t("QRPage.header.title")} logoVariant="qr" />
-        <p className="loading">{t("QRPage.loading")}</p>
+      <div className='qr-page-wrapper'>
+        <Header title={t("QRPage.header.title")} logoVariant='qr' />
+        <p className='loading'>{t("QRPage.loading")}</p>
       </div>
     );
   }
 
   if (carsError || packagesError) {
     return (
-      <div className="qr-page-wrapper">
-        <Header title={t("QRPage.header.title")} logoVariant="qr" />
-        <p className="error">{t("QRPage.error")}</p>
+      <div className='qr-page-wrapper'>
+        <Header title={t("QRPage.header.title")} logoVariant='qr' />
+        <p className='error'>{t("QRPage.error")}</p>
       </div>
     );
   }
 
   return (
     <div>
-      <Header title={t("QRPage.header.title")} logoVariant="qr" />
-      <div className="qr-page-wrapper">
+      <Header title={t("QRPage.header.title")} logoVariant='qr' />
+      <div className='qr-page-wrapper'>
         {/* QR Overlay */}
         {activePlate && (
-          <div className="qr-overlay">
-            <button className="close-btn" onClick={closeOverlay}>
+          <div className='qr-overlay'>
+            <button className='close-btn' onClick={closeOverlay}>
               {t("QRPage.overlay.close")}
             </button>
-            <div className="qr-container">
-              <p className="plate-label">{activePlate}</p>
+            <div className='qr-container'>
+              <p className='plate-label'>{activePlate}</p>
               {qrImageUrl ? (
-                <img src={qrImageUrl} alt="QR Code" className="qr-image" />
+                <img src={qrImageUrl} alt='QR Code' className='qr-image' />
               ) : (
                 <p>{t("QRPage.overlay.loading")}</p>
               )}
@@ -103,36 +100,37 @@ export default function QRPage() {
 
         {/* Машины */}
         {cars.length === 0 ? (
-          <p className="no-cars">{t("QRPage.noCars")}</p>
+          <p className='no-cars'>{t("QRPage.noCars")}</p>
         ) : (
-          <div className="car-list">
+          <div className='car-list'>
             {cars.map((car) => {
               const pkg = carIdToPackage[car.id];
               const canGenerateQR = pkg != null;
 
               return (
-                <div key={car.id} className="car-card">
-                  <img src="/images/hatchback_image.png" alt={car.type} />
-                  <p className="car-plate">{car.plate}</p>
-                  <p className="car-model">{t("QRPage.car.model")}: {car.type}</p>
+                <div key={car.id} className='car-card'>
+                  <img src={`${NO_API_URL}${car.image}`} alt={car.type} />
+                  <p className='car-plate'>{car.plate}</p>
+                  <p className='car-model'>
+                    {t("QRPage.car.model")}: {car.type}
+                  </p>
 
                   {canGenerateQR && (
                     <button
-                      className="qr-btn"
+                      className='qr-btn'
                       onClick={() => {
                         setActivePackageId(pkg.id);
                         setActivePlate(car.plate);
                       }}
                     >
-                      <img
-                        src="../../../src/assets/icons/qr_icon.svg"
-                        alt=""
-                      />
+                      <img src='../../../src/assets/icons/qr_icon.svg' alt='' />
                     </button>
                   )}
-                  <span style={{ textAlign: "end", color: "#4B6D95" }}>
-                    Generate QR
-                  </span>
+                  {canGenerateQR && (
+                    <span style={{ textAlign: "end", color: "#4B6D95" }}>
+                      Generate QR
+                    </span>
+                  )}
                 </div>
               );
             })}

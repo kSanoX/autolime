@@ -30,6 +30,12 @@ const firstCar = cars[0];
     (state: RootState) => state.appointments.appointments
   );
 
+  const APPOINTMENT_STATUS_LABELS: Record<number, string> = {
+    0: "New",
+    1: "Confirm",
+    2: "Deleted",
+    3: "Rescheduled",
+  };
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [pickedTime, setPickedTime] = useState("");
@@ -123,14 +129,15 @@ console.log("Resolved branch:", branch);
         {branch && (
           <BranchInfoPanel
             branch={branch}
-            extraActions={
-              <button onClick={handleGoToMap}>
-                <img
-                  src='../../src/assets/icons/geo-icon-yellow.svg'
-                  alt='geo'
-                />
-              </button>
-            }
+            onGoToMap={handleGoToMap}
+            onGoToCalendar={() => {
+              const calendarSection = document.getElementById(
+                "car-wash-apointment-display"
+              );
+              if (calendarSection) {
+                calendarSection.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
           />
         )}
         {Array.isArray(appointments) && appointments.length > 0 && (
@@ -167,7 +174,12 @@ console.log("Resolved branch:", branch);
                       src='../../../src/assets/icons/branch/summary-applied.svg'
                       alt='status'
                     />
-                    <span>{t("WashAppointment.appointments.status")}</span>
+                    <span className='appointment-status'>
+                      {appointment.approved === 0 && "New"}
+                      {appointment.approved === 1 && "Confirm"}
+                      {appointment.approved === 2 && "Deleted"}
+                      {appointment.approved === 3 && "Rescheduled"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -177,7 +189,11 @@ console.log("Resolved branch:", branch);
 
         <div className='car-wash-apointment-display'>
           <h4>{t("WashAppointment.form.title")}</h4>
-          {success && <div className='booking-status'>{t("WashAppointment.form.success")}</div>}
+          {success && (
+            <div className='booking-status'>
+              {t("WashAppointment.form.success")}
+            </div>
+          )}
           {!success && error && <div className='booking-error'>{error}</div>}
 
           <div className='form-group'>
@@ -212,7 +228,6 @@ console.log("Resolved branch:", branch);
               <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
             </div>
           </div>
-
           <div className='input-block'>
             <label>{t("WashAppointment.form.service.label")}</label>
             <div className='input-select' onClick={() => setTypeOpen(true)}>

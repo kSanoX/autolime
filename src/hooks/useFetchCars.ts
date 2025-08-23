@@ -7,6 +7,7 @@ type EnrichedCar = {
   type: string;
   model: string;
   brand: string;
+  image: string | null;
 };
 
 export function useFetchCars() {
@@ -37,7 +38,8 @@ export function useFetchCars() {
           type: car.model?.type ?? "Unknown",
           model: car.model?.name ?? "Unknown",
           brand: car.model?.brand?.name ?? "Unknown",
-        }));
+          image: car.image ?? null,
+        }));        
 
         setCars(enriched);
       } catch (err) {

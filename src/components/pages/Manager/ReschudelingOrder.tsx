@@ -51,8 +51,9 @@ export default function ReschudelingOrder() {
   
     try {
       await updateAppointmentStatus(orderId, 3, formattedDate, formattedTime);
+      navigate("/"); 
       refetch();
-      navigate(-1);
+      window.location.reload();
     } catch (err) {
       console.error("Reschedule failed:", err);
     } finally {
@@ -67,7 +68,7 @@ export default function ReschudelingOrder() {
         <button className='rescheduling-back-btn' onClick={() => navigate(-1)}>
           <img src='../../src/assets/icons/left-arrow.svg' alt='Back' />
         </button>
-        <h2 className='rescheduling-title'>{t("ReschedulingOrder.header.title")}</h2>
+        <h2 className='rescheduling-title'>{t("ReschudelingOrder.header.title")}</h2>
       </header>
       <div className='rescheduling-order-container'>
         <div className='rescheduling-customer-info'>
@@ -83,7 +84,7 @@ export default function ReschudelingOrder() {
 
         <div className='rescheduling-customer-date-container'>
           <div className='rescheduling-date'>
-            <p>{t("ReschedulingOrder.form.date.label")}</p>
+            <p>{t("ReschudelingOrder.form.date.label")}</p>
             <div
               className='rescheduling-calendar-dropdown'
               onClick={handleCalendarOpen}
@@ -103,7 +104,7 @@ export default function ReschudelingOrder() {
               }}
             />
 
-            <p>{t("ReschedulingOrder.form.time.label")}</p>
+            <p>{t("ReschudelingOrder.form.time.label")}</p>
             <div
               onClick={() => setTimePickerOpen(true)}
               className='rescheduling-time-date'
@@ -122,7 +123,7 @@ export default function ReschudelingOrder() {
             }`}
             onClick={handleSave}
           >
-            {isSaving ? <span className='spinner' /> : t("ReschedulingOrder.save.button")}
+            {isSaving ? <span className='spinner' /> : t("ReschudelingOrder.form.save.button")}
           </button>
         </div>
       </div>

@@ -140,9 +140,13 @@
   }
   .flexible-appointment-detail {
     display: flex;
-    justify-content: start;
-    gap: 24px;
+    gap: 40px;
     @include font-roboto-regular-blue;
+    border-bottom: 1px solid $border;
+    margin-top: 12px;
+    &:last-child {
+      border-bottom: none;
+    }
   }
   .appointment-summary-card {
     background: #fff;
@@ -165,7 +169,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 14px;
+      font-size: 18px;
+      letter-spacing: 0.1px;
       margin-bottom: 8px;
   
       img {
@@ -181,4 +186,8 @@
     border-radius: 16px;
     text-align: center;
     margin: 12px 0px 12px 0px;
+  }
+
+  .appointment-status {
+    color: $yellowMain;
   }
