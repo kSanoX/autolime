@@ -4,8 +4,9 @@ import { store } from "./store";
 import { useUserRole } from "./hooks/useUserRole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useUser } from "@/hooks/useUser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setTranslations } from "./store/langSlice";
+import { ensureDeviceToken } from "./hooks/useDeviceToken";
 
 import Home from "./components/pages/Home";
 import ManagerCalendar from "./components/Calendars/ManagerCalendar";
@@ -25,6 +26,10 @@ import BranchScreen from "./components/BranchScreen";
 import WashAppointment from "./components/pages/Customer/WashApointment";
 import MyReviews from "./components/pages/Customer/MyReviews";
 import MyPackages from "./components/pages/Customer/MyPackages";
+import MyPoints from "./components/pages/Customer/MyPoints";
+import PointsInfo from "./components/pages/Customer/PointsInfo";
+import ReferralsInfo from "./components/pages/Customer/ReferralsInfo";
+import ShopPage from "./components/pages/Customer/ShopPage";
 import CustomerCalendar from "./components/Calendars/CustomerCalendar";
 import QRPage from "./components/pages/Customer/QRPage";
 import ManagerScanner from "./components/pages/Manager/ManagerScanner";
@@ -41,13 +46,41 @@ import SettingsPage from "./components/pages/SettingsPage";
 function AppRoutes() {
   const role = useUserRole();
   const dispatch = useDispatch();
+  const [langLoading, setLangLoading] = useState(true);
   useUser();
+
+  useEffect(() => {
+    ensureDeviceToken().then((token) => {
+      if (token) {
+        const webview = document.querySelector("iframe, webview");
+        if (webview) {
+          const url = new URL(webview.src);
+          url.searchParams.set("token", token);
+          webview.src = url.toString();
+        }
+      }
+    });
+  }, []);
+
+//////////////////////////////////////
+
   useEffect(() => {
     customFetch(`${import.meta.env.VITE_API_URL}/lang/en`)
       .then((res) => res.json())
-      .then((data) => dispatch(setTranslations(data)))
-      .catch((err) => console.error("Failed to load translations:", err));
+      .then((data) => {
+        dispatch(setTranslations(data));
+      })
+      .catch((err) => console.error("Failed to load translations:", err))
+      .finally(() => setLangLoading(false));
   }, [dispatch]);
+
+  if (langLoading) {
+    return (
+      <div className="lang-loader">
+        <div className="spinner" />
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -84,6 +117,10 @@ function AppRoutes() {
         <Route path="/wash-appointment" element={<WashAppointment />} />
         <Route path="/my-reviews" element={<MyReviews />} />
         <Route path="/my-packages" element={<MyPackages />} />
+        <Route path="/my-points" element={<MyPoints />} />
+        <Route path="/my-points/info" element={<PointsInfo />} />
+        <Route path="/my-points/referrals" element={<ReferralsInfo />} />
+        <Route path="/shop" element={<ShopPage />} />
         <Route path="/customer-calendar" element={<CustomerCalendar />} />
         <Route path="/customer-qr-page" element={<QRPage />} />
         <Route path="/messages" element={<Messages />} />

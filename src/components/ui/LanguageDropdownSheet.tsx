@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import React from "react";
 
 export function LanguageDropdownSheet({
   open,
@@ -22,9 +21,9 @@ export function LanguageDropdownSheet({
     { code: "ru", label: "Russian", flag: "🇷🇺" },
   ];
   const FLAG_MAP: Record<string, string> = {
-    en: "/src/assets/icons/english-flag.svg",
-    ru: "/src/assets/icons/russian-flag.svg",
-    ka: "/src/assets/icons/georgian-flag.svg",
+    en: "../../src/assets/icons/en_flag.svg",
+    ka: "../../src/assets/icons/ge_flag.svg",
+    ru: "../../src/assets/icons/ru_flag.svg",
   };
   
 

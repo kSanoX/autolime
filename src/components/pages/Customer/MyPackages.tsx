@@ -46,6 +46,7 @@ export default function MyPackages() {
   };
 
   const transformedPackages: PackageData[] = packages.map((pkg) => ({
+    id: pkg.id,
     plate: pkg.car.plate,
     model: pkg.package.car_type,
     washes: pkg.number_of_washes - pkg.used_washes,
@@ -53,7 +54,7 @@ export default function MyPackages() {
     startDate: new Date(pkg.start_date),
     autoRenewal: pkg.renewal,
   }));
-
+  
   const availableCars = cars.filter(
     (car) => !transformedPackages.some((pkg) => pkg.plate === car.plate)
   );
@@ -81,7 +82,10 @@ export default function MyPackages() {
         {isLoading ? (
           <p>{t("MyPackages.loading")}</p>
         ) : error ? (
-          <p>{t("MyPackages.error")}{error.message}</p>
+          <p>
+            {t("MyPackages.error")}
+            {error.message}
+          </p>
         ) : (
           <>
             {showForm && (
@@ -104,20 +108,18 @@ export default function MyPackages() {
               transformedPackages.map((pkg) => (
                 <ActivePackageCard
                   key={pkg.plate}
+                  id={pkg.id}
                   plate={pkg.plate}
                   model={pkg.model}
                   washes={pkg.washes}
                   period={pkg.period}
                   startDate={pkg.startDate}
                   autoRenewal={pkg.autoRenewal}
-                  setAutoRenewal={(val) => {
-                  }}
-                  onEdit={(updated) => {
-                    setEditingPackage(updated);
-                  }}
-                  onDelete={(plate) => {
-                    console.log(`Delete package for ${plate}`);
-                  }}
+                  setAutoRenewal={(val) => {}}
+                  onEdit={(updated) => setEditingPackage(updated)}
+                  onDelete={(plate) =>
+                    console.log(`Delete package for ${plate}`)
+                  }
                   cars={cars}
                 />
               ))

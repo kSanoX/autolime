@@ -38,9 +38,9 @@ export default function CustomerNavBar() {
         <div className="qr-nav-bar-item">
         <Link to='/customer-qr-page' className={isActive("/customer-qr-page") ? "qr-active" : ""}>
           <svg
-            width='21'
-            height='20'
-            viewBox='0 0 21 20'
+            width='24'
+            height='24'
+            viewBox='0 0 21 21'
             fill='none'
             xmlns='http://www.w3.org/2000/svg'
           >

@@ -6,10 +6,18 @@ import { useState } from "react";
 export default function SettingsPage() {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("en"); // или подтягивай из user/lang
+  const [selectedLang, setSelectedLang] = useState("en");
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
 
   const handleSaveLanguage = () => {
     setDropdownOpen(false);
+  };
+  
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    location.reload();
   };
   
 
@@ -34,37 +42,46 @@ export default function SettingsPage() {
         className='settings-lng-block'
       >
         <div
-  className='setting-item-wrapper'
-  style={{ display: "flex", justifyContent: "space-between", cursor: "pointer" }}
-  onClick={() => setDropdownOpen(true)}
->
-  <div>
-    <img
-      className='setting-left-icon'
-      src='../../src/assets/icons/lang-setting-icon.svg'
-      alt=''
-    />
-    <span>Language</span>
-  </div>
-  <div>
-    <span>English</span>
-    <img
-      className='setting-right-icon'
-      src='../../src/assets/icons/right-arrow.svg'
-      alt=''
-    />
-  </div>
-</div>
+          className='setting-item-wrapper'
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            cursor: "pointer",
+          }}
+          onClick={() => setDropdownOpen(true)}
+        >
+          <div>
+            <img
+              className='setting-left-icon'
+              src='../../src/assets/icons/lang-setting-icon.svg'
+              alt=''
+            />
+            <span>Language</span>
+          </div>
+          <div>
+            <span>English</span>
+            <img
+              className='setting-right-icon'
+              src='../../src/assets/icons/right-arrow.svg'
+              alt=''
+            />
+          </div>
+        </div>
         <div
           className='setting-item-wrapper'
-          style={{ display: "flex", justifyContent: "space-between" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            cursor: "pointer",
+          }}
+          onClick={() => setLogoutModalOpen(true)}
         >
           <div>
             <img
               className='setting-left-icon'
               src='../../src/assets/icons/leave-settings-icon.svg'
               alt=''
-            />{" "}
+            />
             <span>Account</span>
           </div>
           <div>
@@ -87,7 +104,12 @@ export default function SettingsPage() {
       >
         <div
           className='setting-item-wrapper'
-          style={{ display: "flex", justifyContent: "space-between" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            cursor: "pointer",
+          }}
+          onClick={() => setDeleteModalOpen(true)}
         >
           <div>
             <img
@@ -120,15 +142,47 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-      {dropdownOpen && (
-  <LanguageDropdownSheet
-    open={dropdownOpen}
-    setOpen={setDropdownOpen}
-    selectedLang={selectedLang}
-    setSelectedLang={setSelectedLang}
-    onSave={handleSaveLanguage}
-  />
+      {logoutModalOpen && (
+        <div className='modal-backdrop'>
+          <div className='modal-window'>
+            <h2>Sign Out</h2>
+            <h3>Are you sure you want to leave the app?</h3>
+            <div className='modal-actions'>
+              <button onClick={() => setLogoutModalOpen(false)}>Cancel</button>
+              <button onClick={handleLogout}>Leave</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {deleteModalOpen && (
+  <div className="modal-backdrop">
+    <div className="modal-window">
+      <h2 style={{color: "#BA1717"}}>Delete your account?</h2>
+      <h3>You will lose all your data by deleting your account. This action cannot be undone.</h3>
+      <div className="modal-actions">
+        <button onClick={() => setDeleteModalOpen(false)}>No</button>
+        <button
+          onClick={() => {
+            console.log("Account deletion confirmed");
+            setDeleteModalOpen(false);
+          }}
+        >
+          Yes, delete
+        </button>
+      </div>
+    </div>
+  </div>
 )}
+
+      {dropdownOpen && (
+        <LanguageDropdownSheet
+          open={dropdownOpen}
+          setOpen={setDropdownOpen}
+          selectedLang={selectedLang}
+          setSelectedLang={setSelectedLang}
+          onSave={handleSaveLanguage}
+        />
+      )}
     </div>
   );
 }

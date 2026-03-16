@@ -197,7 +197,7 @@ export default function PhoneNumberChanging() {
                 }}
               />
             ) : (
-              t("PhoneNumberChanging.button.getCode")
+              t("PhoneNumberChanging.form.button.getCode")
             )}
           </button>
         </div>

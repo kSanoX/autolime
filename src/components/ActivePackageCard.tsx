@@ -6,6 +6,7 @@ import type { PackageData } from "@/types";
 import type { Car } from "@/store/carSlice";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import { customFetch } from "@/utils/customFetch";
 
 type Props = {
   id: number;
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export function ActivePackageCard({
+  id, // ← вот это
   plate,
   model,
   washes,
@@ -32,11 +34,32 @@ export function ActivePackageCard({
   onEdit,
   onDelete,
   cars,
-}: Props) {
+}: Props){
   const t = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const navigate = useNavigate();
+  
+  const deletePackage = async (id: number): Promise<boolean> => {
+    const token = localStorage.getItem("access_token");
+  
+    try {
+      const res = await customFetch(`${import.meta.env.VITE_API_URL}/packages/${id}/remove`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+  
+      return res.ok;
+    } catch (err) {
+      console.error("Delete package error:", err);
+      return false;
+    }
+  };
+  
 
   const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + period);
@@ -59,10 +82,17 @@ export function ActivePackageCard({
     <div className='active-package-card'>
       <div className='package-header'>
         <h2>{t("ActivePackageCard.header")}</h2>
-        <span className={`package-status ${isExpired ? "expired" : isExpiringSoon ? "warning" : ""}`}>
+        <span
+          className={`package-status ${
+            isExpired ? "expired" : isExpiringSoon ? "warning" : ""
+          }`}
+        >
           {isExpired
             ? t("ActivePackageCard.status.expired")
-            : t("ActivePackageCard.status.until").replace("{{date}}", endDate.toLocaleDateString("en-GB"))}
+            : t("ActivePackageCard.status.until").replace(
+                "{{date}}",
+                endDate.toLocaleDateString("en-GB")
+              )}
         </span>
       </div>
 
@@ -76,21 +106,33 @@ export function ActivePackageCard({
       <div className='package-details'>
         <div className='detail-block'>
           <span className='detail-label'>
-            <img src='../../../src/assets/icons/drop-icon.svg' alt={t("ActivePackageCard.details.washes.iconAlt")} />
+            <img
+              src='../../../src/assets/icons/drop-icon.svg'
+              alt={t("ActivePackageCard.details.washes.iconAlt")}
+            />
             {t("ActivePackageCard.details.washes.label")}
           </span>
           <span className='detail-value'>
-            {washes === "infinity" ? t("ActivePackageCard.details.washes.infinity") : washes}
+            {washes === "infinity"
+              ? t("ActivePackageCard.details.washes.infinity")
+              : washes}
           </span>
-          <span className='deatil-name'>{t("ActivePackageCard.details.washes.remaining")}</span>
+          <span className='deatil-name'>
+            {t("ActivePackageCard.details.washes.remaining")}
+          </span>
         </div>
         <div className='detail-block'>
           <span className='detail-label'>
-            <img src='../../../src/assets/icons/time.svg' alt={t("ActivePackageCard.details.period.iconAlt")} />
+            <img
+              src='../../../src/assets/icons/time.svg'
+              alt={t("ActivePackageCard.details.period.iconAlt")}
+            />
             {t("ActivePackageCard.details.period.label")}
           </span>
           <span className='detail-value'>{period}</span>
-          <span className='deatil-name'>{t("ActivePackageCard.details.period.unit")}</span>
+          <span className='deatil-name'>
+            {t("ActivePackageCard.details.period.unit")}
+          </span>
         </div>
       </div>
 
@@ -104,16 +146,28 @@ export function ActivePackageCard({
 
       <div className='package-actions'>
         <button onClick={() => setShowDeletePopup(true)}>
-          <img src='../../../src/assets/icons/trash-icon.svg' alt={t("ActivePackageCard.actions.deleteAlt")} />
+          <img
+            src='../../../src/assets/icons/trash-icon.svg'
+            alt={t("ActivePackageCard.actions.deleteAlt")}
+          />
         </button>
         <button onClick={() => setIsEditing((prev) => !prev)}>
-          <img src='../../../src/assets/icons/reload-icon.svg' alt={t("ActivePackageCard.actions.editAlt")} />
+          <img
+            src='../../../src/assets/icons/reload-icon.svg'
+            alt={t("ActivePackageCard.actions.editAlt")}
+          />
         </button>
         <button onClick={() => navigate("/branches")}>
-          <img src='../../../src/assets/icons/calendar-icon-yellow.svg' alt={t("ActivePackageCard.actions.calendarAlt")} />
+          <img
+            src='../../../src/assets/icons/calendar-icon-yellow.svg'
+            alt={t("ActivePackageCard.actions.calendarAlt")}
+          />
         </button>
         <button onClick={() => navigate("/customer-qr-page")}>
-          <img src='../../../src/assets/icons/qr-icon-yellow.svg' alt={t("ActivePackageCard.actions.qrAlt")} />
+          <img
+            src='../../../src/assets/icons/qr-icon-yellow.svg'
+            alt={t("ActivePackageCard.actions.qrAlt")}
+          />
         </button>
       </div>
 
@@ -144,7 +198,10 @@ export function ActivePackageCard({
 
       {showDeletePopup && (
         <>
-          <div className='package-delete-backdrop' onClick={() => setShowDeletePopup(false)} />
+          <div
+            className='package-delete-backdrop'
+            onClick={() => setShowDeletePopup(false)}
+          />
           <div className='package-delete-popup'>
             <h2>{t("ActivePackageCard.deletePopup.title")}</h2>
             <p>{t("ActivePackageCard.deletePopup.message")}</p>
@@ -153,9 +210,15 @@ export function ActivePackageCard({
                 {t("ActivePackageCard.deletePopup.cancel")}
               </button>
               <button
-                onClick={() => {
-                  onDelete?.(plate);
-                  setShowDeletePopup(false);
+                onClick={async () => {
+                  const success = await deletePackage(id);
+                  if (success) {
+                    onDelete?.(plate);
+                    setShowDeletePopup(false);
+                    location.reload();
+                  } else {
+                    console.warn("Удаление не удалось");
+                  }
                 }}
               >
                 {t("ActivePackageCard.deletePopup.confirm")}
