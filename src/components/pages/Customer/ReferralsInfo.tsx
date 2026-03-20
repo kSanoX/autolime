@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
+import { customFetch } from "@/utils/customFetch";
 import sharedIconYellow from "@/assets/icons/shared_icon_yellow.svg";
 import sharedIconBlue from "@/assets/icons/shared_icon_blue.svg";
 import referralsIcon from "@/assets/icons/referals_icon.svg";
@@ -46,9 +47,90 @@ export default function ReferralsInfo() {
   const t = useTranslation();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [referralLink, setReferralLink] = useState(MOCK_REFERRAL_LINK);
+  const [referrals, setReferrals] = useState<Array<{ id: number; name: string; phone?: string }>>(
+    []
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    const loadReferrals = async () => {
+      try {
+        const res = await customFetch(`${import.meta.env.VITE_API_URL}/referrals/list`, {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as any;
+        const list = (data?.referrals ?? data?.data ?? []) as any[];
+        if (!Array.isArray(list)) return;
+
+        const mapped = list
+          .map((r, idx) => {
+            const id = Number(r?.id ?? idx + 1);
+            const name =
+              typeof r?.name === "string"
+                ? r.name
+                : typeof r?.full_name === "string"
+                  ? r.full_name
+                  : typeof r?.username === "string"
+                    ? r.username
+                    : "Referral";
+            const phone = typeof r?.phone === "string" ? r.phone : undefined;
+            return { id, name, phone };
+          })
+          .filter(Boolean);
+
+        setReferrals(mapped);
+      } catch (err) {
+        console.error("Failed to load referrals list:", err);
+      }
+    };
+
+    loadReferrals();
+  }, []);
+
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    const loadReferralLink = async () => {
+      try {
+        const res = await customFetch(`${import.meta.env.VITE_API_URL}/me/get-referral-link`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+        if (!res.ok) return;
+
+        const data = (await res.json()) as Record<string, unknown>;
+        const nested = (data.data && typeof data.data === "object" ? data.data : null) as
+          | Record<string, unknown>
+          | null;
+
+        const link =
+          (typeof data.referral_link === "string" && data.referral_link) ||
+          (typeof data.referralLink === "string" && data.referralLink) ||
+          (typeof data.link === "string" && data.link) ||
+          (typeof data.url === "string" && data.url) ||
+          (typeof nested?.referral_link === "string" && nested.referral_link) ||
+          (typeof nested?.link === "string" && nested.link) ||
+          null;
+
+        if (link) setReferralLink(link);
+      } catch (err) {
+        console.error("Failed to load referral link:", err);
+      }
+    };
+
+    loadReferralLink();
+  }, [sheetOpen]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(MOCK_REFERRAL_LINK);
+    navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -92,6 +174,20 @@ export default function ReferralsInfo() {
             ))}
           </ul>
         </div>
+
+        {referrals.length > 0 && (
+          <div className="referrals-info-list">
+            <h2 className="referrals-info-list__title">My referrals</h2>
+            <ul className="referrals-info-list__items">
+              {referrals.map((r) => (
+                <li key={r.id} className="referrals-info-list__item">
+                  <span className="referrals-info-list__name">{r.name}</span>
+                  {r.phone && <span className="referrals-info-list__phone">{r.phone}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {sheetOpen && (
@@ -121,7 +217,7 @@ export default function ReferralsInfo() {
 
             <p className="referral-link-sheet__label">{t("ReferralsInfo.sheet.yourLink")}</p>
             <div className="referral-link-sheet__input-row">
-              <span className="referral-link-sheet__link">{MOCK_REFERRAL_LINK}</span>
+              <span className="referral-link-sheet__link">{referralLink}</span>
               <button
                 className={`referral-link-sheet__copy${copied ? " copied" : ""}`}
                 onClick={handleCopy}
@@ -141,7 +237,7 @@ export default function ReferralsInfo() {
               {SOCIALS.map((s) => (
                 <a
                   key={s.label}
-                  href={s.href(MOCK_REFERRAL_LINK)}
+                  href={s.href(referralLink)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="referral-link-sheet__social"

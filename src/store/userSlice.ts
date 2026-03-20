@@ -18,6 +18,8 @@ export interface User {
   enablePushWashAppointment: boolean;
   enablePushRenewalSubscription: boolean;
   enablePushSpecialPromotions: boolean;
+  points: number;
+  referralsCount: number;
 };
 
 interface UserState {

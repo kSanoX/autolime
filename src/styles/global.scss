@@ -23,6 +23,10 @@
 @use "./customer_styles/points-info.scss";
 @use "./customer_styles/referrals-info.scss";
 @use "./customer_styles/shop.scss";
+@use "./customer_styles/discounts.scss";
+@use "./customer_styles/discount-detail.scss";
+@use "./customer_styles/giveaway.scss";
+@use "./customer_styles/my-area.scss";
 body {
     font-family: $font-roboto;
     -webkit-tap-highlight-color: transparent;

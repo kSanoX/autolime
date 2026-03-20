@@ -1,3 +1,5 @@
+import { customFetch } from "@/utils/customFetch";
+
 const TOKEN_KEY = "device_jwt_token";
 
 export async function ensureDeviceToken(): Promise<string | null> {
@@ -5,7 +7,7 @@ export async function ensureDeviceToken(): Promise<string | null> {
   if (existing) return null;
 
   try {
-    const res = await fetch("https://back.alacitus.com/app/device/register", {
+    const res = await customFetch(`${import.meta.env.VITE_API_URL}/device/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type: "android" }),

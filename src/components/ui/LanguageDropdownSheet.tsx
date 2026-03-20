@@ -1,4 +1,7 @@
 import { motion } from "framer-motion";
+import enFlag from "@/assets/icons/en_flag.svg";
+import geFlag from "@/assets/icons/ge_flag.svg";
+import ruFlag from "@/assets/icons/ru_flag.svg";
 
 export function LanguageDropdownSheet({
   open,
@@ -16,15 +19,11 @@ export function LanguageDropdownSheet({
   if (!open) return null;
 
   const LANGUAGES = [
-    { code: "en", label: "English", flag: "🇬🇧" },
-    { code: "ka", label: "Georgian", flag: "🇬🇪" },
-    { code: "ru", label: "Russian", flag: "🇷🇺" },
+    { code: "en", label: "English" },
+    { code: "ka", label: "Georgian" },
+    { code: "ru", label: "Russian" },
   ];
-  const FLAG_MAP: Record<string, string> = {
-    en: "../../src/assets/icons/en_flag.svg",
-    ka: "../../src/assets/icons/ge_flag.svg",
-    ru: "../../src/assets/icons/ru_flag.svg",
-  };
+  const FLAG_MAP: Record<string, string> = { en: enFlag, ka: geFlag, ru: ruFlag };
   
 
   return (

@@ -1,11 +1,61 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type LangState = {
-  translations: Record<string, any>;
+  currentLang: "en" | "ru" | "ka";
+  translations: Record<string, unknown>;
 };
 
 const initialState: LangState = {
+  currentLang: (localStorage.getItem("lang") as LangState["currentLang"]) || "en",
   translations: {
+    Giveaway: {
+      title: "Giveaway",
+      activeOffers: "Active offers",
+      daysLeft: "days left",
+      joinBtn: "Join the giveaway",
+      takePartBtn: "Take part",
+      buyMoreBtn: "Buy more tickets",
+      joinedSuccess: "You've joined the giveaway!",
+      myTickets: "My tickets:",
+      daysLeftLabel: "Days left",
+      participants: "Participants",
+      termsTitle: "Terms of Participation:",
+      ticketPrice: "Ticket price",
+      quantity: "Quantity",
+      totalCost: "Total cost:",
+      currentBalance: "Current balance:",
+      newBalance: "New balance:",
+      points: "points",
+      confirmBtn: "Confirm",
+      takeBtn: "Take",
+      tickets: "Tickets",
+      buyMorePointsBtn: "Buy more points",
+      notEnoughTitle: "Not enough points",
+      notEnoughDesc: "You are {amount} points short. Purchase them now.",
+      amountToPay: "Amount to pay",
+      buyBtn: "Buy",
+      successTitle: "Successful purchase",
+      successDesc: "You have successfully purchased {amount} points.",
+      okBtn: "OK",
+      takePartForBtn: "Take part for {price} points",
+    },
+    Discounts: {
+      title: "Discounts",
+      searchPlaceholder: "Search for a partner company",
+      detail: {
+        termsTitle: "Terms of Use:",
+        buy: "Buy",
+        take: "Take",
+        currentBalance: "Current balance:",
+        newBalance: "New balance:",
+        points: "points",
+        successMsg: "Purchased successfully",
+        yourCode: "Your discount code:",
+        notEnoughTitle: "Not enough points",
+        notEnoughDesc: "You don't have enough points to get this discount. Buy more points to continue.",
+        buyPoints: "Buy points",
+      },
+    },
     Shop: {
       header: { title: "Shop" },
       balance: { label: "Balance", unit: "Coins" },
@@ -89,11 +139,15 @@ export const langSlice = createSlice({
   name: "lang",
   initialState,
   reducers: {
-    setTranslations(state, action: PayloadAction<Record<string, any>>) {
+    setLanguage(state, action: PayloadAction<LangState["currentLang"]>) {
+      state.currentLang = action.payload;
+      localStorage.setItem("lang", action.payload);
+    },
+    setTranslations(state, action: PayloadAction<Record<string, unknown>>) {
       state.translations = action.payload;
     },
   },
 });
 
-export const { setTranslations } = langSlice.actions;
+export const { setLanguage, setTranslations } = langSlice.actions;
 export default langSlice.reducer;

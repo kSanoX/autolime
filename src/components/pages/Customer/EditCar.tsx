@@ -101,7 +101,7 @@ export default function EditCar() {
     const token = localStorage.getItem("access_token");
 
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/mycars/${carId}/remove`, {
+      await customFetch(`${import.meta.env.VITE_API_URL}/mycars/${carId}/remove`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

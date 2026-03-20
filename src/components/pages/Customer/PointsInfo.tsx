@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
+import { buyPointsAndRedirect } from "@/lib/buyPoints";
 import cardIconYellow from "@/assets/icons/card_icon_yellow.svg";
 import cardIconBlue from "@/assets/icons/card_icon_blue.svg";
 import ticketIcon from "@/assets/icons/ticket_icon.svg";
@@ -12,6 +13,7 @@ export default function PointsInfo() {
   const t = useTranslation();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [amount, setAmount] = useState("");
+  const [buyLoading, setBuyLoading] = useState(false);
 
   const price = Number(amount) || 0;
 
@@ -98,12 +100,29 @@ export default function PointsInfo() {
             <button
               className={`buy-points-sheet__btn${price > 0 ? " active" : ""}`}
               disabled={price === 0}
-              onClick={() => {
-                setSheetOpen(false);
-                navigate("/my-points", { state: { addedPoints: price } });
+              onClick={async () => {
+                const token = localStorage.getItem("access_token");
+                if (!token || price <= 0 || buyLoading) return;
+
+                try {
+                  setBuyLoading(true);
+                  // Save pending info for MyPoints after redirect back.
+                  sessionStorage.setItem(
+                    "pending_points_buy_amount",
+                    String(price)
+                  );
+                  const returnTo = window.location.pathname + window.location.search;
+
+                  setSheetOpen(false);
+                  await buyPointsAndRedirect(price, returnTo);
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setBuyLoading(false);
+                }
               }}
             >
-              {t("PointsInfo.sheet.buyBtn")}
+              {buyLoading ? "Loading..." : t("PointsInfo.sheet.buyBtn")}
             </button>
           </motion.div>
         </>

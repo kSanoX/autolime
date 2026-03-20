@@ -30,6 +30,7 @@ export function useUser() {
 
         const data: { success: boolean; user: RawUser } = await res.json();
 
+        const raw = data.user as unknown as Record<string, unknown>;
         const parsed: User = {
           id: data.user.id,
           firstName: data.user.name || "",
@@ -45,6 +46,11 @@ export function useUser() {
           enablePushWashAppointment: Boolean(data.user.enable_push_wash_appointment),
           enablePushRenewalSubscription: Boolean(data.user.enable_push_renewal_subscription),
           enablePushSpecialPromotions: Boolean(data.user.enable_push_special_promotions),
+          points: typeof raw.points === "number" ? raw.points : Number(raw.points) || 0,
+          referralsCount:
+            typeof raw.referrals_count === "number"
+              ? raw.referrals_count
+              : Number(raw.referrals_count) || 0,
         };        
 
         dispatch(setUser(parsed));

@@ -22,7 +22,9 @@ export function CarCheckRoute() {
 
   if (error) {
     console.error(error);
-    return <Navigate to="/add-car" replace />;
+    // Если API сейчас недоступно, не редиректим на add-car,
+    // иначе пользователь "застревает" на одной странице.
+    return <Outlet />;
   }
 
   if (cars.length === 0) {

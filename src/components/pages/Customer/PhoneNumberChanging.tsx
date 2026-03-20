@@ -37,7 +37,7 @@ export default function PhoneNumberChanging() {
 
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/change_phone`, {
+      const response = await customFetch(`${import.meta.env.VITE_API_URL}/change_phone`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

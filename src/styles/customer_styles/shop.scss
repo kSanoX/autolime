@@ -1,9 +1,10 @@
 @use "../variables" as *;
 
+$shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
+
 .shop-page {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
   background: $bg;
 }
 
@@ -12,7 +13,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 12px 16px;
+  background: #fff;
+  box-shadow: $shop-shadow;
 
   &__burger {
     background: none;
@@ -21,12 +24,18 @@
     padding: 0;
     display: flex;
     align-items: center;
+    width: 63px;
   }
 
   &__title {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     color: $blueMain;
+  }
+
+  // spacer to keep title centered
+  &__spacer {
+    width: 63px;
   }
 }
 
@@ -34,32 +43,36 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 16px 32px;
+  padding: 16px;
 }
 
 // Balance card
 .shop-balance {
   background: $blueMain;
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: $shop-shadow;
 
   &__left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   &__coin {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #FFD954 0%, #FA9C18 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    padding: 2px;
+    flex-shrink: 0;
 
     img {
       width: 100%;
@@ -70,7 +83,8 @@
 
   &__label {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 400;
+    line-height: 22px;
     color: $yellowMain;
   }
 
@@ -78,18 +92,22 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    text-align: right;
   }
 
   &__amount {
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
     color: #fff;
+    line-height: 1;
   }
 
   &__unit {
     font-size: 12px;
+    font-weight: 400;
     color: $yellowMain;
-    margin-top: -2px;
+    line-height: 1;
+    margin-top: 2px;
   }
 }
 
@@ -97,45 +115,53 @@
 .shop-categories {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
 }
 
 .shop-category {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 2px 2px 8px rgba(143, 143, 143, 0.15);
-  padding: 16px;
+  box-shadow: $shop-shadow;
+  padding: 16px 12px 16px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: flex-end;
+  justify-content: space-between;
   cursor: pointer;
 
+  &__left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
   &__icon-wrap {
-    width: 40px;
-    height: 40px;
-    background: $color-blue-50;
-    border-radius: 12px;
+    width: 32px;
+    height: 32px;
+    background: $yellowMain;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
     img {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
     }
   }
 
   &__label {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
     color: $blueMain;
   }
 
   &__arrow {
-    width: 16px;
-    height: 16px;
-    align-self: flex-end;
-    margin-top: -4px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 }
 
@@ -149,30 +175,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-right: 4px;
   }
 
   &__title {
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
     color: $blueMain;
   }
 
   &__all {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
     color: $yellowMain;
     padding: 0;
 
     img {
-      width: 14px;
-      height: 14px;
-      filter: invert(70%) sepia(60%) saturate(500%) hue-rotate(5deg);
+      width: 20px;
+      height: 20px;
     }
   }
 }
@@ -180,10 +208,14 @@
 // Horizontal scroll container
 .shop-scroll {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
   scrollbar-width: none;
+  align-items: stretch;
+
+  // без фона и границ, чтобы лента карточек полностью сливалась с общим фоном
+  background: transparent;
+  border: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -193,98 +225,136 @@
 // Voucher card
 .voucher-card {
   flex-shrink: 0;
-  width: 156px;
+  width: 161px;
+  height: 203px;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 2px 2px 8px rgba(143, 143, 143, 0.15);
+  border-radius: 16px;
+  box-shadow: $shop-shadow;
   overflow: hidden;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 
   &__img {
     width: 100%;
-    height: 90px;
+    height: 96px;
     object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    border-radius: 16px 16px 0 0;
   }
 
   &__body {
-    padding: 8px 10px 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    justify-content: space-between;
+    flex: 1;
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   &__title {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: $blueMain;
-    white-space: nowrap;
+    line-height: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   &__category {
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 400;
     color: $textSecondary;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   &__badge {
-    display: inline-block;
-    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 8px;
     background: $yellowMain;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
+    color: $blueMain;
+    font-size: 16px;
+    font-weight: 600;
     border-radius: 8px;
-    padding: 2px 10px;
+    line-height: 1;
     align-self: flex-start;
+    white-space: nowrap;
   }
 }
 
 // Ticket card
 .ticket-card {
   flex-shrink: 0;
-  width: 156px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 2px 2px 8px rgba(143, 143, 143, 0.15);
-  overflow: hidden;
+  width: 161px;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: $shop-shadow;
 
   &__img {
     width: 100%;
-    height: 90px;
+    height: 64px;
     object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    border-radius: 16px 16px 0 0;
   }
 
   &__body {
-    padding: 8px 10px 10px;
+    padding: 12px 12px 8px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    background: #fff;
   }
 
   &__title {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: $blueMain;
-    white-space: nowrap;
+    line-height: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   &__days {
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 400;
     color: $textSecondary;
+    white-space: nowrap;
   }
 
   &__coins {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: 2px;
 
     img {
       width: 16px;
@@ -294,44 +364,128 @@
 
     span {
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
       color: $yellowMain;
+      text-transform: uppercase;
     }
+  }
+
+  &__tear {
+    height: 12px;
+    flex-shrink: 0;
+    align-self: stretch;
+    position: relative;
+    background-color: #fff;
+    background-image: radial-gradient(circle at 11px 100%, $bg 7px, transparent 7px);
+    background-size: 20px 12px;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+  }
+
+  &__tear::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    // Мягкая тень по кромке вырезов (как в giveaway-card)
+    background-image: radial-gradient(
+      circle at 11px 100%,
+      transparent 6.5px,
+      rgba(24, 61, 105, 0.06) 7.2px,
+      transparent 8.2px
+    );
+    background-size: 20px 12px;
+    background-repeat: repeat-x;
+    background-position: 0 0;
   }
 }
 
-// "Buy more" / "Join giveaway" card
-.shop-scroll__more {
+// "Buy more" / "Join giveaway" card (last card in scroll)
+.shop-more-card {
   flex-shrink: 0;
-  width: 100px;
+  width: 161px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: none;
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  cursor: pointer;
-  padding: 12px 8px;
+  padding: 12px;
+  // Чтобы при пустом списке (когда других карточек в строке нет)
+  // контент оставался по центру и визуально совпадал с макетом.
+  min-height: 110px;
 
-  span {
-    font-size: 12px;
-    font-weight: 600;
-    color: $blueMain;
-    text-align: center;
-    line-height: 1.3;
+  // Shadow via pseudo element to avoid corner artifacts on stretched cards
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: none;
+    z-index: 1;
+    background: transparent;
+    pointer-events: none;
   }
 
-  &-icon {
-    width: 16px;
-    height: 16px;
+  // Ensure the content is above the shadow layer.
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &--ticket {
+    justify-content: space-between;
+    padding: 0;
+    min-height: 128px;
+    overflow: hidden;
+
+    .shop-more-card__inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+    }
+  }
+
+
+  &__plus {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid $yellowMain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: $blueMain;
+    white-space: nowrap;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
-.shop-scroll__plus {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid $blueMain;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.shop-more-card--my-area {
+  box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
 }

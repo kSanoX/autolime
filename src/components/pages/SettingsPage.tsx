@@ -2,16 +2,24 @@ import { useNavigate } from "react-router-dom";
 import "@/styles/settings.scss";
 import { LanguageDropdownSheet } from "../ui/LanguageDropdownSheet";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "@/store";
+import { setLanguage } from "@/store/langSlice";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("en");
+  const dispatch = useDispatch<AppDispatch>();
+  const currentLang = useSelector((s: RootState) => s.lang.currentLang);
+  const [selectedLang, setSelectedLang] = useState<RootState["lang"]["currentLang"]>(currentLang);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const languageLabel =
+    currentLang === "en" ? "English" : currentLang === "ru" ? "Russian" : "Georgian";
 
   const handleSaveLanguage = () => {
+    dispatch(setLanguage(selectedLang));
     setDropdownOpen(false);
   };
   
@@ -59,7 +67,7 @@ export default function SettingsPage() {
             <span>Language</span>
           </div>
           <div>
-            <span>English</span>
+            <span>{languageLabel}</span>
             <img
               className='setting-right-icon'
               src='../../src/assets/icons/right-arrow.svg'
