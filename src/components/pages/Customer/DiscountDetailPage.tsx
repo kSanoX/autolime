@@ -1,25 +1,49 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import type { AppDispatch } from "@/store";
 import geocoinIcon from "@/assets/images/shop/geocoin_icon.png";
 import discountImg from "@/assets/images/discounts/discount_img.png";
 import copyIcon from "@/assets/icons/coppy_icon.svg";
 import { buyPointsAndRedirect } from "@/lib/buyPoints";
-
-const MOCK_CODE = "GE - 22 - 77 - 9A";
+import {
+  buyVoucher,
+  extractVoucherCode,
+  fetchMyVouchers,
+  fetchVouchers,
+  formatVoucherCodeDisplay,
+} from "@/lib/shopApi";
+import { refreshCurrentUser } from "@/hooks/useUser";
+import ShopAsyncLoader from "@/components/ui/ShopAsyncLoader";
 
 type SheetState = "closed" | "confirm" | "not_enough";
 
 type CardData = {
+  id?: number;
   title: string;
   subtitle: string;
   discount: string;
   coins: number;
   img?: string;
 };
+
+type DetailLocationState = Partial<CardData> & {
+  fromMyArea?: boolean;
+  /** Код ваучера при переходе из My Area */
+  code?: string;
+};
+
+/** Полные данные каталога (цена > 0) — тогда не дергаем /vouchers повторно. */
+function isCatalogComplete(p: Partial<CardData> | null | undefined): boolean {
+  return (
+    Boolean(p?.title) &&
+    typeof p?.coins === "number" &&
+    p.coins > 0
+  );
+}
 
 const MOCK_DETAIL: CardData = {
   title: "Insurance from TBC Insurance with a 15% discount.",
@@ -37,15 +61,32 @@ const TERMS = [
 export default function DiscountDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: routeId } = useParams();
   const t = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const passed = location.state as Partial<CardData> | null;
-  const card: CardData = { ...MOCK_DETAIL, ...passed };
+  const passed = location.state as DetailLocationState | null;
+  const fromMyArea = Boolean(passed?.fromMyArea);
+  const [resolved, setResolved] = useState<Partial<CardData> | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(
+    () => !isCatalogComplete(passed) && Boolean(routeId),
+  );
+  const routeIdNum = routeId ? Number(routeId) : NaN;
+  const card: CardData = {
+    ...MOCK_DETAIL,
+    ...passed,
+    ...resolved,
+    id: passed?.id ?? resolved?.id ?? (Number.isFinite(routeIdNum) ? routeIdNum : undefined),
+  };
 
   const [sheet, setSheet] = useState<SheetState>("closed");
-  const [purchased, setPurchased] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [redeemCode, setRedeemCode] = useState<string | null>(() => {
+    if (!passed?.fromMyArea) return null;
+    const c = passed.code?.trim();
+    return c || null;
+  });
 
   const userPoints = useSelector((s: RootState) => s.user.data?.points);
   const [balance, setBalance] = useState(0);
@@ -53,6 +94,66 @@ export default function DiscountDetailPage() {
   useEffect(() => {
     if (typeof userPoints === "number") setBalance(userPoints);
   }, [userPoints]);
+
+  useEffect(() => {
+    if (isCatalogComplete(passed)) {
+      setCatalogLoading(false);
+      return;
+    }
+    if (!routeId) {
+      setCatalogLoading(false);
+      return;
+    }
+    const vid = Number(routeId);
+    if (!Number.isFinite(vid)) {
+      setCatalogLoading(false);
+      return;
+    }
+    setCatalogLoading(true);
+    let cancelled = false;
+    void fetchVouchers()
+      .then((list) => {
+        if (cancelled) return;
+        const v = list.find((x) => x.id === vid);
+        if (v) {
+          const desc = v.description?.trim();
+          setResolved({
+            id: v.id,
+            title: v.title,
+            subtitle: desc || v.category,
+            discount: v.discount,
+            coins: v.coins,
+            img: v.img || discountImg,
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setCatalogLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [passed?.title, passed?.coins, routeId]);
+
+  // Только из My Area без кода в state — подтянуть код из API (не помечаем «куплен» для витрины)
+  useEffect(() => {
+    if (!fromMyArea) return;
+    if (redeemCode) return;
+    const vid = card.id ?? (routeId ? Number(routeId) : NaN);
+    if (!Number.isFinite(vid) || vid <= 0) return;
+    let cancelled = false;
+    void fetchMyVouchers()
+      .then((list) => {
+        if (cancelled) return;
+        const owned = list.find((x) => x.voucherId === vid);
+        if (owned?.code?.trim()) setRedeemCode(owned.code.trim());
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [fromMyArea, redeemCode, card.id, routeId]);
 
   const newBalance = balance - card.coins;
 
@@ -64,15 +165,33 @@ export default function DiscountDetailPage() {
     }
   };
 
-  const handleTake = () => {
-    setSheet("closed");
-    setPurchased(true);
-    setBannerVisible(true);
-    setTimeout(() => setBannerVisible(false), 3000);
+  const handleTake = async () => {
+    const vid = card.id ?? (routeId ? Number(routeId) : NaN);
+    if (!Number.isFinite(vid) || vid <= 0) {
+      console.error("Missing voucher id");
+      return;
+    }
+    try {
+      const json = await buyVoucher(vid);
+      await refreshCurrentUser(dispatch);
+      let code = extractVoucherCode(json)?.trim();
+      if (!code) {
+        const list = await fetchMyVouchers();
+        code = list.find((x) => x.voucherId === vid)?.code?.trim();
+      }
+      setRedeemCode(code ?? "");
+      setSheet("closed");
+      setBannerVisible(true);
+      setTimeout(() => setBannerVisible(false), 3000);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(MOCK_CODE).catch(() => {});
+    const raw = (redeemCode ?? "").replace(/[\s-]/g, "");
+    if (!raw) return;
+    navigator.clipboard.writeText(raw).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -91,6 +210,25 @@ export default function DiscountDetailPage() {
     // Drag down enough -> close, otherwise snap back.
     if (info.offset.y > 90) setSheet("closed");
   };
+
+  if (catalogLoading) {
+    return (
+      <div className="discount-detail discount-detail--catalog-loading">
+        <div className="discount-detail__loading-appbar">
+          <button type="button" className="discount-detail__back" onClick={() => navigate(-1)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="#183D69" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <div className="discount-detail__balance">
+            <img src={geocoinIcon} alt="coin" />
+            <span>{balance.toLocaleString()}</span>
+          </div>
+        </div>
+        <ShopAsyncLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="discount-detail">
@@ -130,12 +268,12 @@ export default function DiscountDetailPage() {
           )}
         </AnimatePresence>
 
-        {/* Discount code (after purchase) */}
-        {purchased && (
+        {/* Код: из My Area или после покупки на этой странице (не показываем «уже куплен» при заходе с витрины) */}
+        {redeemCode && (
           <div className="discount-detail__code-block">
             <p className="discount-detail__code-label">{t("Discounts.detail.yourCode")}</p>
             <div className="discount-detail__code-row">
-              <span className="discount-detail__code">{MOCK_CODE}</span>
+              <span className="discount-detail__code">{formatVoucherCodeDisplay(redeemCode)}</span>
               <button className="discount-detail__code-copy" onClick={handleCopy}>
                 {copied ? (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -149,14 +287,16 @@ export default function DiscountDetailPage() {
           </div>
         )}
 
-        {/* Price row */}
-        <div className="discount-detail__price-row">
-          <span className="discount-detail__discount-badge">{card.discount}</span>
-          <div className="discount-detail__coin-badge">
-            <img src={geocoinIcon} alt="coin" />
-            <span>{card.coins.toLocaleString()}</span>
+        {/* Цена — только режим витрины; из My Area смотрим только код */}
+        {!fromMyArea && (
+          <div className="discount-detail__price-row">
+            <span className="discount-detail__discount-badge">{card.discount}</span>
+            <div className="discount-detail__coin-badge">
+              <img src={geocoinIcon} alt="coin" />
+              <span>{card.coins.toLocaleString()}</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Title + desc */}
         <div className="discount-detail__info">
@@ -189,8 +329,8 @@ export default function DiscountDetailPage() {
           </div>
         </div>
 
-        {/* Buy button */}
-        {!purchased && (
+        {/* Покупка — сколько угодно раз с витрины; из My Area только просмотр кода */}
+        {!fromMyArea && (
           <button className="discount-detail__buy-btn" onClick={handleBuy}>
             {t("Discounts.detail.buy")}
           </button>

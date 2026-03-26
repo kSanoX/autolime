@@ -78,11 +78,22 @@
 .save-button {
   width: 100%;
   padding: 12px;
-  background: #ccc;
+  background: $color-blue-500;
   border-radius: 12px;
   font-weight: 600;
   color: #fff;
   border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-blue-600;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 }
 
 .modal-backdrop {

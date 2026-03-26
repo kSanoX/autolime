@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import "../../../styles/customer_styles/qr-page.scss";
 import { useMyPackages } from "@/hooks/useActivePackages";
 import { useTranslation } from "@/hooks/useTranslation";
+import { qrIcon } from "@/assets/staticUrls";
 const NO_API_URL = import.meta.env.VITE_NO_API_URL;
 
 export default function QRPage() {
@@ -123,7 +124,7 @@ export default function QRPage() {
                         setActivePlate(car.plate);
                       }}
                     >
-                      <img src='../../../src/assets/icons/qr_icon.svg' alt='' />
+                      <img src={qrIcon} alt='' />
                     </button>
                   )}
                   {canGenerateQR && (

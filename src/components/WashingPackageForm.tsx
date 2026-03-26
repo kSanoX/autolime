@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { useActivatePackage } from "@/hooks/useActivatePackage";
 import { useFetchPackagePricing } from "@/hooks/useFetchPackagePricing";
 import { useTranslation } from "@/hooks/useTranslation";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 type Props = {
   mode: "create" | "edit";
@@ -156,7 +157,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
                     {selectedCar?.plate}
                   </button>
                   <img
-                    src='../../../src/assets/icons/left-arrow.svg'
+                    src={leftArrowUrl}
                     alt='arrow'
                   />
                 </div>

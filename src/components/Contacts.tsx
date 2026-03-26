@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/Contacts.scss";
 import { useNavigate } from "react-router-dom";
 import { useFetchContacts } from "@/hooks/useFetchContacts";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 export default function Contacts() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function Contacts() {
   return (
     <div>
       <header>
-        <img onClick={() => navigate(-1)} src="../src/assets/icons/left-arrow.svg" alt="" />
+        <img onClick={() => navigate(-1)} src={leftArrowUrl} alt="" />
         Contacts
         <span></span>
       </header>

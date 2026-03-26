@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import OTPVerification from "../../OTPVerification";
 import { customFetch } from "@/utils/customFetch";
 import { useTranslation } from "@/hooks/useTranslation";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 export default function PhoneNumberChanging() {
   const [phoneDigits, setPhoneDigits] = useState("");
@@ -106,7 +107,7 @@ export default function PhoneNumberChanging() {
     <div>
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <img
-          src='src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt={t("PhoneNumberChanging.header.backAlt")}
           onClick={() => navigate(-1)}
         />

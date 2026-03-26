@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { leftArrowUrl } from "@/assets/staticUrls";
 import "../../../styles/customer_styles/reviews.scss"
 export default function MyReviews() {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ export default function MyReviews() {
       <header>
         <img
           onClick={() => navigate(-1)}
-          src='../../../src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt=''
         />
         My reviews

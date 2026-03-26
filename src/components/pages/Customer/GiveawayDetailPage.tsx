@@ -1,24 +1,44 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
 import geocoinIcon from "@/assets/images/shop/geocoin_icon.png";
 import ticketYellow from "@/assets/images/shop/ticket_yellow.svg";
 import { buyPointsAndRedirect } from "@/lib/buyPoints";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store";
+import type { AppDispatch } from "@/store";
 import type { GiveawayItem } from "./GiveawayPage";
-import { MOCK_GIVEAWAYS } from "./GiveawayPage";
+import ShopAsyncLoader from "@/components/ui/ShopAsyncLoader";
+import giveaway1 from "@/assets/images/giveaway/giveaway_1.png";
+import giveaway2 from "@/assets/images/giveaway/giveaway_2.png";
+import giveaway3 from "@/assets/images/giveaway/giveaway_3.png";
+import { buyTicket, fetchMyTickets, fetchTickets } from "@/lib/shopApi";
+import { refreshCurrentUser } from "@/hooks/useUser";
+
+const G_FALLBACK = [giveaway2, giveaway1, giveaway3];
+
+function ticketWithFallback(t: GiveawayItem, i: number): GiveawayItem {
+  return { ...t, img: t.img || G_FALLBACK[i % G_FALLBACK.length] };
+}
 
 type SheetState = "closed" | "confirm" | "buy_points" | "buy_loading" | "buy_success";
 
 export default function GiveawayDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: routeId } = useParams();
   const t = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
 
   const passed = location.state as GiveawayItem | null;
-  const item: GiveawayItem = passed ?? MOCK_GIVEAWAYS[0];
+  const [resolved, setResolved] = useState<GiveawayItem | null>(null);
+  const [detailStatus, setDetailStatus] = useState<"loading" | "ready">(() =>
+    passed ? "ready" : routeId ? "loading" : "ready",
+  );
+
+  const itemRaw = passed ?? resolved ?? null;
+  const item = itemRaw ? ticketWithFallback(itemRaw, 0) : null;
 
   const [sheet, setSheet] = useState<SheetState>("closed");
   const [qty, setQty] = useState(1);
@@ -28,15 +48,26 @@ export default function GiveawayDetailPage() {
   const [myTickets, setMyTickets] = useState(0);
   const [bannerVisible, setBannerVisible] = useState(false);
 
-  const totalCost = item.coinPrice * qty;
-  const newBalance = balance - totalCost;
+  const totalCost = item ? item.coinPrice * qty : 0;
+  const newBalance = item ? balance - totalCost : 0;
   const isNegative = newBalance < 0;
   const shortage = Math.abs(newBalance);
-  const handleTake = () => {
-    setSheet("closed");
-    setMyTickets((t) => t + qty);
-    setBannerVisible(true);
-    setTimeout(() => setBannerVisible(false), 3000);
+  const handleTake = async () => {
+    if (!item) return;
+    try {
+      await buyTicket(item.id, qty);
+      await refreshCurrentUser(dispatch);
+      const rows = await fetchMyTickets();
+      const sum = rows
+        .filter((r) => r.ticketId === item.id)
+        .reduce((s, r) => s + r.qty, 0);
+      setMyTickets(sum);
+      setSheet("closed");
+      setBannerVisible(true);
+      setTimeout(() => setBannerVisible(false), 3000);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleBuy = () => {
@@ -77,6 +108,93 @@ export default function GiveawayDetailPage() {
       setBalance(userPoints);
     }
   }, [userPoints]);
+
+  useEffect(() => {
+    if (passed) return;
+    if (!routeId) {
+      setDetailStatus("ready");
+      return;
+    }
+    const pid = Number(routeId);
+    if (!Number.isFinite(pid)) {
+      setDetailStatus("ready");
+      return;
+    }
+    setDetailStatus("loading");
+    let cancelled = false;
+    void fetchTickets()
+      .then((list) => {
+        if (cancelled) return;
+        const f = list.find((x) => x.id === pid);
+        if (f) setResolved(f);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setDetailStatus("ready");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [passed, routeId]);
+
+  useEffect(() => {
+    if (!item) return;
+    let cancelled = false;
+    void fetchMyTickets()
+      .then((rows) => {
+        if (cancelled) return;
+        const sum = rows
+          .filter((r) => r.ticketId === item.id)
+          .reduce((s, r) => s + r.qty, 0);
+        setMyTickets(sum);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [item?.id]);
+
+  if (detailStatus === "loading" && !passed) {
+    return (
+      <div className="giveaway-page">
+        <header className="giveaway-header">
+          <button className="giveaway-header__back" onClick={() => navigate(-1)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="#183D69" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <span className="giveaway-header__title">{t("Giveaway.title")}</span>
+          <div className="giveaway-header__balance">
+            <img src={geocoinIcon} alt="coin" />
+            <span>{typeof userPoints === "number" ? userPoints.toLocaleString() : "—"}</span>
+          </div>
+        </header>
+        <ShopAsyncLoader />
+      </div>
+    );
+  }
+
+  if (!item) {
+    return (
+      <div className="giveaway-page">
+        <header className="giveaway-header">
+          <button className="giveaway-header__back" onClick={() => navigate(-1)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="#183D69" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <span className="giveaway-header__title">{t("Giveaway.title")}</span>
+          <div className="giveaway-header__balance">
+            <img src={geocoinIcon} alt="coin" />
+            <span>{typeof userPoints === "number" ? userPoints.toLocaleString() : "—"}</span>
+          </div>
+        </header>
+        <p className="shop-async-empty" style={{ padding: "24px 16px" }}>
+          {t("Giveaway.notFound")}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="giveaway-detail">

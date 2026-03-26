@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 export default function Messages() {
   const navigate = useNavigate();
   return (
     <div>
       <header>
-        <img onClick={()=> navigate(-1)} src='../../../src/assets/icons/left-arrow.svg' alt='' />
+        <img onClick={()=> navigate(-1)} src={leftArrowUrl} alt='' />
         Messages
         <span></span>
       </header>

@@ -1,8 +1,7 @@
 import "../../styles/sidebar.scss";
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
-import shopIcon from "../../assets/icons/shop_icon.svg";
-import geoPointIcon from "../../assets/icons/geo_piont_icon.svg";
+import { logoUrl, shopIconUrl, geoPointIconUrl } from "@/assets/staticUrls";
 
 export default function Sidebar({ onClose }: { onClose: () => void }) {
   const t = useTranslation();
@@ -10,7 +9,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
     <div className='sidebar-overlay' onClick={onClose}>
       <div className='sidebar' onClick={(e) => e.stopPropagation()}>
         <div className='sidebar-header'>
-          <img src='../../src/assets/logo.svg' alt='Geocar Logo' />
+          <img src={logoUrl} alt='Geocar Logo' />
         </div>
         <div className='sidebar-divider' />
         <div className='sidebar-navigation'>
@@ -32,7 +31,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                 <Link to='/my-packages'>{t("Sidebar.menu.myPackages")}</Link>
               </li>
               <li>
-                <img src={shopIcon} alt='' width={20} height={20} />
+                <img src={shopIconUrl} alt='' width={20} height={20} />
                 <Link to='/shop'>{t("Sidebar.menu.shop")}</Link>
               </li>
               <li>
@@ -51,7 +50,7 @@ export default function Sidebar({ onClose }: { onClose: () => void }) {
                 <Link to='/my-reviews'>{t("Sidebar.menu.myReviews")}</Link>
               </li>
               <li>
-                <img src={geoPointIcon} alt='' width={24} height={24} />
+                <img src={geoPointIconUrl} alt='' width={24} height={24} />
                 <Link to='/my-points'>{t("Sidebar.menu.myPoints")}</Link>
               </li>
               <li>

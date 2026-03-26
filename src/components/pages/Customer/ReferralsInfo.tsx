@@ -12,6 +12,7 @@ import telegramIcon from "@/assets/icons/telegram_referal.svg";
 import viberIcon from "@/assets/icons/viber_referal.svg";
 import whatsappIcon from "@/assets/icons/whatsapp_referal.svg";
 import facebookIcon from "@/assets/icons/facebook_referal.svg";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 const MOCK_REFERRAL_LINK = "https://geocar.com/rnu2345681";
 
@@ -146,7 +147,7 @@ export default function ReferralsInfo() {
       <header>
         <img
           onClick={() => navigate(-1)}
-          src="../../../src/assets/icons/left-arrow.svg"
+          src={leftArrowUrl}
           alt="Back"
         />
         {t("ReferralsInfo.header.title")}

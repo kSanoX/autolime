@@ -1,10 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import "@/styles/settings.scss";
 import { LanguageDropdownSheet } from "../ui/LanguageDropdownSheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "@/store";
 import { setLanguage } from "@/store/langSlice";
+import {
+  leftArrowUrl,
+  langSettingIconUrl,
+  rightArrowUrl,
+  leaveSettingsIconUrl,
+  deleteSettingsIconUrl,
+} from "@/assets/staticUrls";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -14,6 +21,12 @@ export default function SettingsPage() {
   const [selectedLang, setSelectedLang] = useState<RootState["lang"]["currentLang"]>(currentLang);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (dropdownOpen) {
+      setSelectedLang(currentLang);
+    }
+  }, [dropdownOpen, currentLang]);
 
   const languageLabel =
     currentLang === "en" ? "English" : currentLang === "ru" ? "Russian" : "Georgian";
@@ -34,7 +47,7 @@ export default function SettingsPage() {
       <header>
         <img
           onClick={() => navigate(-1)}
-          src='../../src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt=''
         />
         <p>Settings</p>
@@ -61,7 +74,7 @@ export default function SettingsPage() {
           <div>
             <img
               className='setting-left-icon'
-              src='../../src/assets/icons/lang-setting-icon.svg'
+              src={langSettingIconUrl}
               alt=''
             />
             <span>Language</span>
@@ -70,7 +83,7 @@ export default function SettingsPage() {
             <span>{languageLabel}</span>
             <img
               className='setting-right-icon'
-              src='../../src/assets/icons/right-arrow.svg'
+              src={rightArrowUrl}
               alt=''
             />
           </div>
@@ -87,7 +100,7 @@ export default function SettingsPage() {
           <div>
             <img
               className='setting-left-icon'
-              src='../../src/assets/icons/leave-settings-icon.svg'
+              src={leaveSettingsIconUrl}
               alt=''
             />
             <span>Account</span>
@@ -96,7 +109,7 @@ export default function SettingsPage() {
             <span>Exit</span>
             <img
               className='setting-right-icon'
-              src='../../src/assets/icons/right-arrow.svg'
+              src={rightArrowUrl}
               alt=''
             />
           </div>
@@ -123,7 +136,7 @@ export default function SettingsPage() {
             <img
               style={{ backgroundColor: "#BA1717" }}
               className='setting-left-icon'
-              src='../../src/assets/icons/delete-settings-icon.svg'
+              src={deleteSettingsIconUrl}
               alt=''
             />{" "}
             <span>Delete my account</span>
@@ -186,6 +199,7 @@ export default function SettingsPage() {
         <LanguageDropdownSheet
           open={dropdownOpen}
           setOpen={setDropdownOpen}
+          savedLang={currentLang}
           selectedLang={selectedLang}
           setSelectedLang={setSelectedLang}
           onSave={handleSaveLanguage}

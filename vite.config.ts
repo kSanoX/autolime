@@ -13,6 +13,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ["e63316346dc8.ngrok-free.app", "8814-46-149-89-216.ngrok-free.app"]
+    // Allow ngrok (and other tunnel) host headers without listing each subdomain
+    allowedHosts: true,
   },
 });

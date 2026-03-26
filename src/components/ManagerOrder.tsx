@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
+import {
+  managerCallIconUrl,
+  managerRefreshIconUrl,
+  managerConfirmedIconUrl,
+  managerVectorIconUrl,
+  managerCancelIconUrl,
+} from '@/assets/staticUrls'
 
 type Status = 'Confirm' | 'Rescheduled' | 'Expired' | 'Deleted' | 'New'
 
@@ -91,7 +98,7 @@ export default function ManagerOrder({
     return (
       <div className='order-controll-right-box'>
         <button className='order-btn'>
-          <img src='../../src/assets/icons/ManagerOrder/call_icon.svg' alt='cutomerCall' />
+          <img src={managerCallIconUrl} alt='cutomerCall' />
         </button>
         {!isConfirmed && onReschedule && (
   <button
@@ -99,11 +106,11 @@ export default function ManagerOrder({
     onClick={onReschedule}
     disabled={isDeleted}
   >
-    <img src='../../src/assets/icons/ManagerOrder/refresh.svg' alt='refresh' />
+    <img src={managerRefreshIconUrl} alt='refresh' />
   </button>
 )}
         <button className='order-btn' disabled={isDeleted} onClick={onConfirmed}>
-          <img src='../../src/assets/icons/ManagerOrder/confirmed.svg' alt='confirmed' />
+          <img src={managerConfirmedIconUrl} alt='confirmed' />
           
         </button>
       </div>
@@ -124,7 +131,7 @@ export default function ManagerOrder({
       <div className='order-info'>
         <div className='washing-type-container'>
           <img
-            src='../../src/assets/icons/ManagerOrder/Vector.svg'
+            src={managerVectorIconUrl}
             alt='washing-type-icon'
           />
           <p className='washing-type'>{type}</p>
@@ -143,7 +150,7 @@ export default function ManagerOrder({
               disabled={isDeleted}
             >
               <img
-                src='../../src/assets/icons/ManagerOrder/cancel (2).svg'
+                src={managerCancelIconUrl}
                 alt='cancel-btn'
               />
             </button>
@@ -155,7 +162,7 @@ export default function ManagerOrder({
             <div className='order-controll-right-box'>
               <button className='order-btn'>
                 <img
-                  src='../../src/assets/icons/ManagerOrder/call_icon.svg'
+                  src={managerCallIconUrl}
                   alt='cutomerCall'
                 />
               </button>

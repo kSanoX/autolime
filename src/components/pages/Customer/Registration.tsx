@@ -6,6 +6,7 @@ import { fetchUserData } from "@/lib/fetchUserData";
 import { useDispatch } from "react-redux";
 const API_URL = import.meta.env.VITE_API_URL;
 import { useTranslation } from "@/hooks/useTranslation";
+import { logoUrl, googleServiceIconUrl, facebookUrl } from "@/assets/staticUrls";
 
 export default function Registration() {
   const t = useTranslation();
@@ -136,7 +137,7 @@ export default function Registration() {
     return (
       <div className="auth-wrapper">
         <div className="auth-logo-block">
-          <img src="../../../src/assets/logo.svg" alt="LOGO" />
+          <img src={logoUrl} alt="LOGO" />
         </div>
 
         <div className="auth-greetings">
@@ -193,7 +194,7 @@ export default function Registration() {
   return (
     <div className='auth-wrapper'>
       <div className='auth-logo-block'>
-        <img src='../../../src/assets/logo.svg' alt='LOGO' />
+        <img src={logoUrl} alt='LOGO' />
       </div>
 
       <div className='auth-greetings'>
@@ -261,7 +262,7 @@ export default function Registration() {
         <div className='google-auth'>
           <a href='/'>
             <img
-              src='../../../src/assets/icons/google-service (1).svg'
+              src={googleServiceIconUrl}
               alt='google'
             />
           </a>
@@ -269,7 +270,7 @@ export default function Registration() {
         </div>
         <div className='facebook-auth'>
           <a href='/'>
-            <img src='../../../src/assets/icons/facebook.svg' alt='facebook' />
+            <img src={facebookUrl} alt='facebook' />
           </a>
           <p>Facebook</p>
         </div>

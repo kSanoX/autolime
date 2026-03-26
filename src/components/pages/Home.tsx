@@ -1,7 +1,11 @@
-import leftArrow from "../../assets/icons/left-arrow.svg";
-import rightArrow from "../../assets/icons/right-arrow.svg";
 import Header from "../Header";
-import qrIcon from "../../assets/icons/qr_icon.svg";
+import {
+  leftArrowUrl,
+  rightArrowUrl,
+  qrIcon,
+  whashesUrl,
+  timeUrl,
+} from "@/assets/staticUrls";
 import { useUser } from "@/hooks/useUser";
 import { useFetchCars } from "@/hooks/useFetchCars";
 import { useMyPackages } from "@/hooks/useActivePackages";
@@ -81,7 +85,7 @@ export default function Home() {
           <div className='auto_info'>
             <img
               className='cursor-pointer'
-              src={leftArrow}
+              src={leftArrowUrl}
               alt='arrowToLeft'
               onClick={() => slider?.current?.prev()}
             />
@@ -94,7 +98,7 @@ export default function Home() {
             </div>
             <img
               className='cursor-pointer'
-              src={rightArrow}
+              src={rightArrowUrl}
               alt='arrowToRight'
               onClick={() => slider?.current?.next()}
             />
@@ -122,7 +126,7 @@ export default function Home() {
             <div className='whashes_info-block'>
               <div className='info-block header'>
                 <span>
-                  <img src='../../src/assets/icons/whashes.svg' alt='whashes' />
+                  <img src={whashesUrl} alt='whashes' />
                 </span>
                 <p>{t("Home.washes.title")}</p>
               </div>
@@ -138,7 +142,7 @@ export default function Home() {
             <div className='whashes_info-block'>
               <div className='info-block header'>
                 <span>
-                  <img src='../../src/assets/icons/time.svg' alt='time' />
+                  <img src={timeUrl} alt='time' />
                 </span>
                 <p>{t("Home.period.title")}</p>
               </div>

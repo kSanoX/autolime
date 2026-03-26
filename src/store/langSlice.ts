@@ -10,6 +10,9 @@ const initialState: LangState = {
   translations: {
     Giveaway: {
       title: "Giveaway",
+      loading: "Loading…",
+      empty: "No active offers.",
+      notFound: "Offer not found.",
       activeOffers: "Active offers",
       daysLeft: "days left",
       joinBtn: "Join the giveaway",
@@ -42,6 +45,8 @@ const initialState: LangState = {
     Discounts: {
       title: "Discounts",
       searchPlaceholder: "Search for a partner company",
+      loading: "Loading…",
+      empty: "No discounts found.",
       detail: {
         termsTitle: "Terms of Use:",
         buy: "Buy",
@@ -64,14 +69,18 @@ const initialState: LangState = {
         giveaway: "Giveaway",
       },
       all: "All",
+      loading: "Loading…",
+      loadError: "Could not load. Pull to refresh or try again later.",
       vouchers: {
         title: "My Vouchers",
         buyMore: "Buy more",
+        empty: "No vouchers yet.",
       },
       tickets: {
         title: "My Tickets",
         daysLeft: "days left",
         join: "Join the giveaway",
+        empty: "No giveaways yet.",
       },
     },
     ReferralsInfo: {
@@ -117,7 +126,7 @@ const initialState: LangState = {
       header: { title: "My points" },
       balance: { label: "Balance", unit: "points" },
       referrals: { label: "Referrals", unit: "people" },
-      notice: { added: "points added" },
+      notice: { addedLine: "{count} points added" },
       history: { title: "Transaction history", empty: "No transactions" },
     },
     Sidebar: {

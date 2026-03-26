@@ -2,6 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import MapView, { Marker } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import PinIcon from "../../public/images/branch-mark.png";
+import CallIcon from "@/assets/icons/ManagerOrder/call_icon.svg?react";
+import PathIcon from "@/assets/icons/path-icon.svg?react";
+import CalendarIconYellow from "@/assets/icons/calendar-icon-yellow.svg?react";
 import { useNavigate } from "react-router-dom";
 import type { Branch } from "@/hooks/useFetchBranches";
 import { Source, Layer } from "@vis.gl/react-maplibre";
@@ -172,21 +175,15 @@ export function BranchMap({
 
           <div className='branch-info-panel__actions'>
           <a href={`tel:+${selectedBranch.manager.phone}`}>
-            <button>
-              <img
-                src='../../src/assets/icons/ManagerOrder/call_icon.svg'
-                alt='call'
-              />
+            <button type="button">
+              <CallIcon aria-hidden />
             </button>
             </a>
-            <button onClick={handleRouteClick}>
-              <img src='../../src/assets/icons/path-icon.svg' alt='path' />
+            <button type="button" onClick={handleRouteClick}>
+              <PathIcon aria-hidden />
             </button>
-            <button onClick={handleAppointmentClick}>
-              <img
-                src='../../src/assets/icons/calendar-icon-yellow.svg'
-                alt='calendar'
-              />
+            <button type="button" onClick={handleAppointmentClick}>
+              <CalendarIconYellow aria-hidden />
             </button>
           </div>
         </div>

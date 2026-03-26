@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
 import { buyPointsAndRedirect } from "@/lib/buyPoints";
+import { leftArrowUrl } from "@/assets/staticUrls";
 import cardIconYellow from "@/assets/icons/card_icon_yellow.svg";
 import cardIconBlue from "@/assets/icons/card_icon_blue.svg";
 import ticketIcon from "@/assets/icons/ticket_icon.svg";
@@ -28,7 +29,7 @@ export default function PointsInfo() {
       <header>
         <img
           onClick={() => navigate(-1)}
-          src="../../../src/assets/icons/left-arrow.svg"
+          src={leftArrowUrl}
           alt="Back"
         />
         {t("PointsInfo.header.title")}

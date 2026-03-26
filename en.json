@@ -331,14 +331,48 @@
             "setPassword": {
                 "title": "Set your password",
                 "subtitle": "Choose a secure password to complete registration",
+                "finish": "Finish",
                 "label": "Password",
                 "placeholder": "Create your password",
                 "button": "Finish",
+                "title": {
+                    "errors": {
+                        "tooShort": "Password must be at least 6 characters"
+                    }
+                },
                 "errors": {
                     "tooShort": "Password must be at least 6 characters",
                     "serverError": "Server error. Please try again.",
                     "network": "Network error. Please check your connection."
                 }
+            }
+        }
+    },
+    "PasswordChange": {
+        "request": {
+            "title": "Reset password",
+            "subtitle": "Enter your phone number to receive a verification code",
+            "label": "Phone number",
+            "button": "Send code",
+            "navigate": {
+                "text": "Remembered your password?",
+                "link": "Sign In"
+            },
+            "errors": {
+                "required": "Phone number is required",
+                "invalid": "Phone number is invalid",
+                "not-found": "Phone number doesn't exist",
+                "server-error": "Server error. Please try again.",
+                "network": "Network error. Please check your connection."
+            }
+        },
+        "setPassword": {
+            "title": "Set a new password",
+            "subtitle": "Choose a secure password for your account",
+            "label": "Password",
+            "finish": "Save",
+            "errors": {
+                "tooShort": "Password must be at least 6 characters"
             }
         }
     },
@@ -386,6 +420,9 @@
     },
     "Booking": {
         "header": "Booking",
+        "fallback": {
+            "error": "Failed to load data"
+        },
         "filters": {
             "New": "New",
             "Confirmed": "Confirmed",
@@ -750,19 +787,25 @@
             "giveaway": "Giveaway"
         },
         "all": "All",
+        "loading": "Loading…",
+        "loadError": "Could not load. Pull to refresh or try again later.",
         "vouchers": {
             "title": "My Vouchers",
-            "buyMore": "Buy more"
+            "buyMore": "Buy more",
+            "empty": "No vouchers yet."
         },
         "tickets": {
             "title": "My Tickets",
             "daysLeft": "days left",
-            "join": "Join the giveaway"
+            "join": "Join the giveaway",
+            "empty": "No giveaways yet."
         }
     },
     "Discounts": {
         "title": "Discounts",
         "searchPlaceholder": "Search for a partner company",
+        "loading": "Loading…",
+        "empty": "No discounts found.",
         "detail": {
             "termsTitle": "Terms of Use:",
             "buy": "Buy",
@@ -779,6 +822,9 @@
     },
     "Giveaway": {
         "title": "Giveaway",
+        "loading": "Loading…",
+        "empty": "No active offers.",
+        "notFound": "Offer not found.",
         "activeOffers": "Active offers",
         "daysLeft": "days left",
         "joinBtn": "Join the giveaway",
@@ -812,7 +858,7 @@
         "header": { "title": "My points" },
         "balance": { "label": "Balance", "unit": "points" },
         "referrals": { "label": "Referrals", "unit": "people" },
-        "notice": { "added": "points added" },
+        "notice": { "addedLine": "{count} points added" },
         "history": { "title": "Transaction history", "empty": "No transactions" }
     },
     "PointsInfo": {

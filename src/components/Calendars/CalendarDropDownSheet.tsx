@@ -4,6 +4,7 @@ import { useDrag } from "@use-gesture/react";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format, subMonths } from "date-fns";
 import type { DateRange } from "react-day-picker";
+import { leftArrowUrl, rightArrowUrl } from "@/assets/staticUrls";
 
 
 export function CalendarMobileSheet({
@@ -128,7 +129,7 @@ export function CalendarMobileSheet({
                 cursor: "pointer",
               }}
             >
-              <img src="../../src/assets/icons/left-arrow.svg" alt="Previous Month" />
+              <img src={leftArrowUrl} alt="Previous Month" />
             </button>
 
             <span
@@ -155,7 +156,7 @@ export function CalendarMobileSheet({
                 cursor: "pointer",
               }}
             >
-              <img src="../../src/assets/icons/right-arrow.svg" alt="Next Month" />
+              <img src={rightArrowUrl} alt="Next Month" />
             </button>
           </div>
 

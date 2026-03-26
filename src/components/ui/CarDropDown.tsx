@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { hatchbackIconUrl } from "@/assets/staticUrls";
 import type { CarPreview } from "@/store/carSlice";
 type Props = {
   open: boolean;
@@ -123,7 +124,7 @@ export function CarDropDown({
                         borderRadius: "8px",
                         marginRight: "8px",
                       }}
-                      src='../../src/assets/icons/hatchback_icon.svg'
+                      src={hatchbackIconUrl}
                       alt='Car icon'
                     />
                     {car.plate}

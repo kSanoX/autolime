@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { RootState } from "@/store";
 import Sidebar from "@/components/ui/Sidebar";
+import ShopAsyncLoader from "@/components/ui/ShopAsyncLoader";
 import burgerIcon from "/icons/b-menu.svg";
 import discountIcon from "@/assets/icons/discount_icon.svg";
 import ticketIcon from "@/assets/icons/ticket_icon.svg";
@@ -16,25 +17,53 @@ import voucher3 from "@/assets/images/shop/voucher_3.png";
 import ticket1 from "@/assets/images/shop/ticket_1.png";
 import ticket2 from "@/assets/images/shop/ticket_2.png";
 import ticket3 from "@/assets/images/shop/ticket_3.png";
+import { fetchTickets, fetchVouchers, type ShopTicket, type ShopVoucher } from "@/lib/shopApi";
 
-const MOCK_VOUCHERS = [
-  { id: 1, img: voucher1, title: "TBC Insurance", category: "Car Insurance",          discount: "-15%", coins: 150 },
-  { id: 2, img: voucher2, title: "Wissol",        category: "Car parts and accessories", discount: "-15%", coins: 120 },
-  { id: 3, img: voucher3, title: "TBC Insurance", category: "Car Insurance",          discount: "-15%", coins: 90 },
-];
+const V_FALLBACK = [voucher1, voucher2, voucher3];
+const T_FALLBACK = [ticket1, ticket2, ticket3];
 
-const MOCK_TICKETS = [
-  // coins здесь — сколько "ticket" отображаем на карточке (yellow badge)
-  { id: 1, img: ticket1, title: "Iphone 17 Pro Max",    daysLeft: 14,  ticketCost: 2,  coinPrice: 150 },
-  { id: 2, img: ticket2, title: "2025 Toyota Camry",    daysLeft: 132, ticketCost: 24, coinPrice: 350 },
-  { id: 3, img: ticket3, title: "20 liters of gasoline", daysLeft: 7,   ticketCost: 24, coinPrice: 75 },
-];
+function patchVoucherImgs(list: ShopVoucher[]): ShopVoucher[] {
+  return list.map((v, i) => ({
+    ...v,
+    img: v.img || V_FALLBACK[i % V_FALLBACK.length],
+  }));
+}
+
+function patchTicketImgs(list: ShopTicket[]): ShopTicket[] {
+  return list.map((t, i) => ({
+    ...t,
+    img: t.img || T_FALLBACK[i % T_FALLBACK.length],
+  }));
+}
 
 export default function ShopPage() {
   const navigate = useNavigate();
   const t = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const points = useSelector((s: RootState) => s.user.data?.points);
+  const [vouchers, setVouchers] = useState<ShopVoucher[]>([]);
+  const [tickets, setTickets] = useState<ShopTicket[]>([]);
+  const [listStatus, setListStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all([fetchVouchers(), fetchTickets()])
+      .then(([vList, tList]) => {
+        if (cancelled) return;
+        setVouchers(patchVoucherImgs(vList));
+        setTickets(patchTicketImgs(tList));
+        setListStatus("ready");
+      })
+      .catch(() => {
+        if (!cancelled) setListStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const loading = listStatus === "loading";
+  const error = listStatus === "error";
 
   return (
     <div className="shop-page">
@@ -86,6 +115,8 @@ export default function ShopPage() {
           </div>
         </div>
 
+        {error && <p className="shop-async-error">{t("Shop.loadError")}</p>}
+
         {/* My Vouchers */}
         <section className="shop-section">
           <div className="shop-section__header">
@@ -96,43 +127,54 @@ export default function ShopPage() {
             </button>
           </div>
           <div className="shop-scroll">
-            {MOCK_VOUCHERS.map((v) => (
-              <div
-                key={v.id}
-                className="voucher-card"
-                onClick={() =>
-                  navigate(`/shop/discounts/${v.id}`, {
-                    state: {
-                      title: v.title,
-                      subtitle: v.category,
-                      discount: v.discount,
-                      coins: v.coins,
-                      img: v.img,
-                    },
-                  })
-                }
-              >
-                <img src={v.img} alt={v.title} className="voucher-card__img" />
-                <div className="voucher-card__body">
-                  <div className="voucher-card__text">
+            {loading ? (
+              <ShopAsyncLoader />
+            ) : error ? null : vouchers.length === 0 ? (
+              <p className="shop-async-empty">{t("Shop.vouchers.empty")}</p>
+            ) : (
+              vouchers.map((v) => (
+                <div
+                  key={v.id}
+                  className="voucher-card"
+                  onClick={() =>
+                    navigate(`/shop/discounts/${v.id}`, {
+                      state: {
+                        id: v.id,
+                        title: v.title,
+                        subtitle: v.category,
+                        discount: v.discount,
+                        coins: v.coins,
+                        img: v.img,
+                      },
+                    })
+                  }
+                >
+                  <img src={v.img} alt={v.title} className="voucher-card__img" />
+                  <div className="voucher-card__body">
                     <p className="voucher-card__title">{v.title}</p>
-                    <p className="voucher-card__category">{v.category}</p>
+                    <div className="voucher-card__bottom">
+                      <span className="voucher-card__category">{v.category}</span>
+                      <div className="voucher-card__value">
+                        <span>{v.discount}</span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="voucher-card__badge">{v.discount}</span>
+                </div>
+              ))
+            )}
+            {!loading && !error && (
+              <div className="shop-more-card shop-more-card--shop" onClick={() => navigate("/shop/discounts")}>
+                <div className="shop-more-card__plus">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5v14M5 12h14" stroke="#183D69" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className="shop-more-card__label">
+                  <span>{t("Shop.vouchers.buyMore")}</span>
+                  <img src={discountIcon} alt="" />
                 </div>
               </div>
-            ))}
-            <div className="shop-more-card shop-more-card--shop" onClick={() => navigate("/shop/discounts")}>
-              <div className="shop-more-card__plus">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 5v14M5 12h14" stroke="#183D69" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="shop-more-card__label">
-                <span>{t("Shop.vouchers.buyMore")}</span>
-                <img src={discountIcon} alt="" />
-              </div>
-            </div>
+            )}
           </div>
         </section>
 
@@ -146,50 +188,56 @@ export default function ShopPage() {
             </button>
           </div>
           <div className="shop-scroll">
-            {MOCK_TICKETS.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="ticket-card"
-                onClick={() =>
-                  navigate(`/shop/giveaway/${ticket.id}`, {
-                    state: {
-                      id: ticket.id,
-                      img: ticket.img,
-                      title: ticket.title,
-                      daysLeft: ticket.daysLeft,
-                      ticketCost: ticket.ticketCost,
-                      coinPrice: ticket.coinPrice,
-                    },
-                  })
-                }
-              >
-                <img src={ticket.img} alt={ticket.title} className="ticket-card__img" />
-                <div className="ticket-card__body">
-                  <p className="ticket-card__title">{ticket.title}</p>
-                  <div className="ticket-card__bottom">
-                    <span className="ticket-card__days">{ticket.daysLeft} {t("Shop.tickets.daysLeft")}</span>
-                    <div className="ticket-card__coins">
-                      <img src={ticketYellow} alt="ticket" />
-                      <span>{ticket.ticketCost}</span>
+            {loading ? (
+              <ShopAsyncLoader />
+            ) : error ? null : tickets.length === 0 ? (
+              <p className="shop-async-empty">{t("Shop.tickets.empty")}</p>
+            ) : (
+              tickets.map((ticket) => (
+                <div
+                  key={ticket.id}
+                  className="ticket-card"
+                  onClick={() =>
+                    navigate(`/shop/giveaway/${ticket.id}`, {
+                      state: {
+                        id: ticket.id,
+                        img: ticket.img,
+                        title: ticket.title,
+                        daysLeft: ticket.daysLeft,
+                        ticketCost: ticket.ticketCost,
+                        coinPrice: ticket.coinPrice,
+                      },
+                    })
+                  }
+                >
+                  <img src={ticket.img} alt={ticket.title} className="ticket-card__img" />
+                  <div className="ticket-card__body">
+                    <p className="ticket-card__title">{ticket.title}</p>
+                    <div className="ticket-card__bottom">
+                      <span className="ticket-card__days">{ticket.daysLeft} {t("Shop.tickets.daysLeft")}</span>
+                      <div className="ticket-card__coins">
+                        <img src={ticketYellow} alt="ticket" />
+                        <span>{ticket.ticketCost}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="ticket-card__tear" />
-              </div>
-            ))}
-            <div className="shop-more-card shop-more-card--ticket shop-more-card--shop" onClick={() => navigate("/shop/giveaway")}>
-              <div className="shop-more-card__inner">
-                <div className="shop-more-card__plus">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5v14M5 12h14" stroke="#183D69" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
+              ))
+            )}
+            {!loading && !error && (
+              <div className="shop-more-card shop-more-card--ticket shop-more-card--shop" onClick={() => navigate("/shop/giveaway")}>
+                <div className="shop-more-card__inner">
+                  <div className="shop-more-card__plus">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5v14M5 12h14" stroke="#183D69" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div className="shop-more-card__label">
+                    <span>{t("Shop.tickets.join")}</span>
+                  </div>
                 </div>
-                <div className="shop-more-card__label">
-                  <span>{t("Shop.tickets.join")}</span>
-                </div>
               </div>
-              <div className="ticket-card__tear" />
-            </div>
+            )}
           </div>
         </section>
       </div>

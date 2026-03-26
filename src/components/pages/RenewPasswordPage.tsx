@@ -5,6 +5,7 @@ import { customFetch } from "@/utils/customFetch";
 import { fetchUserData } from "@/lib/fetchUserData";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@/hooks/useTranslation";
+import { logoUrl } from "@/assets/staticUrls";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -140,7 +141,7 @@ export default function PasswordChangePage() {
     return (
       <div className='auth-wrapper'>
         <div className='auth-logo-block'>
-          <img src='../../../src/assets/logo.svg' alt='LOGO' />
+          <img src={logoUrl} alt='LOGO' />
         </div>
 
         <div className='auth-greetings'>
@@ -255,7 +256,7 @@ export default function PasswordChangePage() {
   return (
     <div className="auth-wrapper">
       <div className="auth-logo-block">
-        <img src="../../../src/assets/logo.svg" alt="LOGO" />
+        <img src={logoUrl} alt="LOGO" />
       </div>
 
       <div className="auth-greetings">

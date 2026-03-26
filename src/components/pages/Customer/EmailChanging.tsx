@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 export default function EmailChanging() {
   const [email, setEmail] = useState("");
@@ -40,7 +41,7 @@ export default function EmailChanging() {
         }}
       >
         <img
-          src='src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt='Back'
           onClick={() => navigate(-1)}
         />

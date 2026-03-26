@@ -81,10 +81,12 @@
       display: flex;
       gap: 8px;
       margin-top: 12px;
-      img {
+      :is(img, svg) {
         padding: 12px;
         border-radius: 16px;
         background-color: $blueMain;
+        display: block;
+        box-sizing: content-box;
       }
     }
   
@@ -174,6 +176,20 @@
   .branch-card {
     position: relative;
   }
+
+  // List view: BranchInfoPanel uses branch-info-panel-card, not .branch-info-panel
+  .branch-info-panel-card .branch-info-panel__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    :is(img, svg) {
+      padding: 12px;
+      border-radius: 16px;
+      background-color: $blueMain;
+      display: block;
+      box-sizing: content-box;
+    }
+  }
   .branch-booked-icon {
     position: absolute;
     bottom: 40px;
@@ -181,6 +197,7 @@
     width: 32px;
     height: 32px;
     pointer-events: none;
+    display: block;
   }
 
   .filter-button svg path {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../../styles/help.scss";
-import arrowHelp from "../../assets/icons/left-arrow.svg";
+import { leftArrowUrl } from "@/assets/staticUrls";
 import { useNavigate } from "react-router-dom";
 
 const helpData = [
@@ -38,7 +38,7 @@ export default function Help() {
   return (
     <div>
       <header>
-        <img onClick={()=> navigate(-1)} src={arrowHelp} alt="" />
+        <img onClick={()=> navigate(-1)} src={leftArrowUrl} alt="" />
         Help
         <span></span>
       </header>
@@ -51,7 +51,7 @@ export default function Help() {
               <div className="help-question">
                 <p>{item.question}</p>
                 <img
-                  src={arrowHelp}
+                  src={leftArrowUrl}
                   alt="toggle"
                   className={`arrow-icon ${isOpen ? "open" : ""}`}
                 />

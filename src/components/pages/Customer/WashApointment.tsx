@@ -12,6 +12,13 @@ import { SingleCalendarMobileSheet } from "@/components/Calendars/SingleCalendar
 import { TimePickerMobileSheet } from "@/components/ui/TimePickerMobileSheet";
 import { TypeWashingDropDown } from "@/components/ui/TypeWashingDropDown";
 import { BranchInfoPanel } from "./BranchInfoPanel";
+import {
+  leftArrowUrl,
+  branchSummaryCalendarUrl,
+  branchSummaryTimeUrl,
+  branchSummaryAppliedUrl,
+  carWashTypeIconUrl,
+} from "@/assets/staticUrls";
 
 type Service = {
   id: number;
@@ -118,7 +125,7 @@ console.log("Resolved branch:", branch);
       <header>
         <img
           onClick={() => navigate(-1)}
-          src='src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt=''
         />
         {t("WashAppointment.header.title")}
@@ -148,14 +155,14 @@ console.log("Resolved branch:", branch);
                 <div>
                   <div className='appointment-detail'>
                     <img
-                      src='../../../src/assets/icons/branch/summary-calendar.svg'
+                      src={branchSummaryCalendarUrl}
                       alt='calendar'
                     />
                     <span>{appointment.date}</span>
                   </div>
                   <div className='appointment-detail'>
                     <img
-                      src='src/assets/icons/car-wash-type-icon.svg'
+                      src={carWashTypeIconUrl}
                       alt='type'
                     />
                     <span>{appointment.type}</span>
@@ -164,14 +171,14 @@ console.log("Resolved branch:", branch);
                 <div>
                   <div className='appointment-detail'>
                     <img
-                      src='../../../src/assets/icons/branch/summary-time.svg'
+                      src={branchSummaryTimeUrl}
                       alt='clock'
                     />
                     <span>{appointment.time}</span>
                   </div>
                   <div className='appointment-detail'>
                     <img
-                      src='../../../src/assets/icons/branch/summary-applied.svg'
+                      src={branchSummaryAppliedUrl}
                       alt='status'
                     />
                     <span className='appointment-status'>
@@ -214,7 +221,7 @@ console.log("Resolved branch:", branch);
                 }
                 readOnly
               />
-              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+              <img src={leftArrowUrl} alt='Arrow' />
             </div>
           </div>
 
@@ -225,14 +232,14 @@ console.log("Resolved branch:", branch);
               onClick={() => setTimePickerOpen(true)}
             >
               {pickedTime || "-- : --"}
-              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+              <img src={leftArrowUrl} alt='Arrow' />
             </div>
           </div>
           <div className='input-block'>
             <label>{t("WashAppointment.form.service.label")}</label>
             <div className='input-select' onClick={() => setTypeOpen(true)}>
               {selectedService?.name || "-"}
-              <img src='src/assets/icons/left-arrow.svg' alt='Arrow' />
+              <img src={leftArrowUrl} alt='Arrow' />
             </div>
           </div>
 

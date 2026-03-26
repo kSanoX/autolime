@@ -5,6 +5,7 @@ import { SingleCalendarMobileSheet } from "../../Calendars/SingleCalendarDropDow
 import { TimePickerMobileSheet } from "../../ui/TimePickerMobileSheet"
 import { updateAppointmentStatus } from "@/lib/utils"
 import { useTranslation } from "@/hooks/useTranslation"
+import { leftArrowUrl, managerVectorIconUrl } from "@/assets/staticUrls"
 
 
 export default function ReschudelingOrder() {
@@ -66,7 +67,7 @@ export default function ReschudelingOrder() {
     <div>
       <header className='rescheduling-header'>
         <button className='rescheduling-back-btn' onClick={() => navigate(-1)}>
-          <img src='../../src/assets/icons/left-arrow.svg' alt='Back' />
+          <img src={leftArrowUrl} alt='Back' />
         </button>
         <h2 className='rescheduling-title'>{t("ReschudelingOrder.header.title")}</h2>
       </header>
@@ -77,7 +78,7 @@ export default function ReschudelingOrder() {
             <p className='rescheduling-customer-info-phone'>{customerPhone || "—"}</p>
           </div>
           <div>
-            <img src='../../src/assets/icons/ManagerOrder/Vector.svg' alt='' />
+            <img src={managerVectorIconUrl} alt='' />
             <p className='rescheduling-washing-type'>{serviceType || "—"}</p>
           </div>
         </div>
@@ -90,7 +91,7 @@ export default function ReschudelingOrder() {
               onClick={handleCalendarOpen}
             >
               {datePart || "---"}
-              <img src='../../src/assets/icons/left-arrow.svg' alt='' />
+              <img src={leftArrowUrl} alt='' />
             </div>
 
             <SingleCalendarMobileSheet
@@ -110,7 +111,7 @@ export default function ReschudelingOrder() {
               className='rescheduling-time-date'
             >
               {pickedTime || "---"}
-              <img src='../../src/assets/icons/left-arrow.svg' alt='' />
+              <img src={leftArrowUrl} alt='' />
             </div>
           </div>
         </div>

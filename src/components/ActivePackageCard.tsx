@@ -7,6 +7,14 @@ import type { Car } from "@/store/carSlice";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 import { customFetch } from "@/utils/customFetch";
+import {
+  dropIconUrl,
+  timeUrl,
+  trashIconUrl,
+  reloadIconUrl,
+  calendarIconYellowUrl,
+  qrIconYellowUrl,
+} from "@/assets/staticUrls";
 
 type Props = {
   id: number;
@@ -107,7 +115,7 @@ export function ActivePackageCard({
         <div className='detail-block'>
           <span className='detail-label'>
             <img
-              src='../../../src/assets/icons/drop-icon.svg'
+              src={dropIconUrl}
               alt={t("ActivePackageCard.details.washes.iconAlt")}
             />
             {t("ActivePackageCard.details.washes.label")}
@@ -124,7 +132,7 @@ export function ActivePackageCard({
         <div className='detail-block'>
           <span className='detail-label'>
             <img
-              src='../../../src/assets/icons/time.svg'
+              src={timeUrl}
               alt={t("ActivePackageCard.details.period.iconAlt")}
             />
             {t("ActivePackageCard.details.period.label")}
@@ -147,25 +155,25 @@ export function ActivePackageCard({
       <div className='package-actions'>
         <button onClick={() => setShowDeletePopup(true)}>
           <img
-            src='../../../src/assets/icons/trash-icon.svg'
+            src={trashIconUrl}
             alt={t("ActivePackageCard.actions.deleteAlt")}
           />
         </button>
         <button onClick={() => setIsEditing((prev) => !prev)}>
           <img
-            src='../../../src/assets/icons/reload-icon.svg'
+            src={reloadIconUrl}
             alt={t("ActivePackageCard.actions.editAlt")}
           />
         </button>
         <button onClick={() => navigate("/branches")}>
           <img
-            src='../../../src/assets/icons/calendar-icon-yellow.svg'
+            src={calendarIconYellowUrl}
             alt={t("ActivePackageCard.actions.calendarAlt")}
           />
         </button>
         <button onClick={() => navigate("/customer-qr-page")}>
           <img
-            src='../../../src/assets/icons/qr-icon-yellow.svg'
+            src={qrIconYellowUrl}
             alt={t("ActivePackageCard.actions.qrAlt")}
           />
         </button>

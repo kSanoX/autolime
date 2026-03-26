@@ -1,4 +1,7 @@
-import React from "react";
+import CallIcon from "@/assets/icons/ManagerOrder/call_icon.svg?react";
+import PathIcon from "@/assets/icons/path-icon.svg?react";
+import GeoIconYellow from "@/assets/icons/geo-icon-yellow.svg?react";
+import CalendarIconYellow from "@/assets/icons/calendar-icon-yellow.svg?react";
 
 type Branch = {
   id: string;
@@ -42,23 +45,20 @@ export function BranchInfoPanel({ branch, onGoToMap, onGoToCalendar }: Props) {
 
       <div className='branch-info-panel__actions'>
         <a href={`tel:+${branch.manager.phone}`}>
-          <button className='call-button'>
-            <img
-              src='../../src/assets/icons/ManagerOrder/call_icon.svg'
-              alt='Call manager'
-            />
+          <button type="button" className="call-button">
+            <CallIcon aria-hidden />
           </button>
         </a>
 
-        <button onClick={onGoToMap}>
-          <img src='../../src/assets/icons/path-icon.svg' alt='Map' />
+        <button type="button" onClick={onGoToMap}>
+          <PathIcon aria-hidden />
         </button>
 
-        <button onClick={onGoToMap}>
-          <img src='../../../src/assets/icons/geo-icon-yellow.svg' alt='Map' />
+        <button type="button" onClick={onGoToMap}>
+          <GeoIconYellow aria-hidden />
         </button>
-        <button onClick={onGoToCalendar}>
-          <img src='../../src/assets/icons/calendar-icon-yellow.svg' alt='Calendar' />
+        <button type="button" onClick={onGoToCalendar}>
+          <CalendarIconYellow aria-hidden />
         </button>
       </div>
     </div>

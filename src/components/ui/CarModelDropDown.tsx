@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import "../../../src/styles/dropdowns/car-model-dropdown.scss";
 import type { Brand, Model} from "@/store/carSlice";
+import { searchIconUrl } from "@/assets/staticUrls";
 
 export function CarModelDropDown({
   open,
@@ -56,7 +57,7 @@ export function CarModelDropDown({
               placeholder='Search...'
               className='brand-search'
             />
-            <img src='src/assets/icons/search-icon.svg' alt='' />
+            <img src={searchIconUrl} alt='' />
           </div>
 
           <div className='brand-letter-group'>

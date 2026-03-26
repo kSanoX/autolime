@@ -4,6 +4,7 @@ import CustomerInfoSkeleton from "./Skeletons/CustomerInfoSkeleton";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { useTranslation } from "@/hooks/useTranslation";
+import { editNoteIconUrl } from "@/assets/staticUrls";
 
 export default function CustomerContactInfo() {
   const user = useSelector((state: RootState) => state.user.data);
@@ -34,7 +35,7 @@ export default function CustomerContactInfo() {
               <div>
                 <Link to='/change-phone'>
                   <img
-                    src='src/assets/icons/edit-note-icon.svg'
+                    src={editNoteIconUrl}
                     alt={t("CustomerContactInfo.phone.editAlt")}
                   />
                 </Link>
@@ -59,7 +60,7 @@ export default function CustomerContactInfo() {
               <div>
                 <Link to='/change-email'>
                   <img
-                    src='src/assets/icons/edit-note-icon.svg'
+                    src={editNoteIconUrl}
                     alt={t("CustomerContactInfo.email.editAlt")}
                   />
                 </Link>

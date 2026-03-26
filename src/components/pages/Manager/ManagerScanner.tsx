@@ -4,6 +4,7 @@ import "../../../styles/manager-scanner.scss";
 import { useCheckQr } from "@/hooks/useCheckQr";
 import { differenceInMonths, format } from "date-fns";
 import { customFetch } from "@/utils/customFetch";
+import { closeIconUrl, whashesUrl, timeUrl } from "@/assets/staticUrls";
 
 export default function ManagerScanner(): React.JSX.Element {
   const [scannedCode, setScannedCode] = useState<string | null>(null);
@@ -218,7 +219,7 @@ export default function ManagerScanner(): React.JSX.Element {
               </p>
               <p className='qr-client-phone'>+{user.phone}</p>
               <img
-                src='../../../src/assets/icons/close-icon.svg'
+                src={closeIconUrl}
                 alt='close'
                 className='qr-close-icon'
                 onClick={handleCloseCard}
@@ -236,7 +237,7 @@ export default function ManagerScanner(): React.JSX.Element {
             <div className='qr-flexible-info'>
               <div className='qr-total-washes-block'>
                 <p className='qr-total-washes'>
-                  <img src='../../../src/assets/icons/whashes.svg' alt='' />{" "}
+                  <img src={whashesUrl} alt='' />{" "}
                   Washes
                 </p>
                 <span className='qr-whashes-count'>
@@ -248,7 +249,7 @@ export default function ManagerScanner(): React.JSX.Element {
               </div>
               <div className='qr-package-period-block'>
                 <p className='qr-package-period'>
-                  <img src='../../../src/assets/icons/time.svg' alt='' /> Period{" "}
+                  <img src={timeUrl} alt='' /> Period{" "}
                 </p>
                 <span className='qr-package-month-count'>
                   {differenceInMonths(

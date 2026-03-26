@@ -10,6 +10,7 @@ import type { PackageData } from "@/types";
 import { customFetch } from "@/utils/customFetch";
 import { useMyPackages } from "@/hooks/useActivePackages";
 import { useTranslation } from "@/hooks/useTranslation";
+import { leftArrowUrl } from "@/assets/staticUrls";
 
 export default function MyPackages() {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ export default function MyPackages() {
       <header>
         <img
           onClick={() => navigate(-1)}
-          src='../../../src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt='Back'
         />
         {t("MyPackages.header.title")}

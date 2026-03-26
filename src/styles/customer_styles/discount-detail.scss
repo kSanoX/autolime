@@ -9,6 +9,24 @@ $card-shadow: 0 0 12px 0 rgba(24, 61, 105, 0.08);
   min-height: 100vh;
   position: relative;
 
+  &--catalog-loading {
+    .shop-async-loader {
+      flex: 1;
+      min-height: 220px;
+    }
+  }
+
+  &__loading-appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    min-height: 64px;
+    background: #fff;
+    box-shadow: $card-shadow;
+    flex-shrink: 0;
+  }
+
   // ── Hero ──────────────────────────────────────────────────────────────────
   &__hero {
     position: relative;

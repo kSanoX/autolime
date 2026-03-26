@@ -3,6 +3,17 @@ import PercentBar from "../../PercentBar";
 import { MobileDropdownSheet } from "../../ui/MobileDropdown";
 import { CalendarMobileSheet } from "../../Calendars/CalendarDropDownSheet";
 import { format } from "date-fns";
+import {
+  rightArrowUrl,
+  whashesUrl,
+  branchPackageUrl,
+  branchHeaderCarUrl,
+  branchSedanUrl,
+  branchWagonUrl,
+  branchCoupeUrl,
+  branchPickupUrl,
+  branchWorkloadUrl,
+} from "@/assets/staticUrls";
 
 export default function CarwashStatistics() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -46,7 +57,7 @@ export default function CarwashStatistics() {
               <button onClick={() => setDropdownOpen(true)} className='ml-2'>
                 <img
                   className='right-arrow'
-                  src='../../src/assets/icons/right-arrow.svg'
+                  src={rightArrowUrl}
                   alt='right-arrow'
                 />
               </button>
@@ -80,7 +91,7 @@ export default function CarwashStatistics() {
       </div>
       <div className='count-whashes'>
         <div className='whashes-img'>
-          <img src='../../src/assets/icons/whashes.svg' alt='whashes' />
+          <img src={whashesUrl} alt='whashes' />
         </div>
         <div className='whashes-flex'>
           <div className='whashes-info'>
@@ -94,7 +105,7 @@ export default function CarwashStatistics() {
       <div className='packeges'>
         <div className='packeges-header'>
           <div className='yellow-box'>
-            <img src='./../../src/assets/icons/branch/package.svg' alt='' />
+            <img src={branchPackageUrl} alt='' />
           </div>
           <div>
             <p>Packeges</p>
@@ -116,7 +127,7 @@ export default function CarwashStatistics() {
         <div className='packeges-header'>
           <div className='yellow-box'>
             <img
-              src='./../../src/assets/icons/branch/branch-header-car.svg'
+              src={branchHeaderCarUrl}
               alt=''
             />
           </div>
@@ -129,7 +140,7 @@ export default function CarwashStatistics() {
         <div className='car-types-list'>
           <div className='car-types-row'>
             <div className='blue-box'>
-              <img src='../../src/assets/icons/branch/sedan.svg' alt='sedan' />
+              <img src={branchSedanUrl} alt='sedan' />
             </div>
             <div className='bar-container'>
               <PercentBar percent={64} label='Sedan' />
@@ -138,7 +149,7 @@ export default function CarwashStatistics() {
 
           <div className='car-types-row'>
             <div className='blue-box'>
-              <img src='../../src/assets/icons/branch/wagon.svg' alt='wagon' />
+              <img src={branchWagonUrl} alt='wagon' />
             </div>
             <div className='bar-container'>
               <PercentBar percent={25} label='Wagon' />
@@ -147,7 +158,7 @@ export default function CarwashStatistics() {
 
           <div className='car-types-row'>
             <div className='blue-box'>
-              <img src='../../src/assets/icons/branch/coupe.svg' alt='cope' />
+              <img src={branchCoupeUrl} alt='cope' />
             </div>
             <div className='bar-container'>
               <PercentBar percent={20} label='Coupe' />
@@ -157,7 +168,7 @@ export default function CarwashStatistics() {
           <div className='car-types-row'>
             <div className='blue-box'>
               <img
-                src='../../src/assets/icons/branch/pickup.svg'
+                src={branchPickupUrl}
                 alt='pickup'
               />
             </div>
@@ -171,7 +182,7 @@ export default function CarwashStatistics() {
       <div className='workload'>
         <div className='packeges-header'>
           <div className='yellow-box'>
-            <img src='./../../src/assets/icons/branch/workload.svg' alt='' />
+            <img src={branchWorkloadUrl} alt='' />
           </div>
           <div>
             <p>Workload</p>

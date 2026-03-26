@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { BranchInfoPanel } from "./pages/Customer/BranchInfoPanel";
 import type { Branch } from "@/hooks/useFetchBranches";
+import CalendarOkIcon from "@/assets/icons/calendar-ok.svg?react";
 
 export function BranchCard({ branch, onClick, isActive }: {
   branch: Branch;
@@ -54,12 +55,8 @@ export function BranchCard({ branch, onClick, isActive }: {
 />
 
       {isActive && (
-  <img
-    src="../src/assets/icons/calendar-ok.svg"
-    alt="Booked"
-    className="branch-booked-icon"
-  />
-)}
+        <CalendarOkIcon className="branch-booked-icon" aria-label="Booked" />
+      )}
 
     </div>
   );

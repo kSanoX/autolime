@@ -21,6 +21,12 @@ import { customFetch } from "@/utils/customFetch";
 import { useFetchBranches, type Branch } from "@/hooks/useFetchBranches";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  trashIconUrl,
+  managerCallIconUrl,
+  pathIconUrl,
+  qrIconYellowUrl,
+} from "@/assets/staticUrls";
 
 type Appointment = {
   id: number;
@@ -160,20 +166,20 @@ export default function WashAppointmentsCalendar() {
                   )}
                   <div className="functional-block-caledar">
                     <button onClick={() => handleDeleteClick(a)}>
-                      <img src="../../src/assets/icons/trash-icon.svg" alt="delete" />
+                      <img src={trashIconUrl} alt="delete" />
                     </button>
                     {branch?.manager?.phone && (
                       <a href={`tel:+${branch.manager.phone}`}>
                         <button>
-                          <img src="../../src/assets/icons/ManagerOrder/call_icon.svg" alt="call" />
+                          <img src={managerCallIconUrl} alt="call" />
                         </button>
                       </a>
                     )}
                     <button>
-                      <img src="../../src/assets/icons/path-icon.svg" alt="map" />
+                      <img src={pathIconUrl} alt="map" />
                     </button>
                     <button onClick={() => navigate("/customer-qr-page")}>
-                      <img src="../../src/assets/icons/qr-icon-yellow.svg" alt="qr" />
+                      <img src={qrIconYellowUrl} alt="qr" />
                     </button>
                   </div>
                 </div>

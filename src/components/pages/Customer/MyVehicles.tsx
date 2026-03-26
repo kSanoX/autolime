@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/hooks/hooks";
 import { useFetchCars } from "@/hooks/useFetchCars";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultCarPlaceholderUrl, editNoteIconUrl } from "@/assets/staticUrls";
 const NO_API_URL = import.meta.env.VITE_NO_API_URL;
 
 export default function MyVehicles() {
@@ -28,7 +29,7 @@ export default function MyVehicles() {
               src={
                 car.image
                   ? `${NO_API_URL}${car.image}`
-                  : "/assets/icons/default-car.svg"
+                  : defaultCarPlaceholderUrl
               }
               alt='vehicle'
             />
@@ -46,7 +47,7 @@ export default function MyVehicles() {
                 style={{ padding: "0px" }}
               >
                 <img
-                  src='src/assets/icons/edit-note-icon.svg'
+                  src={editNoteIconUrl}
                   alt='edit-icon'
                 />
               </button>

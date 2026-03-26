@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { carWashTypeIconUrl } from "@/assets/staticUrls";
 
 export type Service = {
   id: number;
@@ -116,7 +117,7 @@ export function TypeWashingDropDown({
                     }}
                   >
                     <img
-                      src='../../src/assets/icons/car-wash-type-icon.svg'
+                      src={carWashTypeIconUrl}
                       alt=''
                       width={24}
                       height={24}

@@ -1,7 +1,5 @@
 @use "../variables" as *;
 
-$shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
-
 .shop-page {
   display: flex;
   flex-direction: column;
@@ -15,7 +13,7 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
   justify-content: space-between;
   padding: 12px 16px;
   background: #fff;
-  box-shadow: $shop-shadow;
+  box-shadow: $shop-ui-shadow;
 
   &__burger {
     background: none;
@@ -54,7 +52,7 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: $shop-shadow;
+  box-shadow: $shop-ui-shadow;
 
   &__left {
     display: flex;
@@ -121,7 +119,7 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
 .shop-category {
   background: #fff;
   border-radius: 16px;
-  box-shadow: $shop-shadow;
+  box-shadow: $shop-ui-shadow;
   padding: 16px 12px 16px 16px;
   display: flex;
   align-items: flex-end;
@@ -212,6 +210,7 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
   overflow-x: auto;
   scrollbar-width: none;
   align-items: stretch;
+  padding: 6px 0px 6px 0px;
 
   // без фона и границ, чтобы лента карточек полностью сливалась с общим фоном
   background: transparent;
@@ -222,94 +221,16 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
   }
 }
 
-// Voucher card
+// Voucher card — та же сетка, что и у ticket-card
 .voucher-card {
   flex-shrink: 0;
   width: 161px;
-  height: 203px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: $shop-shadow;
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-
-  &__img {
-    width: 100%;
-    height: 96px;
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
-    border-radius: 16px 16px 0 0;
-  }
-
-  &__body {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-    background: #fff;
-    border-radius: 0 0 16px 16px;
-  }
-
-  &__text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  &__title {
-    font-size: 14px;
-    font-weight: 600;
-    color: $blueMain;
-    line-height: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  &__category {
-    font-size: 12px;
-    font-weight: 400;
-    color: $textSecondary;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  &__badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 24px;
-    padding: 0 8px;
-    background: $yellowMain;
-    color: $blueMain;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 8px;
-    line-height: 1;
-    align-self: flex-start;
-    white-space: nowrap;
-  }
-}
-
-// Ticket card
-.ticket-card {
-  flex-shrink: 0;
-  width: 161px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   background: #fff;
   border-radius: 16px;
-  box-shadow: $shop-shadow;
+  box-shadow: $shop-card-shadow;
 
   &__img {
     width: 100%;
@@ -326,6 +247,84 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
     flex-direction: column;
     gap: 4px;
     background: #fff;
+    border-radius: 0 0 16px 16px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $blueMain;
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  &__category {
+    font-size: 12px;
+    font-weight: 400;
+    color: $textSecondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  &__value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 600;
+      color: $yellowMain;
+      text-transform: uppercase;
+    }
+  }
+}
+
+// Ticket card
+.ticket-card {
+  flex-shrink: 0;
+  width: 161px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: $shop-card-shadow;
+
+  &__img {
+    width: 100%;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+  &__body {
+    padding: 12px 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #fff;
+    border-radius: 0 0 16px 16px;
   }
 
   &__title {
@@ -369,37 +368,6 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
       text-transform: uppercase;
     }
   }
-
-  &__tear {
-    height: 12px;
-    flex-shrink: 0;
-    align-self: stretch;
-    position: relative;
-    background-color: #fff;
-    background-image: radial-gradient(circle at 11px 100%, $bg 7px, transparent 7px);
-    background-size: 20px 12px;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-    border-radius: 0 0 16px 16px;
-    overflow: hidden;
-  }
-
-  &__tear::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    // Мягкая тень по кромке вырезов (как в giveaway-card)
-    background-image: radial-gradient(
-      circle at 11px 100%,
-      transparent 6.5px,
-      rgba(24, 61, 105, 0.06) 7.2px,
-      transparent 8.2px
-    );
-    background-size: 20px 12px;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-  }
 }
 
 // "Buy more" / "Join giveaway" card (last card in scroll)
@@ -419,6 +387,7 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
   justify-content: center;
   gap: 8px;
   padding: 12px;
+  
   // Чтобы при пустом списке (когда других карточек в строке нет)
   // контент оставался по центру и визуально совпадал с макетом.
   min-height: 110px;
@@ -441,11 +410,20 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
     z-index: 2;
   }
 
+  &--shop {
+    box-shadow: $shop-card-shadow;
+    overflow: visible;
+  }
+
   &--ticket {
     justify-content: space-between;
     padding: 0;
     min-height: 128px;
     overflow: hidden;
+
+    &.shop-more-card--shop {
+      overflow: visible;
+    }
 
     .shop-more-card__inner {
       flex: 1;
@@ -457,7 +435,6 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
       padding: 12px;
     }
   }
-
 
   &__plus {
     width: 40px;
@@ -487,5 +464,25 @@ $shop-shadow: 0px 0px 12px 0px rgba(24, 61, 105, 0.08);
 }
 
 .shop-more-card--my-area {
-  box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: $shop-card-shadow;
+}
+
+.shop-async-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+  padding: 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.shop-async-error,
+.shop-async-empty {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #879ab1;
+  width: 100%;
+  box-sizing: border-box;
 }

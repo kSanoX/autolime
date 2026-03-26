@@ -119,26 +119,73 @@
   box-shadow: 0 2px 10px rgba(24, 61, 105, 0.18);
 }
 
-// Make plus-card stretch full width in /my-area (matches the screenshot)
+// /my-area — отдельные модификаторы, без влияния на .shop-page .voucher-card
 .my-area-page {
-  .shop-scroll {
-    gap: 0;
+  .shop-scroll--my-area-full {
+    flex-direction: column;
+    overflow-x: visible;
+    gap: 16px;
+    width: 100%;
+
+    .voucher-card--my-area,
+    .ticket-card--my-area {
+      width: 100%;
+      max-width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .voucher-card--my-area {
+      height: auto;
+      min-height: auto;
+      margin-bottom: 16px;
+    }
+
+    .ticket-card--my-area {
+      margin-bottom: 16px;
+    }
+  }
+
+  .ticket-card--my-area,
+  .voucher-card--my-area {
+    border-radius: 16px;
+    overflow: visible;
+
+    .ticket-card__img,
+    .voucher-card__img {
+      height: 148px;
+      min-height: 148px;
+      object-fit: cover;
+    }
+
+    .ticket-card__body,
+    .voucher-card__body {
+      border-radius: 0 0 16px 16px;
+      padding-bottom: 12px;
+    }
   }
 
   .shop-section {
     width: 100%;
-    border-radius: 16px;
-    box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    overflow: visible;
   }
 
-  .shop-scroll > * {
+  .shop-scroll--my-area {
+    gap: 0;
+
+    .voucher-card--my-area,
+    .ticket-card--my-area,
+    .shop-more-card--my-area {
+      border-radius: 16px;
+      box-shadow: $shop-card-shadow;
+    }
+  }
+
+  .shop-scroll--my-area > * {
     position: relative;
     z-index: 1;
   }
 
-  .shop-more-card,
-  .shop-more-card--ticket {
+  .shop-more-card--my-area {
     width: 100% !important;
     flex: 0 0 100% !important;
   }

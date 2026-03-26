@@ -6,12 +6,14 @@ import ruFlag from "@/assets/icons/ru_flag.svg";
 export function LanguageDropdownSheet({
   open,
   setOpen,
+  savedLang,
   selectedLang,
   setSelectedLang,
   onSave,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
+  savedLang: string;
   selectedLang: string;
   setSelectedLang: (lang: string) => void;
   onSave: () => void;
@@ -96,7 +98,7 @@ export function LanguageDropdownSheet({
           </ul>
           <button
             className='save-button'
-            disabled={!selectedLang}
+            disabled={selectedLang === savedLang}
             onClick={onSave}
           >
             Save Settings

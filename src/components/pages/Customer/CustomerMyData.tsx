@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { useTranslation } from "@/hooks/useTranslation";
 import { customFetch } from "@/utils/customFetch";
+import { leftArrowUrl, calendarIconUrl, dangerUrl } from "@/assets/staticUrls";
 
 export default function CustomerMyData() {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ const [promo, setPromo] = useState(false);
     <div className='customer-data-container'>
       <header className='header'>
         <img
-          src='src/assets/icons/left-arrow.svg'
+          src={leftArrowUrl}
           alt='back'
           onClick={() => navigate(-1)}
         />
@@ -152,7 +153,7 @@ const [promo, setPromo] = useState(false);
                 }
                 readOnly
               />
-              <img src='src/assets/icons/calendar_icon.svg' alt='calendar' />
+              <img src={calendarIconUrl} alt='calendar' />
             </div>
           </div>
 
@@ -183,7 +184,7 @@ const [promo, setPromo] = useState(false);
               />
               <img
                 className='dropdown-arrow-sex'
-                src='src/assets/icons/left-arrow.svg'
+                src={leftArrowUrl}
                 alt='select'
               />
             </div>
@@ -205,7 +206,7 @@ const [promo, setPromo] = useState(false);
         <div className='save-data-modal-backdrop'>
           <div className='save-data-modal-window'>
             <div className='save-data-modal-cap'>
-              <img src='src/assets/icons/danger.svg' alt='danger' />
+              <img src={dangerUrl} alt='danger' />
               <h4>{t("CustomerMyData.modal.title")}</h4>
             </div>
             <p>{t("CustomerMyData.modal.message")}</p>

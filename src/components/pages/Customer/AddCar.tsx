@@ -9,6 +9,7 @@ import { customFetch } from "@/utils/customFetch";
 import { useCarBrands } from "@/hooks/useCarBrands";
 import type { Brand, Model, Car } from "@/store/carSlice";
 import { useTranslation } from "@/hooks/useTranslation";
+import { leftArrowUrl, closeIconUrl } from "@/assets/staticUrls";
 
 export default function AddCar({ showHeader }: { showHeader?: boolean }) {
   const dispatch = useAppDispatch();
@@ -135,9 +136,9 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
     <div className='add-car-screen'>
       {shouldShowHeader && (
         <header>
-          <img src='src/assets/icons/left-arrow.svg' alt='Back' />
+          <img src={leftArrowUrl} alt='Back' />
           <h3>{t("AddCar.header.title")}</h3>
-          <img src='src/assets/icons/close-icon.svg' alt='Close' />
+          <img src={closeIconUrl} alt='Close' />
         </header>
       )}
       <div className='add-car-content'>
@@ -162,7 +163,7 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
                   {brand?.name || t("AddCar.placeholders.chooseBrand")}
                 </span>
                 <img
-                  src='src/assets/icons/left-arrow.svg'
+                  src={leftArrowUrl}
                   alt={t("AddCar.icons.arrowAlt")}
                 />
               </div>
@@ -178,7 +179,7 @@ export default function AddCar({ showHeader }: { showHeader?: boolean }) {
                   {model?.name || t("AddCar.placeholders.chooseModel")}
                 </span>
                 <img
-                  src='src/assets/icons/left-arrow.svg'
+                  src={leftArrowUrl}
                   alt={t("AddCar.icons.arrowAlt")}
                 />
               </div>

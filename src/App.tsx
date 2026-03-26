@@ -3,7 +3,7 @@ import { Provider, useDispatch } from "react-redux";
 import { store } from "./store";
 import { useUserRole } from "./hooks/useUserRole";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { useUser } from "@/hooks/useUser";
+import { useUser, useRefreshUserOnBfcacheRestore } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import { setTranslations } from "./store/langSlice";
 import { ensureDeviceToken } from "./hooks/useDeviceToken";
@@ -56,6 +56,7 @@ function AppRoutes() {
   const [langLoading, setLangLoading] = useState(true);
   const currentLang = useSelector((s: RootState) => s.lang.currentLang);
   useUser();
+  useRefreshUserOnBfcacheRestore();
 
   useEffect(() => {
     ensureDeviceToken().then((token) => {

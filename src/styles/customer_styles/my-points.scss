@@ -91,13 +91,6 @@
   font-weight: 500;
   padding: 10px 14px;
   border-radius: 10px;
-  animation: fadeNotice 5s forwards;
-}
-
-@keyframes fadeNotice {
-  0%   { opacity: 1; }
-  70%  { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 .my-points-history {

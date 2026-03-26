@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useDrag } from "@use-gesture/react";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format, subMonths } from "date-fns";
+import { leftArrowUrl, rightArrowUrl } from "@/assets/staticUrls";
 
 export function SingleCalendarMobileSheet({
   open,
@@ -124,7 +125,7 @@ export function SingleCalendarMobileSheet({
                 background: "transparent",
               }}
             >
-              <img src='../../src/assets/icons/left-arrow.svg' alt='prev' />
+              <img src={leftArrowUrl} alt='prev' />
             </button>
 
             <span
@@ -150,7 +151,7 @@ export function SingleCalendarMobileSheet({
                 background: "transparent",
               }}
             >
-              <img src='../../src/assets/icons/right-arrow.svg' alt='next' />
+              <img src={rightArrowUrl} alt='next' />
             </button>
           </div>
 

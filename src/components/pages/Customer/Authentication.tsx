@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 import { useTranslation } from "@/hooks/useTranslation";
+import { logoUrl, googleServiceIconUrl, facebookUrl } from "@/assets/staticUrls";
 export default function Authentication() {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -83,7 +84,7 @@ export default function Authentication() {
     <div className='auth-wrapper'>
       <div className='auth-logo-block'>
         <img
-          src='../../../src/assets/logo.svg'
+          src={logoUrl}
           alt={t("Authentication.logoAlt")}
         />
       </div>
@@ -192,7 +193,7 @@ export default function Authentication() {
         <div className='google-auth'>
           <a href='/'>
             <img
-              src='../../../src/assets/icons/google-service (1).svg'
+              src={googleServiceIconUrl}
               alt={t("Authentication.social.googleAlt")}
             />
           </a>
@@ -201,7 +202,7 @@ export default function Authentication() {
         <div className='facebook-auth'>
           <a href='/'>
             <img
-              src='../../../src/assets/icons/facebook.svg'
+              src={facebookUrl}
               alt={t("Authentication.social.facebookAlt")}
             />
           </a>
